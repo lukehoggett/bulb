@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Bulb Control
 
 
@@ -47,4 +46,3 @@ For demonstrating the `crash-reporter` you've to start the little `express` serv
 =======
 # bulb
 Control panel in electron for Playbulb
->>>>>>> origin/master
