@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html ng-app="bulb">
+<head>
+    <title>Electron / Angular / ES6 Sample </title>
+    <script src="jspm_packages/system.js"></script>
+    <script src="config.js"></script>
+    <script>
+    console.log("Doing System Import");
+        System.import('./scripts/list/app');
+    </script>
+</head>
+    <body>
+        <ng-view></ng-view>
+        <!-- <h1>Electron / Angular / ES6 Sample</h1> -->
+        <!-- <div ng-app="bulb">
+            <div ng-controller="listCtrl as list">
+                {{list}}
+                <p>You're running Electron version
+                    <span ng-bind="list.electronVersion"></span>
+                </p>
+                <button ng-click="list.doCrash()">Force App to crash</button>
+
+                <button ng-click="list.openDevTools()">Open Developer Tools</button>
+            </div>
+        </div> -->
+    </body>
+</html>
