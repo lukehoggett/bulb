@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Bulb Control
 
 
@@ -43,3 +44,7 @@ The final electron app will be located as a zip file within the `dist` subfolder
 ## Demonstrating CrashReporter
 
 For demonstrating the `crash-reporter` you've to start the little `express` server from the `server` subfolder by invoking `node server.js` before crashing the app using the button...
+=======
+# bulb
+Control panel in electron for Playbulb
+>>>>>>> origin/master
