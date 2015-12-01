@@ -1,7 +1,7 @@
 {
-  "name": "electron-sample",
-  "version": "1.0.0",
-  "description": "My first electron app",
+  "name": "Bulb",
+  "version": "0.0.2",
+  "description": "PLaybulb led control panel",
   "main": "main/index.js",
   "scripts": {
     "postinstall": "jspm install"
@@ -9,16 +9,16 @@
   "keywords": [
     "electron-app"
   ],
-  "author": "Thorsten Hans",
-  "repository": "https://github.com/ofi/electron-angular-es6",
+  "author": "Luke Hoggett",
+  "repository": "https://github.com/lukehoggett/bulb",
   "license": "MIT",
   "devDependencies": {
     "del": "^1.2.0",
+    "electron-rebuild": "^1.0.2",
     "gulp": "^3.9.0",
     "gulp-atom-electron": "^0.12.0",
     "gulp-babel": "^5.1.0",
     "gulp-rename": "^1.2.2",
-    "gulp-run": "^1.6.11",
     "gulp-run-electron": "^1.2.2",
     "jspm": "^0.16.15",
     "run-sequence": "^1.1.2"

@@ -1,12 +1,4 @@
-
- 
-
-
-
-
-
 console.log("test");
-var noble = require('noble');
 var electron = require('electron');
 var app = electron.app;
 // var app = require('app');  // Module to control application life.
@@ -30,15 +22,6 @@ app.on('window-all-closed', function() {
 app.on('ready', function() {
 
     console.log(app.getPath('exe'));
-    noble.on('stateChange', function(state) {
-        console.log("Noble State Change 1", state);
-        if (state == 'poweredOn') {
-            console.log("Noble State Change 2", state);
-            noble.startScanning();
-        }
-        
-        console.log("Noble State Change 3 ", state);
-    });
     // Create the browser window.
     // mainWindow = new BrowserWindow({width: 800, height: 600});
 
@@ -46,7 +29,7 @@ app.on('ready', function() {
     // mainWindow.loadURL('file://' + __dirname + '/browser/index.html');
 
     // Open the devtools.
-    // mainWindow.openDevTools();
+    mainWindow.openDevTools();
 
     // Emitted when the window is closed.
     // mainWindow.on('closed', function() {
