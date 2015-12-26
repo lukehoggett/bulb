@@ -26,8 +26,10 @@ app.on('window-all-closed', function() {
 app.on('ready', function() {
     console.log("Electron Ready");
     // nobleDiscover();
+    // 
+    playbulbExperiment();
 
-    playbulbExplore();
+    // playbulbExplore();
     // Create the browser window.
     // mainWindow = new BrowserWindow({width: 800, height: 600});
 
@@ -46,159 +48,198 @@ app.on('ready', function() {
     // });
 });
 
-function nobleDiscover() {
-  console.log("nobleDiscover");
-    noble.on('stateChange', function(state) {
-        if (state == 'poweredOn') {
-            noble.startScanning();
-        }
-    });
+// function nobleDiscover() {
+//   console.log("nobleDiscover");
+//     noble.on('stateChange', function(state) {
+//         if (state == 'poweredOn') {
+//             noble.startScanning();
+//         }
+//     });
+// 
+//     noble.on('discover', function(peripheral) {
+//         console.info(peripheral);
+//         noble.stopScanning();
+// 
+//         console.log('peripheral with ID ' + peripheral.id + ' found');
+//         var advertisement = peripheral.advertisement;
+// 
+//         var localName = advertisement.localName;
+//         var txPowerLevel = advertisement.txPowerLevel;
+//         var manufacturerData = advertisement.manufacturerData;
+//         var serviceData = advertisement.serviceData;
+//         var serviceUuids = advertisement.serviceUuids;
+// 
+//         if (localName) {
+//             console.log('  Local Name        = ' + localName);
+//         }
+// 
+//         if (txPowerLevel) {
+//             console.log('  TX Power Level    = ' + txPowerLevel);
+//         }
+// 
+//         if (manufacturerData) {
+//             console.log('  Manufacturer Data = ' + manufacturerData.toString('hex'));
+//         }
+// 
+//         if (serviceData) {
+//             console.log('  Service Data      = ' + serviceData);
+//         }
+// 
+//         if (localName) {
+//             console.log('  Service UUIDs     = ' + serviceUuids);
+//         }
+// 
+//         console.log();
+//         explore(peripheral);
+//     });
+// }
+// 
+// function explore(peripheral) {
+//     console.log('services and characteristics:');
+// 
+//     peripheral.on('disconnect', function() {
+//         process.exit(0);
+//     });
+// 
+//     peripheral.connect(function(error) {
+//         peripheral.discoverServices([], function(error, services) {
+//             var serviceIndex = 0;
+// 
+//             async.whilst(
+//                 function() {
+//                     return (serviceIndex < services.length);
+//                 },
+//                 function(callback) {
+//                     var service = services[serviceIndex];
+//                     var serviceInfo = service.uuid;
+// 
+//                     if (service.name) {
+//                         serviceInfo += ' (' + service.name + ')';
+//                     }
+//                     console.log(serviceInfo);
+// 
+//                     service.discoverCharacteristics([], function(error, characteristics) {
+//                         var characteristicIndex = 0;
+// 
+//                         async.whilst(
+//                             function() {
+//                                 return (characteristicIndex < characteristics.length);
+//                             },
+//                             function(callback) {
+//                                 var characteristic = characteristics[characteristicIndex];
+//                                 var characteristicInfo = '  ' + characteristic.uuid;
+// 
+//                                 if (characteristic.name) {
+//                                     characteristicInfo += ' (' + characteristic.name + ')';
+//                                 }
+// 
+//                                 async.series([
+//                                     function(callback) {
+//                                         characteristic.discoverDescriptors(function(error, descriptors) {
+//                                             async.detect(
+//                                                 descriptors,
+//                                                 function(descriptor, callback) {
+//                                                     return callback(descriptor.uuid === '2901');
+//                                                 },
+//                                                 function(userDescriptionDescriptor) {
+//                                                     if (userDescriptionDescriptor) {
+//                                                         userDescriptionDescriptor.readValue(function(error, data) {
+//                                                             if (data) {
+//                                                                 characteristicInfo += ' (' + data.toString() + ')';
+//                                                             }
+//                                                             callback();
+//                                                         });
+//                                                     } else {
+//                                                         callback();
+//                                                     }
+//                                                 }
+//                                             );
+//                                         });
+//                                     },
+//                                     function(callback) {
+//                                         characteristicInfo += '\n    properties  ' + characteristic.properties.join(', ');
+// 
+//                                         if (characteristic.properties.indexOf('read') !== -1) {
+//                                             characteristic.read(function(error, data) {
+//                                                 if (data) {
+//                                                     var string = data.toString('ascii');
+// 
+//                                                     characteristicInfo += '\n    value       ' + data.toString('hex') + ' | \'' + string + '\'';
+//                                                 }
+//                                                 callback();
+//                                             });
+//                                         } else {
+//                                             callback();
+//                                         }
+//                                     },
+//                                     function() {
+//                                         console.log(characteristicInfo);
+//                                         characteristicIndex++;
+//                                         callback();
+//                                     }
+//                                 ]);
+//                             },
+//                             function(error) {
+//                                 serviceIndex++;
+//                                 callback();
+//                             }
+//                         );
+//                     });
+//                 },
+//                 function(err) {
+//                     peripheral.disconnect();
+//                 }
+//             );
+//         });
+//     });
+// }
 
-    noble.on('discover', function(peripheral) {
-        console.info(peripheral);
-        noble.stopScanning();
-
-        console.log('peripheral with ID ' + peripheral.id + ' found');
-        var advertisement = peripheral.advertisement;
-
-        var localName = advertisement.localName;
-        var txPowerLevel = advertisement.txPowerLevel;
-        var manufacturerData = advertisement.manufacturerData;
-        var serviceData = advertisement.serviceData;
-        var serviceUuids = advertisement.serviceUuids;
-
-        if (localName) {
-            console.log('  Local Name        = ' + localName);
-        }
-
-        if (txPowerLevel) {
-            console.log('  TX Power Level    = ' + txPowerLevel);
-        }
-
-        if (manufacturerData) {
-            console.log('  Manufacturer Data = ' + manufacturerData.toString('hex'));
-        }
-
-        if (serviceData) {
-            console.log('  Service Data      = ' + serviceData);
-        }
-
-        if (localName) {
-            console.log('  Service UUIDs     = ' + serviceUuids);
-        }
-
-        console.log();
-        explore(peripheral);
-    });
-}
-
-function explore(peripheral) {
-    console.log('services and characteristics:');
-
-    peripheral.on('disconnect', function() {
-        process.exit(0);
-    });
-
-    peripheral.connect(function(error) {
-        peripheral.discoverServices([], function(error, services) {
-            var serviceIndex = 0;
-
-            async.whilst(
-                function() {
-                    return (serviceIndex < services.length);
-                },
-                function(callback) {
-                    var service = services[serviceIndex];
-                    var serviceInfo = service.uuid;
-
-                    if (service.name) {
-                        serviceInfo += ' (' + service.name + ')';
-                    }
-                    console.log(serviceInfo);
-
-                    service.discoverCharacteristics([], function(error, characteristics) {
-                        var characteristicIndex = 0;
-
-                        async.whilst(
-                            function() {
-                                return (characteristicIndex < characteristics.length);
-                            },
-                            function(callback) {
-                                var characteristic = characteristics[characteristicIndex];
-                                var characteristicInfo = '  ' + characteristic.uuid;
-
-                                if (characteristic.name) {
-                                    characteristicInfo += ' (' + characteristic.name + ')';
-                                }
-
-                                async.series([
-                                    function(callback) {
-                                        characteristic.discoverDescriptors(function(error, descriptors) {
-                                            async.detect(
-                                                descriptors,
-                                                function(descriptor, callback) {
-                                                    return callback(descriptor.uuid === '2901');
-                                                },
-                                                function(userDescriptionDescriptor) {
-                                                    if (userDescriptionDescriptor) {
-                                                        userDescriptionDescriptor.readValue(function(error, data) {
-                                                            if (data) {
-                                                                characteristicInfo += ' (' + data.toString() + ')';
-                                                            }
-                                                            callback();
-                                                        });
-                                                    } else {
-                                                        callback();
-                                                    }
-                                                }
-                                            );
-                                        });
-                                    },
-                                    function(callback) {
-                                        characteristicInfo += '\n    properties  ' + characteristic.properties.join(', ');
-
-                                        if (characteristic.properties.indexOf('read') !== -1) {
-                                            characteristic.read(function(error, data) {
-                                                if (data) {
-                                                    var string = data.toString('ascii');
-
-                                                    characteristicInfo += '\n    value       ' + data.toString('hex') + ' | \'' + string + '\'';
-                                                }
-                                                callback();
-                                            });
-                                        } else {
-                                            callback();
-                                        }
-                                    },
-                                    function() {
-                                        console.log(characteristicInfo);
-                                        characteristicIndex++;
-                                        callback();
-                                    }
-                                ]);
-                            },
-                            function(error) {
-                                serviceIndex++;
-                                callback();
-                            }
-                        );
-                    });
-                },
-                function(err) {
-                    peripheral.disconnect();
-                }
-            );
+function playbulbExperiment() {
+  console.log("playbulbExperiment()");
+  noble.on('stateChange', function(state) {
+    if (state == 'poweredOn') {
+        noble.startScanning();
+    }
+  });
+  
+  noble.on('discover', function(peripheral) {
+    // console.info(peripheral);
+    noble.stopScanning();
+    // console.log("Discovered peripheral", peripheral);
+    
+    peripheral.connect(function(err) {
+      if (err) {
+        throw err;
+      }
+      
+      peripheral.discoverAllServicesAndCharacteristics();
+      peripheral.on('servicesDiscover', function(services) {
+        services.map(function(service) {
+          service.on('characteristicsDiscover', function(characteristics) {
+            characteristics.map(function(characteristic) {
+              if (characteristic.uuid === 'fffc') {
+                console.log(characteristic.uuid, characteristic)
+                var r = 0, g = 0, b = 0; 
+                var colorBytes = new Buffer([255, r, g, b]);
+                characteristic.write(colorBytes, true, function(err) {
+                  console.log(err);
+                });
+              }
+            });
+          });
         });
+      });
     });
+  });
 }
 
-function playbulbExplore() {
-    console.log("Playbulb Exploring");
-    var pb = new Playbulb.PlaybulbCandle('04');
-    console.log("pb object ", pb);
-    pb.ready(function() {
-        // console.log("pb ready");
-        pb.setColor(0, 255, 0, 255); // set fixed color in Saturation, R, G, B
-    });
-
-}
+// function playbulbExplore() {
+//     console.log("Playbulb Exploring");
+//     var pb = new Playbulb.PlaybulbCandle('04');
+//     console.log("pb object ", pb);
+//     pb.ready(function() {
+//         // console.log("pb ready");
+//         pb.setColor(0, 255, 0, 255); // set fixed color in Saturation, R, G, B
+//     });
+// 
+// }
