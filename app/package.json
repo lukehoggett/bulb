@@ -4,6 +4,7 @@
   "description": "PLaybulb led control panel",
   "main": "main/index.js",
   "scripts": {
+    "start": "./node_modules/electron-prebuilt/dist/electron noble.js",
     "postinstall": "jspm install"
   },
   "keywords": [
