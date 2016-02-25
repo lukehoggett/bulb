@@ -46,81 +46,38 @@ app.on('ready', () => {
     x: 960,
     y: 100
   });
-  
+
   var webContents = mainWindow.webContents;
-
-
-  console.log("Setting noble state change listener what");
-  noble.on('stateChange', (state) => {
-    console.log("Noble State Change", state);
-
-    if (state == 'poweredOn') {
-      console.log("Startng Scan");
+  
+  
+  ipcMain.on('startScan', function() {
+    // Start scanning for new BLE devices.
+    // First clear out any known and selected devices.
+    // devices = [];
+    // disconnect();
+    // Start scanning only if already powered up.
+    if (noble.state === 'poweredOn') {
+      console.log('Starting scan... ');
       noble.startScanning();
-    } else {
-      noble.stopScaning();
     }
+  });
 
+  ipcMain.on('stopScan', function() {
+    // Stop scanning for devices.
+    console.log('Stopping scan...');
+    noble.stopScanning();
   });
 
   noble.on('discover', function(peripheral) {
+    console.log("Discovered", peripheral.advertisement.localName);
     
-    webContents.send('discover', peripheral);
-    // console.log("onDiscover", peripheral.advertisement.manufacturerData.toString('hex'), peripheral);
-    // console.info(peripheral);
-    // noble.stopScanning();
-    // console.log("Discovered peripheral", peripheral);
-
-    console.log('peripheral discovered (' + peripheral.id +
-      ' with address <' + peripheral.address + ', ' + peripheral.addressType + '>,' +
-      ' connectable ' + peripheral.connectable + ',' +
-      ' RSSI ' + peripheral.rssi + ':');
-    console.log('\thello my local name is:');
-    console.log('\t\t' + peripheral.advertisement.localName);
-    console.log('\tcan I interest you in any of the following advertised services:');
-    console.log('\t\t' + JSON.stringify(peripheral.advertisement.serviceUuids));
-
-    var serviceData = peripheral.advertisement.serviceData;
-    if (serviceData && serviceData.length) {
-      console.log('\there is my service data:');
-      for (var i in serviceData) {
-        console.log('\t\t' + JSON.stringify(serviceData[i].uuid) + ': ' + JSON.stringify(serviceData[i].data.toString('hex')));
-      }
+    if (peripheral.advertisement.manufacturerData.toString('hex') === "4d49504f57") {
+      noble.stopScanning();
+      console.log("Sending data about ", peripheral.advertisement.localName);
+      webContents.send('discover', peripheral);
     }
-    if (peripheral.advertisement.manufacturerData) {
-      console.log('\there is my manufacturer data:');
-      console.log('\t\t' + JSON.stringify(peripheral.advertisement.manufacturerData.toString('hex')));
-    }
-    if (peripheral.advertisement.txPowerLevel !== undefined) {
-      console.log('\tmy TX power level is:');
-      console.log('\t\t' + peripheral.advertisement.txPowerLevel);
-    }
-
-    console.log();
-    // peripheral.connect(function(err) {
-    //   if (err) {
-    //     throw err;
-    //   }
-    //   
-    //   peripheral.discoverAllServicesAndCharacteristics();
-    //   peripheral.on('servicesDiscover', function(services) {
-    //     services.map(function(service) {
-    //       service.on('characteristicsDiscover', function(characteristics) {
-    //         characteristics.map(function(characteristic) {
-    //           if (characteristic.uuid === 'fffc') {
-    //             console.log(characteristic.uuid, characteristic)
-    //             var r = 0, g = 0, b = 0; 
-    //             var colorBytes = new Buffer([255, r, g, b]);
-    //             characteristic.write(colorBytes, true, function(err) {
-    //               console.log(err);
-    //             });
-    //           }
-    //         });
-    //       });
-    //     });
-    //   });
-    // });
   });
+
 
   // mainWindow.loadURL('file://' + __dirname + '/../browser/index.html');
   mainWindow.loadURL('file://' + __dirname + '/../browser/test.html');

@@ -14,10 +14,11 @@
         <h1>Electron / Angular / ES6 Sample</h1>
         <div ng-app="bulb">
             <div ng-controller="listCtrl as list">
-                {{list}}
                 <p>You're running Electron version
                     <span ng-bind="list.electronVersion"></span>
                 </p>
+                
+                <button ng-click="list.toggleScan()">{{list.scanStateMessage}}</button>
                 <button ng-click="list.doCrash()">Force App to crash</button>
 
                 <button ng-click="list.openDevTools()">Open Developer Tools</button>
