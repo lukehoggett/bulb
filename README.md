@@ -38,6 +38,8 @@ Whenever you ran 'jspm init' correct line 2 of browser/config.js to:
 
 `baseURL: __dirname + "/",`
 
+Every time npm i is run need to run `./node_modules/.bin/electron-rebuild` from the app/ dir
+
 
 
 

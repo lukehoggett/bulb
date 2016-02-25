@@ -41,22 +41,24 @@ app.on('ready', function () {
         // height: 1200,
         // x: 1280,
         // y: 100
-        width: 800,
-        height: 600,
+        width: 1200,
+        height: 800,
         x: 960,
         y: 100
     });
 
-    mainWindow.loadURL('file://' + __dirname + '/../browser/index.html');
+    // mainWindow.loadURL('file://' + __dirname + '/../browser/index.html');
+    mainWindow.loadURL('file://' + __dirname + '/../browser/test.html');
     mainWindow.webContents.on('did-finish-load', function () {
         console.log("Window Did Load");
         mainWindow.setTitle(app.getName());
 
         console.log("Setting noble state change listener");
-        noble.on('stateChange', function (state) {
-            console.log("Noble State Change", state);
-            noble.startScanning();
-        });
+        // noble.on('stateChange', (state) => {
+        //     console.log("Noble State Change", state);
+        //     noble.startScanning();
+        //    
+        // });
     });
     mainWindow.on('closed', function () {
         console.log("Window Closed");

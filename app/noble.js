@@ -1,7 +1,12 @@
+var __dirname = "/home/luke/Dropbox/projects/electron/bulb/app";
+var APP_ROOT = "/home/luke/Dropbox/projects/electron/bulb/app";
+
 var noble = require('noble');
 var electron = require('electron');
 var app = electron.app;
 var async = require('async');
+var dialog = require('dialog');
+var os = require('os');
 
 // var Playbulb = require('playbulb');
 
@@ -24,7 +29,14 @@ app.on('window-all-closed', function() {
 // This method will be called when Electron has done everything
 // initialization and ready for creating browser windows.
 app.on('ready', function() {
-    console.log("Electron Ready");
+    console.log("Electron Ready", process.versions['electron']);
+    
+    // Check running as root on Linux (usually required for noble).
+    if (os.platform() === 'linux' && !runningAsRoot()) {
+      // Throw an error dialog when not running as root.
+      dialog.showErrorBox('Bulb', 'WARNING: This program should be run as a root user with sudo!');
+    }
+    
     playbulbExperiment();
 
     // playbulbExplore();
@@ -32,7 +44,7 @@ app.on('ready', function() {
     mainWindow = new BrowserWindow({width: 1600, height: 1200});
 
     // // and load the index.html of the app.
-    mainWindow.loadURL('file://' + __dirname + '/browser/index.html');
+    mainWindow.loadURL(__dirname + '/browser/index.html');
 
     // Open the devtools.
     mainWindow.openDevTools();
@@ -95,3 +107,15 @@ function playbulbExperiment() {
 //     });
 // 
 // }
+// 
+function runningAsRoot() {
+  // Check if the user is running as root on a POSIX platform (Linux/OSX).
+  // Returns true if it can be determined the user is running as root, otherwise
+  // false.
+  if (os.platform() === 'linux' || os.platform() === 'darwin') {
+    return process.getuid() === 0;
+  }
+  else {
+    return false;
+  }
+}
