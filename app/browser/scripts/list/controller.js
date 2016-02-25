@@ -12,6 +12,12 @@ class ListCtrl {
     this.electronVersion = process.versions.electron;
     this.chromeVersion = process.versions.chrome;
     this.nodeVersion = process.versions.node;
+    this.peripherals = [];
+    ipc.on('discover', function(event, message) {
+      console.log("ipcRenderer", message);
+      
+      this.peripherals.push(message);
+    }.bind(this));
   }
 
   doCrash() {
@@ -23,6 +29,8 @@ class ListCtrl {
     console.log("DevTools");
     ipc.send('devTools', null);
   }
+  
+  
 
 
 }

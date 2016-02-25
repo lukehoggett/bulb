@@ -14,10 +14,10 @@
         <h1>Electron / Angular / ES6 Sample</h1>
         <div ng-app="bulb">
             <div ng-controller="listCtrl as list">
-                <p>process
+                <!-- <p>Process
                     <span ng-bind="list.process"></span>
-                </p>
-                <p>You're running Electron version
+                </p> -->
+                <p>You're running Electron Version
                     <span ng-bind="list.electronVersion"></span>
                 </p>
                 <p>You're running Chrome version
@@ -25,6 +25,9 @@
                 </p>
                 <p>You're running Node version
                     <span ng-bind="list.nodeVersion"></span>
+                </p>
+                <p>Found Peripherals
+                    <span ng-bind="list.peripherals"></span>
                 </p>
                 <button ng-click="list.doCrash()">Force App to crash</button>
 

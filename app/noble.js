@@ -44,7 +44,7 @@ app.on('ready', function() {
     mainWindow = new BrowserWindow({width: 1600, height: 1200});
 
     // // and load the index.html of the app.
-    mainWindow.loadURL(__dirname + '/browser/index.html');
+    mainWindow.loadURL('file://' + __dirname + '/browser/index.html');
 
     // Open the devtools.
     mainWindow.openDevTools();
@@ -61,39 +61,69 @@ app.on('ready', function() {
 function playbulbExperiment() {
   console.log("playbulbExperiment()");
   noble.on('stateChange', function(state) {
+    console.log("onStateChange", state);
     if (state == 'poweredOn') {
         noble.startScanning();
+    } else {
+      noble.stopScaning();
     }
   });
   
   noble.on('discover', function(peripheral) {
+    // console.log("onDiscover", peripheral.advertisement.manufacturerData.toString('hex'), peripheral);
     // console.info(peripheral);
-    noble.stopScanning();
+    // noble.stopScanning();
     // console.log("Discovered peripheral", peripheral);
     
-    peripheral.connect(function(err) {
-      if (err) {
-        throw err;
-      }
-      
-      peripheral.discoverAllServicesAndCharacteristics();
-      peripheral.on('servicesDiscover', function(services) {
-        services.map(function(service) {
-          service.on('characteristicsDiscover', function(characteristics) {
-            characteristics.map(function(characteristic) {
-              if (characteristic.uuid === 'fffc') {
-                console.log(characteristic.uuid, characteristic)
-                var r = 0, g = 0, b = 0; 
-                var colorBytes = new Buffer([255, r, g, b]);
-                characteristic.write(colorBytes, true, function(err) {
-                  console.log(err);
-                });
-              }
-            });
-          });
-        });
-      });
-    });
+    console.log('peripheral discovered (' + peripheral.id +
+              ' with address <' + peripheral.address +  ', ' + peripheral.addressType + '>,' +
+              ' connectable ' + peripheral.connectable + ',' +
+              ' RSSI ' + peripheral.rssi + ':');
+  console.log('\thello my local name is:');
+  console.log('\t\t' + peripheral.advertisement.localName);
+  console.log('\tcan I interest you in any of the following advertised services:');
+  console.log('\t\t' + JSON.stringify(peripheral.advertisement.serviceUuids));
+
+  var serviceData = peripheral.advertisement.serviceData;
+  if (serviceData && serviceData.length) {
+    console.log('\there is my service data:');
+    for (var i in serviceData) {
+      console.log('\t\t' + JSON.stringify(serviceData[i].uuid) + ': ' + JSON.stringify(serviceData[i].data.toString('hex')));
+    }
+  }
+  if (peripheral.advertisement.manufacturerData) {
+    console.log('\there is my manufacturer data:');
+    console.log('\t\t' + JSON.stringify(peripheral.advertisement.manufacturerData.toString('hex')));
+  }
+  if (peripheral.advertisement.txPowerLevel !== undefined) {
+    console.log('\tmy TX power level is:');
+    console.log('\t\t' + peripheral.advertisement.txPowerLevel);
+  }
+
+  console.log();
+    // peripheral.connect(function(err) {
+    //   if (err) {
+    //     throw err;
+    //   }
+    //   
+    //   peripheral.discoverAllServicesAndCharacteristics();
+    //   peripheral.on('servicesDiscover', function(services) {
+    //     services.map(function(service) {
+    //       service.on('characteristicsDiscover', function(characteristics) {
+    //         characteristics.map(function(characteristic) {
+    //           if (characteristic.uuid === 'fffc') {
+    //             console.log(characteristic.uuid, characteristic)
+    //             var r = 0, g = 0, b = 0; 
+    //             var colorBytes = new Buffer([255, r, g, b]);
+    //             characteristic.write(colorBytes, true, function(err) {
+    //               console.log(err);
+    //             });
+    //           }
+    //         });
+    //       });
+    //     });
+    //   });
+    // });
   });
 }
 
