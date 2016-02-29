@@ -33,6 +33,7 @@
       "angular": "github:angular/bower-angular@^1.4.7",
       "angular-animate": "github:angular/bower-angular-animate@^1.4.7",
       "angular-material": "github:angular/bower-material@^0.11.4",
+      "angular-material-icons": "npm:angular-material-icons@^0.6.0",
       "angular-route": "github:angular/bower-angular-route@^1.4.7"
     },
     "devDependencies": {

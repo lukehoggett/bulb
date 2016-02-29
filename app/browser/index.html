@@ -1,38 +1,16 @@
 <!DOCTYPE html>
 <html ng-app="bulb">
-<head>
-    <title>Electron / Angular / ES6 Sample </title>
+  <head>
+    <title>Bulb</title>
     <script src="jspm_packages/system.js"></script>
     <script src="config.js"></script>
-    <script>
+    <link href="css/app.css" rel='stylesheet'>
+  </head>
+  <body ng-cloak>
+    <ng-view></ng-view>
+  </body>
+  <script>
     console.log("Doing System Import");
-        System.import('./scripts/list/app');
-    </script>
-</head>
-    <body>
-        <!-- <ng-view></ng-view> -->
-        <h1>Electron / Angular / ES6 Sample</h1>
-        <div ng-app="bulb">
-            <div ng-controller="listCtrl as list">
-                <!-- <p>Process
-                    <span ng-bind="list.process"></span>
-                </p> -->
-                <p>You're running Electron Version
-                    <span ng-bind="list.electronVersion"></span>
-                </p>
-                <p>You're running Chrome version
-                    <span ng-bind="list.chromeVersion"></span>
-                </p>
-                <p>You're running Node version
-                    <span ng-bind="list.nodeVersion"></span>
-                </p>
-                <p>Found Peripherals
-                    <span ng-bind="list.peripherals"></span>
-                </p>
-                <button ng-click="list.doCrash()">Force App to crash</button>
-
-                <button ng-click="list.openDevTools()">Open Developer Tools</button>
-            </div>
-        </div>
-    </body>
+    System.import ('./scripts/app/app');
+  </script>
 </html>

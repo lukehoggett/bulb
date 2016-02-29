@@ -37,24 +37,16 @@ app.on('window-all-closed', () => {
 app.on('ready', () => {
   console.log("App Ready");
   mainWindow = new BrowserWindow({
-    // width: 1280,
-    // height: 1200,
-    // x: 1280,
-    // y: 100
-    width: 1200,
+    width: 1600,
     height: 800,
-    x: 960,
-    y: 100
+    x: 300,
+    y: 300
   });
 
   var webContents = mainWindow.webContents;
   
   
   ipcMain.on('startScan', function() {
-    // Start scanning for new BLE devices.
-    // First clear out any known and selected devices.
-    // devices = [];
-    // disconnect();
     // Start scanning only if already powered up.
     if (noble.state === 'poweredOn') {
       console.log('Starting scan... ');
@@ -69,18 +61,18 @@ app.on('ready', () => {
   });
 
   noble.on('discover', function(peripheral) {
-    console.log("Discovered", peripheral.advertisement.localName);
     
     if (peripheral.advertisement.manufacturerData.toString('hex') === "4d49504f57") {
-      noble.stopScanning();
+      // noble.stopScanning();
       console.log("Sending data about ", peripheral.advertisement.localName);
       webContents.send('discover', peripheral);
+      // noble.startScanning();
+      // need mechanism for timing out once all suspected devices have been found
     }
   });
 
 
-  // mainWindow.loadURL('file://' + __dirname + '/../browser/index.html');
-  mainWindow.loadURL('file://' + __dirname + '/../browser/test.html');
+  mainWindow.loadURL('file://' + __dirname + '/../browser/index.html');
   mainWindow.webContents.on('did-finish-load', () => {
     console.log("Window Did Load");
     mainWindow.setTitle(app.getName());

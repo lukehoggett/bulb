@@ -1,0 +1,32 @@
+<div style="width:100%;height: 100%;" layout="row" ng-cloak>
+
+  
+
+  <div flex layout="column" tabIndex="-1" role="main" class="md-whiteframe-z2">
+    
+    <md-toolbar layout="row" class="md-whiteframe-z1">
+      <h1>Bulbs</h1>
+      <md-button ng-click="app.toggleMenu()" hide-gt-sm aria-label="Menu">
+        <ng-md-icon icon="menu"></ng-md-icon>
+      </md-button>
+      <md-button ng-click="app.toggleScan()">
+        {{app.scanStateMessage}}
+      </md-button>
+      <md-button ng-click="app.doCrash()">
+        Crash
+      </md-button>
+      <md-button ng-click="app.openDevTools()">
+        Dev Tools
+      </md-button>
+    </md-toolbar>
+    <!-- <menu> -->
+    <ng-include src="'scripts/app/menu/menu.html'"></ng-include>
+    <!-- <list> -->
+    <div>
+      <ng-include src="'scripts/app/list/list.html'"></ng-include>
+    </div>
+  </div>
+
+  <!-- <characteristic> -->
+  <ng-include src="'scripts/app/characteristic/characteristic.html'"></ng-include>
+</div>
