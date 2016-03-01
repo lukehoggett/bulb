@@ -62,13 +62,17 @@ app.on('ready', () => {
 
   noble.on('discover', function(peripheral) {
     
-    if (peripheral.advertisement.manufacturerData.toString('hex') === "4d49504f57") {
-      // noble.stopScanning();
-      console.log("Sending data about ", peripheral.advertisement.localName);
-      webContents.send('discover', peripheral);
-      // noble.startScanning();
-      // need mechanism for timing out once all suspected devices have been found
+    if (typeof peripheral.advertisement.manufacturerData !== 'undefined') {
+      console.log("manufacturerData", peripheral.advertisement);
+      if (peripheral.advertisement.manufacturerData.toString('hex') === "4d49504f57") {
+        // noble.stopScanning();
+        console.log("Sending data about ", peripheral.advertisement.localName);
+        webContents.send('discover', peripheral);
+        // noble.startScanning();
+        // need mechanism for timing out once all suspected devices have been found
+      }
     }
+    
   });
 
 

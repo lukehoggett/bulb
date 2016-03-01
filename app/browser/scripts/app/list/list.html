@@ -2,6 +2,10 @@
   <md-content flex id="content">
     <div layout="column" style="width:50%">
       List
+      {{list.devices}}
+      <md-button ng-click="list.showCharacteristics()"  aria-label="Characteristic Toggle"> Show Characteristic
+        <ng-md-icon icon="menu"></ng-md-icon>
+      </md-button>
     </div>
   </md-content>
 </div>

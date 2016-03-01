@@ -6,11 +6,12 @@ const ipc = require('electron').ipcRenderer;
 
 class AppCtrl {
 
-  constructor($mdSidenav, bulbScannerService) {
+  constructor($mdSidenav, bulbScannerService, bulbStoreService) {
     
     console.log("App Controller constructor");
     this.mdSidenav = $mdSidenav;
     this.scanner = bulbScannerService;
+    this.store = bulbStoreService;
     
     this.scanStateMessage = "Start Scan"
 
@@ -59,7 +60,7 @@ class AppCtrl {
 
 }
 
-AppCtrl.$inject = ['$mdSidenav', 'bulbScannerService'];
+AppCtrl.$inject = ['$mdSidenav', 'bulbScannerService', 'bulbStoreService'];
 export {
   AppCtrl
 };

@@ -23,6 +23,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-run-electron": "^1.2.2",
     "jspm": "^0.16.15",
+    "jspm-bower-endpoint": "^0.3.2",
     "run-sequence": "^1.1.2"
   },
   "jspm": {
@@ -32,9 +33,12 @@
     "dependencies": {
       "angular": "github:angular/bower-angular@^1.4.7",
       "angular-animate": "github:angular/bower-angular-animate@^1.4.7",
+      "angular-localforage": "npm:angular-localforage@^1.2.5",
       "angular-material": "github:angular/bower-material@^0.11.4",
       "angular-material-icons": "npm:angular-material-icons@^0.6.0",
-      "angular-route": "github:angular/bower-angular-route@^1.4.7"
+      "angular-route": "github:angular/bower-angular-route@^1.4.7",
+      "mozilla/localForage": "github:mozilla/localForage@^1.4.0",
+      "ocombe/angular-localForage": "github:ocombe/angular-localForage@^1.2.5"
     },
     "devDependencies": {
       "babel": "npm:babel-core@^5.8.24",
