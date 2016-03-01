@@ -27,9 +27,6 @@ console.log("Imported Controllers", AppCtrl);
 import {
   BulbScannerService
 } from './services/bulb-scanner.service'
-import {
-  BulbStoreService
-} from './services/bulb-store.service'
 
 
 console.log("Imported Services");
@@ -44,8 +41,6 @@ angular.module('bulb', [
     'LocalForageModule'
   ])
   .service('bulbScannerService', BulbScannerService)
-  .service('bulbStoreService', BulbStoreService)
-  // .service('LocalForageModule', LocalForageModule)
   .controller('appCtrl', AppCtrl)
   .controller('menuCtrl', MenuCtrl)
   .controller('listCtrl', ListCtrl)
