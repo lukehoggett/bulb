@@ -30,7 +30,7 @@ class BulbScannerService {
     }
     
     isScanning() {
-      return this.scanninig;
+      return this.scanning;
     }
     
     startScan() {
