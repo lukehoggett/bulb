@@ -5,46 +5,43 @@
 
 class ListCtrl {
 
-  constructor($scope, $mdSidenav, $localForage) {
+  constructor($rootScope, $mdSidenav, $localForage, bulbScannerService) {
     console.log("List Controller constructor");
-    
+
     this.$mdSidenav = $mdSidenav;
-    // this.$localForage = $localForage;
-    
+    this.$localForage = $localForage;
+    this.$rootScope = $rootScope;
     // this.$localForage.getItem('devices').then(function(devices) {
     //     console.log("ListCtrl startup device check", devices);
     // });
     this.devices = [];
-    $localForage.getItem('devices').then(function(devices) {
-        console.log("ListCtrl startup device check", devices, this);
+    console.log(bulbScannerService);
+
+    // this.devices = bulbScannerService.getDevices();
+
+    this.$rootScope.$on('devices_changed', function(event) {
+      this.$localForage.getItem('devices').then(function(devices) {
+        console.log("ListCtrl: devices changed: local fotage data", devices, arguments);
         this.devices = devices;
+      }.bind(this));
     }.bind(this));
-    // this.devices = "devices this";
-    // $scope.devices = "devices scope";
-    $scope.devices = [];
-    $localForage.bind($scope, {
-      key: 'devices',
-      defaultValue: {}, // a default value (needed if it is not already in the database)
-      scopeKey: 'devices', // the name of the scope key (if you want it to be different from key)
-      name: 'bulb' // instance name
-    });
-    // this.devices = $scope.devices;
-    
-    $scope.$watch('devices', function(val) {
-      console.log("watching scope devices", $scope.devices, val);
-      this.devices = $scope.devices;
-    }.bind(this), true);
-  
+
   }
-  
-  showCharacteristics() {
+
+  selectDevice(device) {
+    console.log("ListCtrl: selectDevice", device);
+    this.$rootScope.$broadcast('device_selected', device.uuid);
+    this.showCharacteristicsPanel();
+  }
+
+  showCharacteristicsPanel() {
     console.log("show characteristic");
     this.$mdSidenav('characteristic').toggle();
   }
-  
+
 }
 
-ListCtrl.$inject = ['$scope', '$mdSidenav', '$localForage'];
+ListCtrl.$inject = ['$rootScope', '$mdSidenav', '$localForage', 'bulbScannerService'];
 
 export {
   ListCtrl

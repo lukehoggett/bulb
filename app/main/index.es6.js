@@ -37,10 +37,10 @@ app.on('window-all-closed', () => {
 app.on('ready', () => {
   console.log("App Ready");
   mainWindow = new BrowserWindow({
-    width: 1600,
-    height: 800,
-    x: 300,
-    y: 300
+    width: 2000,
+    height: 1200,
+    x: 2560,
+    y: 100
   });
 
   var webContents = mainWindow.webContents;

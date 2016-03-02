@@ -1,11 +1,16 @@
 <div ng-controller="listCtrl as list">
   <md-content flex id="content">
     <div layout="column" style="width:50%">
-      List
-      {{list.devices}}
-      <md-button ng-click="list.showCharacteristics()"  aria-label="Characteristic Toggle"> Show Characteristic
+      <md-button ng-click="list.showCharacteristicsPanel()"  aria-label="Characteristic Toggle"> Show Characteristic
         <ng-md-icon icon="menu"></ng-md-icon>
       </md-button>
+      <md-list>
+        <md-list-item ng-repeat="device in list.devices" ng-click="list.selectDevice(device)">
+          <h3>{{device.uuid}}</h3>
+          <p>{{device.state}}</p>
+          <p>{{device.rssi}}</p>
+        </md-list-item>
+      </md-list>
     </div>
   </md-content>
 </div>
