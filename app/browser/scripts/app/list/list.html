@@ -1,14 +1,44 @@
-<div ng-controller="listCtrl as list">
-  <md-content flex id="content">
-      <md-button ng-click="list.showCharacteristicsPanel()"  aria-label="Characteristic Toggle"> 
-        <ng-md-icon icon="menu"></ng-md-icon>Show Characteristic
-      </md-button>
-      <md-list>
-        <md-list-item ng-repeat="device in list.devices" ng-click="list.selectDevice(device)">
-          <h3>{{device.uuid}}</h3>
-          <p>{{device.state}}</p>
-          <p>{{device.rssi}}</p>
-        </md-list-item>
-      </md-list>
+<div ng-controller="listCtrl as list" id="list">
+  <md-content class="md-padding" layout-xs="column" layout="row">
+    <div flex-xs flex-gt-xs="100" layout="column">
+      <md-card ng-repeat="device in list.devices">
+
+        <!-- <md-card-header>
+        <md-card-avatar>
+          <img class="md-user-avatar" src="avatar.png">
+        </md-card-avatar>
+        <md-card-header-text>
+          <span class="md-title">{{device.uuid}}</span>
+          <span class="md-subhead">Sub header</span>
+        </md-card-header-text>
+      </md-card-header> -->
+        <!-- <img ng-src="card-image.png" class="md-card-image" alt="image caption"> -->
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-headline">{{device.name}}</span>
+            <span class="md-subhead">{{device.uuid}}</span>
+          </md-card-title-text>
+        </md-card-title>
+        <md-card-actions layout="row" layout-align="start center">
+          <md-button ng-click="list.connect(device)" class="md-raised md-primary">Connect</md-button>
+          <md-button ng-click="list.getCharacterisics(device)" class="md-raised md-primary">Get Characteristics</md-button>
+          <md-button ng-click="list.selectDevice(device)" class="md-raised md-primary">Edit Characteristics</md-button>
+        </md-card-actions>
+        <md-card-content>
+          <p>
+            RSSI:
+            {{device.rssi}}
+          </p>
+          <p>
+            State:
+            {{device.state}}
+          </p>
+          <p>
+            Stored:
+            {{device.stored}}
+          </p>
+        </md-card-content>
+      </md-card>
+    </div>
   </md-content>
 </div>
