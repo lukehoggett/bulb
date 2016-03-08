@@ -4,7 +4,6 @@ import ngRoute from 'angular-route';
 import ngMaterial from 'angular-material';
 import ngAnimate from 'angular-animate';
 import ngMdIcons from 'angular-material-icons';
-import LocalForageModule from 'angular-localforage';
 console.log("Imported vendor libraries");
 
 import {
@@ -32,8 +31,7 @@ angular.module('bulb', [
     'ngRoute',
     'ngMdIcons',
     'ngMaterial',
-    'ngAnimate',
-    'LocalForageModule'
+    'ngAnimate'
   ])
   .service('bulbScannerService', BulbScannerService)
   .controller('appCtrl', AppCtrl)
@@ -41,16 +39,7 @@ angular.module('bulb', [
   .controller('listCtrl', ListCtrl)
   .controller('characteristicCtrl', CharacteristicCtrl)
   .config(['$routeProvider', routes])
-  .config(config)
-  .config(['$localForageProvider', function($localForageProvider) {
-    $localForageProvider.config({
-        // driver      : 'localStorageWrapper', // if you want to force a driver
-        name        : 'bulb', // name of the database and prefix for your data, it is "lf" by default
-        version     : 1.0, // version of the database, you shouldn't have to use this
-        storeName   : 'devices', // name of the table
-        description : 'some description'
-    });
-}]);
+  .config(config);
 
 
 function routes($routeProvider) {

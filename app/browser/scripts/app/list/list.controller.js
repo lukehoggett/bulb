@@ -6,41 +6,13 @@ const ipc = require('electron').ipcRenderer;
 
 class ListCtrl {
 
-  constructor($rootScope, $mdSidenav, $localForage, bulbScannerService) {
+  constructor($rootScope, $mdSidenav, bulbScannerService) {
     console.log("List Controller constructor");
 
     this.$mdSidenav = $mdSidenav;
-    this.$localForage = $localForage;
     this.$rootScope = $rootScope;
+    this.devices = bulbScannerService.getDevices();
     
-    this.devices = [];
-    this.$localForage.getItem('devices').then(function(devices) {
-        console.log("ListCtrl startup device check", devices);
-        devices.forEach(function(device, index) {
-          device.stored = true;
-        });
-        this.devices = devices;
-        
-    }.bind(this));
-    
-    console.log(bulbScannerService);
-
-    // this.devices = bulbScannerService.getDevices();
-
-    this.$rootScope.$on('devices_changed', function(event) {
-      this.$localForage.getItem('devices').then(function(devices) {
-        console.log("ListCtrl: devices changed - localforage data", devices, this.devices);
-        this.devices = devices;
-      }.bind(this));
-    }.bind(this));
-    
-    ipc.on('services', function(event, services) {
-      console.log("services", services);
-    });
-    ipc.on('characteristics', function(event, characteristics) {
-      console.log("characteristics", characteristics);
-    });
-
   }
 
   selectDevice(device) {
@@ -66,7 +38,7 @@ class ListCtrl {
 
 }
 
-ListCtrl.$inject = ['$rootScope', '$mdSidenav', '$localForage', 'bulbScannerService'];
+ListCtrl.$inject = ['$rootScope', '$mdSidenav', 'bulbScannerService'];
 
 export {
   ListCtrl

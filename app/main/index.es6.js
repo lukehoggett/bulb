@@ -7,7 +7,7 @@ const ipcMain = require('electron').ipcMain;
 let crashReporter = require('crash-reporter');
 let BrowserWindow = require('browser-window');
 let noble = require('noble');
-let storage = require('node-persist');
+const storage = require('node-persist');
 
 crashReporter.start({
   productName: 'es6-ng-electron',
@@ -18,7 +18,8 @@ crashReporter.start({
 
 var mainWindow = null;
 
-var devices = {};
+var storedDevices = {};
+
 console.log(__dirname + '/../data/');
 // initialise storage
 storage.initSync({
@@ -31,9 +32,31 @@ storage.initSync({
     interval: false,
     ttl: false, // ttl* [NEW], can be true for 24h default or a number in MILLISECONDS
 });
-storage.getItem('ace64b063f29', function(error, device) {
-  console.log(device);
-});
+
+// get the keys (UUIDs) of all the devices in persistent storage 
+
+loadDevicesFromStorage();
+// load all currently stored devices
+function loadDevicesFromStorage() {
+  console.log("loadDevicesFromStorage");
+  let storedDeviceKeys = storage.keys();
+  storedDeviceKeys.forEach(function(uuid, index) {
+    
+    let storedDevice = storage.getItem(uuid, function(error, device) {
+      if (error) {
+        console.error(error);
+      }
+    });
+    
+    console.log("loadDevicesFroStorage: StoredDevice UUID", storedDevice.uuid);
+    
+    storedDevice.stored = true;
+    storedDevices[storedDevice.uuid] = storedDevice;
+    
+  });
+  
+  return storedDevices;
+}
 
 ipcMain.on('crash', (event, arg) => {
   console.log("Crash", arg);
@@ -64,6 +87,17 @@ app.on('ready', () => {
 
   var webContents = mainWindow.webContents;
   
+  ipcMain.on('request-stored-devices', function(event) {
+    let storedDeviceKeys = storage.keys();
+    let storedDevices = loadDevicesFromStorage();
+    
+    for (var uuid in storedDevices) {
+      if (storedDevices.hasOwnProperty(uuid)) {
+          event.sender.send('send-stored-devices', storedDevices[uuid], uuid);
+      }
+    }
+  
+  });
   
   ipcMain.on('startScan', function() {
     // Start scanning only if already powered up.
@@ -95,7 +129,7 @@ app.on('ready', () => {
   });
   
   ipcMain.on('get-characteristics', function(event, deviceUUID) {
-    var device = devices[deviceUUID];
+    var device = storedDevices[deviceUUID];
     var characteristicsAndServices = device.discoverAllServicesAndCharacteristics(function(error, services, characteristics) {
       console.log("error", error);
       console.log("services", services);
@@ -109,6 +143,11 @@ app.on('ready', () => {
     if (typeof device.advertisement.manufacturerData !== 'undefined') {
       console.log("manufacturerData", device.advertisement);
       if (device.advertisement.manufacturerData.toString('hex') === "4d49504f57") {
+        
+        // check if the device is in the stored device
+        devices.forEach(function(device, index) {
+          console.log("onDiscover", device, index);
+        })
         // store in persistent form for node
         storage.setItem(device.uuid, serializeDevice(device), function(error) {
           if (error) {
