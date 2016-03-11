@@ -6,7 +6,7 @@ const ipc = require('electron').ipcRenderer;
 class BulbScannerService {
     constructor($rootScope) {
       console.log("BulbScannerService() constructor");
-      this.devices = [];
+      this.devices = {};
       this.scanning = false;
       
       this.$rootScope = $rootScope;
@@ -15,12 +15,20 @@ class BulbScannerService {
       ipc.on('discover', function(event, device) {
         console.log("BulbScannerService: Discovered Device", device);
         
+        let newDeviceList = [];
+        
+        for (var uuid in this.devices) {
+          if (this.devices.hasOwnProperty(uuid)) {
+            console.log("for in this.devices", this.devies[uuid]);
+          }
+        }
         this.devices.forEach(function(dev, key) {
           console.log("each device", dev);
-          // if 
-          device.powered = true; 
+          newDeviceList.push(dev);
         });
-        this.devices.push(device);
+        this.devices = newDeviceList;
+        
+        $rootScope.$broadcast('device-update');
         
         
       }.bind(this));
@@ -31,7 +39,7 @@ class BulbScannerService {
       
       ipc.on('send-stored-devices', function(event, device) {
         console.log("BulbScannerService: send stored devices", device);
-        this.devices.push(device);
+        this.devices[device.uuid] = device;
       }.bind(this));
       
       ipc.on('services', function(event, services) {

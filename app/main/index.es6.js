@@ -7,6 +7,8 @@ const ipcMain = require('electron').ipcMain;
 let crashReporter = require('crash-reporter');
 let BrowserWindow = require('browser-window');
 let noble = require('noble');
+let bunyan = require('bunyan');
+
 const storage = require('node-persist');
 
 crashReporter.start({
@@ -16,11 +18,15 @@ crashReporter.start({
   autoSubmit: true
 });
 
+let log = bunyan.createLogger(
+  {name: 'bulb'}
+);
+
 var mainWindow = null;
 
 var storedDevices = {};
 
-console.log(__dirname + '/../data/');
+log.info(__dirname + '/../data/');
 // initialise storage
 storage.initSync({
     dir: __dirname + '/../data/device-storage',
@@ -35,10 +41,11 @@ storage.initSync({
 
 // get the keys (UUIDs) of all the devices in persistent storage 
 
-loadDevicesFromStorage();
+// loadDevicesFromStorage();
+
 // load all currently stored devices
 function loadDevicesFromStorage() {
-  console.log("loadDevicesFromStorage");
+  log.info("loadDevicesFromStorage");
   let storedDeviceKeys = storage.keys();
   storedDeviceKeys.forEach(function(uuid, index) {
     
@@ -48,23 +55,24 @@ function loadDevicesFromStorage() {
       }
     });
     
-    console.log("loadDevicesFroStorage: StoredDevice UUID", storedDevice.uuid);
+    log.info("loadDevicesFromStorage: StoredDevice UUID", storedDevice.uuid);
     
     storedDevice.stored = true;
+    storedDevice.power = false;
     storedDevices[storedDevice.uuid] = storedDevice;
     
   });
-  
+  log.info("Stored", storedDevices);
   return storedDevices;
 }
 
 ipcMain.on('crash', (event, arg) => {
-  console.log("Crash", arg);
+  log.info("Crash", arg);
   process.crash(arg);
 });
 
 ipcMain.on('devTools', (event, arg) => {
-  console.log("DevTools", arg);
+  log.info("DevTools", arg);
   mainWindow.openDevTools();
 });
 
@@ -76,7 +84,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('ready', () => {
-  console.log("App Ready");
+  log.info("App Ready");
   mainWindow = new BrowserWindow({
     width: 2000,
     height: 1200,
@@ -89,6 +97,7 @@ app.on('ready', () => {
   
   ipcMain.on('request-stored-devices', function(event) {
     let storedDeviceKeys = storage.keys();
+    log.info("request-stored-devices")
     let storedDevices = loadDevicesFromStorage();
     
     for (var uuid in storedDevices) {
@@ -102,14 +111,14 @@ app.on('ready', () => {
   ipcMain.on('startScan', function() {
     // Start scanning only if already powered up.
     if (noble.state === 'poweredOn') {
-      console.log('Starting scan... ');
+      log.info('Starting scan... ');
       noble.startScanning();
     }
   });
 
   ipcMain.on('stopScan', function() {
     // Stop scanning for devices.
-    console.log('Stopping scan...');
+    log.info('Stopping scan...');
     noble.stopScanning();
   });
 
@@ -117,11 +126,11 @@ app.on('ready', () => {
     noble.stopScanning();
     var device = devices[deviceUUID];
     device.connect(function(error) {
-      console.log("error", error);
+      log.info("error", error);
       var characteristicsAndServices = device.discoverAllServicesAndCharacteristics(function(error, services, characteristics) {
-        console.log("error", error);
-        console.log("services", services);
-        console.log("characteristics", characteristics);
+        log.info("error", error);
+        log.info("services", services);
+        log.info("characteristics", characteristics);
         event.sender.send('services', {deviceUUID: device.uuid, services: serializeServices(services)});
         event.sender.send('characteristics', {deviceUUID: device.uuid, characteristics: characteristics});
       });
@@ -131,9 +140,9 @@ app.on('ready', () => {
   ipcMain.on('get-characteristics', function(event, deviceUUID) {
     var device = storedDevices[deviceUUID];
     var characteristicsAndServices = device.discoverAllServicesAndCharacteristics(function(error, services, characteristics) {
-      console.log("error", error);
-      console.log("services", services);
-      console.log("characteristics", characteristics);
+      log.info("error", error);
+      log.info("services", services);
+      log.info("characteristics", characteristics);
     });
   });
   
@@ -141,32 +150,51 @@ app.on('ready', () => {
   noble.on('discover', function(device) {
     
     if (typeof device.advertisement.manufacturerData !== 'undefined') {
-      console.log("manufacturerData", device.advertisement);
+      // log.info("manufacturerData", device.advertisement);
       if (device.advertisement.manufacturerData.toString('hex') === "4d49504f57") {
         
-        // check if the device is in the stored device
-        devices.forEach(function(device, index) {
-          console.log("onDiscover", device, index);
-        })
+        // check if the device is in the stored device, 
+        // need to also check if it is changed
+        let deviceIsStored = false;
+        let deviceisUptoDate = false;
+        for (var uuid in storedDevices) {
+          if (storedDevices.hasOwnProperty(uuid)) {
+            if (device.uuid === uuid && storedDevices[uuid] == serializeDevice(device)) {
+              deviceisUptoDate = true;
+            }
+            log.info(deviceisUptoDate, "storedDevice", storedDevices[uuid]);
+            log.info("~~~~~~~~~~~~~~~~~~~");
+            log.info("scanned device", serializeDevice(device));
+            log.info("~~~~~~~~~~~~~~~~~~~");
+            // if () {
+            //   deviceIsStored = true;
+            // }
+          }
+        }
+        log.info("Device ", device.uuid, "isStored", deviceIsStored, " is up to date", deviceisUptoDate);
+
+        
         // store in persistent form for node
+        // this might cover update but doesn't determine whetehr to re-send
         storage.setItem(device.uuid, serializeDevice(device), function(error) {
           if (error) {
-            console.log("Storage error: ", error);
+            log.info("Storage error: ", error);
           }
-          storage.getItem(device.uuid, function(error, value) {
-            console.log(error, value);
-          });
         });
         
-        console.log("Sending data about ", device.advertisement.localName, device.uuid);
-        let serializedDevice = serializeDevice(device);
-        devices[device.uuid] = device;
-        webContents.send('discover', serializedDevice);
+        if (!deviceIsStored) {
+          log.info(">>> Sending data about ", device.advertisement.localName, device.uuid);
+          let serializedDevice = serializeDevice(device);
+          serializedDevice.power = true;
+          // devices[device.uuid] = device;
+          webContents.send('discover', serializedDevice);
+        }
+        
         // noble.startScanning();
         // need mechanism for timing out once all suspected devices have been found
       }
     }
-    
+    log.info("===========================================");
   });
   
   
@@ -174,14 +202,14 @@ app.on('ready', () => {
 
   mainWindow.loadURL('file://' + __dirname + '/../browser/index.html');
   mainWindow.webContents.on('did-finish-load', () => {
-    console.log("Window Did Load");
+    log.info("Window Did Load");
     mainWindow.setTitle(app.getName());
 
 
 
   });
   mainWindow.on('closed', () => {
-    console.log("Window Closed");
+    log.info("Window Closed");
     mainWindow = null;
   });
   

@@ -13,6 +13,10 @@ class ListCtrl {
     this.$rootScope = $rootScope;
     this.devices = bulbScannerService.getDevices();
     
+    $rootScope.$on('device-update', function() {
+      this.devices = bulbScannerService.getDevices();
+    }.bind(this));
+    
   }
 
   selectDevice(device) {
