@@ -95,17 +95,16 @@ app.on('ready', () => {
 
   var webContents = mainWindow.webContents;
   
-  ipcMain.on('request-stored-devices', function(event) {
+  ipcMain.on('get-stored-devices', function(event) {
     let storedDeviceKeys = storage.keys();
-    log.info("request-stored-devices")
+    log.info("Stored Devices Requested by renderer");
     let storedDevices = loadDevicesFromStorage();
     
     for (var uuid in storedDevices) {
       if (storedDevices.hasOwnProperty(uuid)) {
-          event.sender.send('send-stored-devices', storedDevices[uuid], uuid);
+          event.sender.send('get-stored-devices-reply', storedDevices[uuid], uuid);
       }
     }
-  
   });
   
   ipcMain.on('startScan', function() {
@@ -153,42 +152,60 @@ app.on('ready', () => {
       // log.info("manufacturerData", device.advertisement);
       if (device.advertisement.manufacturerData.toString('hex') === "4d49504f57") {
         
+        
+        // on dicovery check if device is in stored devices, if not update stored
+        let match = storage.valuesWithKeyMatch(device.uuid);
+        log.info("Match storage", match);
+        if (match.length === 0) {
+          storage.setItem(device.uuid, serializeDevice(device), function(error) {
+            if (error) {
+              log.info("Storage error: ", error);
+            }
+          });
+        }
+        
+        // check if device is in the local variable and update storted devices local variable with some extra data (powered on etc)
+        if (device.uuid in storedDevices) {
+          log.info("Device " +  device.uuid + " in local varaible");
+        }
+        // send notification to renderer that a device has been dicovered
+        
+        
+        
         // check if the device is in the stored device, 
         // need to also check if it is changed
-        let deviceIsStored = false;
-        let deviceisUptoDate = false;
-        for (var uuid in storedDevices) {
-          if (storedDevices.hasOwnProperty(uuid)) {
-            if (device.uuid === uuid && storedDevices[uuid] == serializeDevice(device)) {
-              deviceisUptoDate = true;
-            }
-            log.info(deviceisUptoDate, "storedDevice", storedDevices[uuid]);
-            log.info("~~~~~~~~~~~~~~~~~~~");
-            log.info("scanned device", serializeDevice(device));
-            log.info("~~~~~~~~~~~~~~~~~~~");
-            // if () {
-            //   deviceIsStored = true;
-            // }
-          }
-        }
-        log.info("Device ", device.uuid, "isStored", deviceIsStored, " is up to date", deviceisUptoDate);
-
-        
-        // store in persistent form for node
-        // this might cover update but doesn't determine whetehr to re-send
-        storage.setItem(device.uuid, serializeDevice(device), function(error) {
-          if (error) {
-            log.info("Storage error: ", error);
-          }
-        });
-        
-        if (!deviceIsStored) {
-          log.info(">>> Sending data about ", device.advertisement.localName, device.uuid);
-          let serializedDevice = serializeDevice(device);
-          serializedDevice.power = true;
-          // devices[device.uuid] = device;
-          webContents.send('discover', serializedDevice);
-        }
+        // let deviceIsStored = false;
+        // let deviceisUptoDate = false;
+        // for (var uuid in storedDevices) {
+        //   if (storedDevices.hasOwnProperty(uuid)) {
+        //     if (device.uuid === uuid && storedDevices[uuid] == serializeDevice(device)) {
+        //       deviceisUptoDate = true;
+        //     }
+        //     log.info(deviceisUptoDate, "storedDevice", storedDevices[uuid]);
+        //     log.info("~~~~~~~~~~~~~~~~~~~");
+        //     log.info("scanned device", serializeDevice(device));
+        //     log.info("~~~~~~~~~~~~~~~~~~~");
+        //     // if () {
+        //     //   deviceIsStored = true;
+        //     // }
+        //   }
+        // }
+        // log.info("Device ", device.uuid, "isStored", deviceIsStored, " is up to date", deviceisUptoDate);
+        // 
+        // 
+        // // store in persistent form for node
+        // // this might cover update but doesn't determine whetehr to re-send
+        // 
+        // 
+        // if (!deviceIsStored) {
+        //   log.info(">>> Sending data about ", device.advertisement.localName, device.uuid);
+        //   let serializedDevice = serializeDevice(device);
+        //   serializedDevice.power = true;
+        //   // devices[device.uuid] = device;
+        //   
+        // }
+        // 
+        // webContents.send('discover', serializedDevice.uuid);
         
         // noble.startScanning();
         // need mechanism for timing out once all suspected devices have been found

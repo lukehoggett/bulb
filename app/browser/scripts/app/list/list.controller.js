@@ -7,7 +7,6 @@ const ipc = require('electron').ipcRenderer;
 class ListCtrl {
 
   constructor($rootScope, $mdSidenav, bulbScannerService) {
-    console.log("List Controller constructor");
 
     this.$mdSidenav = $mdSidenav;
     this.$rootScope = $rootScope;

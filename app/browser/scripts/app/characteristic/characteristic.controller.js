@@ -6,7 +6,6 @@
 class CharacteristicCtrl {
 
   constructor($scope, $mdSidenav) {
-    console.log("Characteristic Controller constructor");
     this.mdSidenav = $mdSidenav;
     this.$scope = $scope;
     

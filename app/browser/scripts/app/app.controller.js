@@ -8,7 +8,6 @@ class AppCtrl {
 
   constructor($mdSidenav, bulbScannerService) {
     
-    console.log("App Controller constructor");
     this.mdSidenav = $mdSidenav;
     this.scanner = bulbScannerService;
     
