@@ -10,10 +10,14 @@ class ListCtrl {
 
     this.$mdSidenav = $mdSidenav;
     this.$rootScope = $rootScope;
-    this.devices = bulbScannerService.getDevices();
+    this.devices = {};
+    console.log(this);
+    this.setDevices(bulbScannerService.getDevices());
     
     $rootScope.$on('device-update', function() {
-      this.devices = bulbScannerService.getDevices();
+      console.log("Received Broadcast: device-update", this);
+      this.setDevices(bulbScannerService.getDevices());
+      console.log(this.getDevices());
     }.bind(this));
     
   }
@@ -25,6 +29,7 @@ class ListCtrl {
   }
   
   connect(device) {
+    
     console.log("connecting to ", device.uuid);
     ipc.send('connect', device.uuid);
   }
@@ -37,6 +42,15 @@ class ListCtrl {
   showCharacteristicsPanel() {
     console.log("show characteristic");
     this.$mdSidenav('characteristic').toggle();
+  }
+  
+  getDevices() {
+    return this.devices;
+  }
+  
+  setDevices(devices) {
+    this.devices = devices;
+    console.log("listctrl SETTING DEVICES", devices, this.devices);
   }
 
 }

@@ -20,25 +20,15 @@ class BulbScannerService {
         this.devices[device.uuid] = device;
       }.bind(this));
 
-      ipc.on('discover', function(event, uuid) {
-        console.log("BulbScannerService: Discovered Device", uuid);
+      ipc.on('discovered', function(event, device) {
+        console.log("BulbScannerService: Discovered Device", device);
+        console.log("this.devices", this.devices);
         
-        return;
-        let newDeviceList = [];
-        
-        for (var uuid in this.devices) {
-          if (this.devices.hasOwnProperty(uuid)) {
-            console.log("for in this.devices", this.devies[uuid]);
-          }
+        if (device.uuid in this.devices) {
+          console.log("Existing device");
         }
-        this.devices.forEach(function(dev, key) {
-          console.log("each device", dev);
-          newDeviceList.push(dev);
-        });
-        this.devices = newDeviceList;
-        
+        this.devices[device.uuid] = device;
         $rootScope.$broadcast('device-update');
-        
         
       }.bind(this));
       
