@@ -1,9 +1,8 @@
 <div ng-controller="listCtrl as list" id="list">
-  {{list.devices}}
+  {{list.bulbScanner.devices}}
   <md-content class="md-padding" layout-xs="column" layout="row">
     <div flex-xs flex-gt-xs="100" layout="column">
-      <md-card ng-repeat="device in list.devices">
-
+      <md-card ng-repeat="device in list.bulbScanner.devices">
         <!-- <md-card-header>
         <md-card-avatar>
           <img class="md-user-avatar" src="avatar.png">
@@ -16,7 +15,14 @@
         <!-- <img ng-src="card-image.png" class="md-card-image" alt="image caption"> -->
         <md-card-title>
           <md-card-title-text>
-            <span class="md-headline">{{device.name}}</span>
+            <span class="md-headline">
+              <md-input-container>
+                <!-- <label>Title</label> -->
+                <input ng-model="device.name" ng-model-options="{ updateOn: 'mousedown blur' }" ng-change="list.updateDeviceName(device.uuid)"/>
+                {{device.name}}
+              </md-input-container
+             
+            </span>
             <span class="md-subhead">{{device.uuid}}</span>
           </md-card-title-text>
         </md-card-title>

@@ -16,19 +16,20 @@ class BulbScannerService {
       });
       
       ipc.on('get-stored-devices-reply', function(event, device, uuid) {
-        console.log("BulbScannerService: send stored devices", device, uuid);
+        console.log("BulbScannerService: receiving stored devices", device, uuid);
         this.devices[device.uuid] = device;
       }.bind(this));
 
       ipc.on('discovered', function(event, device) {
         console.log("BulbScannerService: Discovered Device", device);
-        console.log("this.devices", this.devices);
+        
         
         if (device.uuid in this.devices) {
           console.log("Existing device");
         }
         this.devices[device.uuid] = device;
-        $rootScope.$broadcast('device-update');
+        console.log("BulbScannerService: Devices", this.devices);
+        // $rootScope.$broadcast('device.update');
         
       }.bind(this));
       

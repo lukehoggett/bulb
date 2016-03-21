@@ -25,7 +25,7 @@
 
   var mainWindow = null;
 
-  var storedDeviceMap = new Map();
+  var storedDevices = {};
   
 
   log.info("__dirname", __dirname + '/../data/');
@@ -56,11 +56,9 @@
       
       storedDevice.stored = true;
       storedDevice.power = false;
-      storedDeviceMap[storedDevice.uuid] = storedDevice;
-      
+      storedDevices[uuid] = storedDevice;
     });
-    log.info("storedDeviceMap", storedDeviceMap);
-    return storedDeviceMap;
+    return storedDevices; 
   }
 
   ipcMain.on('crash', (event, arg) => {
@@ -84,6 +82,7 @@
     log.info("App Ready");
     mainWindow = new BrowserWindow({
       width: 2000,
+      // width: 1000,
       height: 1200,
       // x: 2560,
       x: 4000,
@@ -96,11 +95,11 @@
     ipcMain.on('get-stored-devices', function(event) {
       let storedDeviceKeys = storage.keys();
       log.info("Stored Devices Requested by renderer");
-      let storedDeviceMap = loadDevicesFromStorage();
+      let devicesFromStorage = loadDevicesFromStorage();
       
-      for (var uuid in storedDeviceMap) {
-        if (storedDeviceMap.hasOwnProperty(uuid)) {
-            event.sender.send('get-stored-devices-reply', storedDeviceMap[uuid], uuid);
+      for (var uuid in devicesFromStorage) {
+        if (devicesFromStorage.hasOwnProperty(uuid)) {
+            event.sender.send('get-stored-devices-reply', devicesFromStorage[uuid], uuid);
         }
       }
     });
@@ -121,22 +120,36 @@
 
     ipcMain.on('connect', function(event, deviceUUID) {
       noble.stopScanning();
-      var device = devices[deviceUUID];
+      log.info("Connect: deviceUUID", deviceUUID);
+      log.info("Connect: storedDevices", storedDevices[deviceUUID]);
+      let device = storedDevices[deviceUUID];
+      log.info("Connecting to device", device);
+      
       device.connect(function(error) {
-        log.info("error", error);
-        var characteristicsAndServices = device.discoverAllServicesAndCharacteristics(function(error, services, characteristics) {
-          log.info("error", error);
-          log.info("services", services);
-          log.info("characteristics", characteristics);
-          event.sender.send('services', {deviceUUID: device.uuid, services: serializeServices(services)});
-          event.sender.send('characteristics', {deviceUUID: device.uuid, characteristics: characteristics});
-        });
+        if (error) {
+            log.error("connect error", error);
+        } else {
+          log.info("Connected to device: ", deviceUUID, device);
+          let characteristicsAndServices = device.discoverAllServicesAndCharacteristics(function(error, services, characteristics) {
+            log.info("error", error);
+            log.info("services", services);
+            log.info("characteristics", characteristics);
+            storedDevices[deviceUUID].services = services;
+            let serializedServices = serializeServices(deviceUUID);
+            
+            
+            // event.sender.send('services', {deviceUUID: device.uuid, services: serializeServices(services)});
+            // event.sender.send('characteristics', {deviceUUID: device.uuid, characteristics: characteristics});
+          });
+        }
+        
+        
       });
     });
     
     ipcMain.on('get-characteristics', function(event, deviceUUID) {
-      var device = storedDeviceMap[deviceUUID];
-      var characteristicsAndServices = device.discoverAllServicesAndCharacteristics(function(error, services, characteristics) {
+      let device = storedDevices[deviceUUID];
+      let characteristicsAndServices = device.discoverAllServicesAndCharacteristics(function(error, services, characteristics) {
         log.info("error", error);
         log.info("services", services);
         log.info("characteristics", characteristics);
@@ -153,31 +166,39 @@
           
           // on discovery check if device is in stored devices, if not update stored
           let match = storage.valuesWithKeyMatch(device.uuid);
-          log.info("Matched storage device", match);
+          log.info(">>>>>>>>>>>>>> Match", match);
           if (match.length === 0) {
+            log.info("Adding devic to storage");
             storage.setItem(device.uuid, serializeDevice(device), function(error) {
               if (error) {
                 log.info("Storage error: ", error);
               }
             });
           }
-          
+          device.stored = true;
+          device.power = true;
           // check if device is in the local variable and update storted devices local variable with some extra data (powered on etc)
-          if (device.uuid in storedDeviceMap) {
-            log.info("Device " +  device.uuid + " in local variable");
-            device.power = true;
+          if (!(device.uuid in storedDevices)) {
+            log.info("Device " +  device.uuid + " not in local variable");
+            
           }
+          storedDevices[device.uuid] = device;
+
+          
           // log.info(webContents);
           // send notification to renderer that a device has been dicovered
-          webContents.send('discovered', serializeDevice(device));
+          let serializedDevice = serializeDevice(device);
+          log.info("Sending discovered device to renderer", serializedDevice);
+          webContents.send('discovered', serializedDevice);
           
         }
+        log.info("===========================================");
       }
-      log.info("===========================================");
+      
     });
     
     ipcMain.on('get-device', (event, uuid) => {
-      log.info(event, uuid, storedDeviceMap[uuid]);
+      log.info(event, uuid, storedDevices[uuid]);
     });
 
 
@@ -199,7 +220,7 @@
       // Copies out all the attributes the renderer might need.  Seems to be
       // necessary as Noble's objects don't serialize well and lose attributes when
       // pass around with the ipc class.
-    
+    log.info("Serializing device", device);
       return {
         id: device.id,
         name: device.advertisement.localName,
@@ -215,7 +236,7 @@
       };
     }
 
-    function serializeServices(index) {
+    function serializeServices(uuid) {
       // Prepare all the services & characteristics for a device to be serialized
       // and sent to the rendering process.  This will be an array of service objects
       // where each one looks like:
@@ -232,7 +253,8 @@
       //    properties: [<list of properties for the char>],
       //    value: <last known characteristic value, or undefined if not known>
       //  }
-      let device = devices[index];
+      let device = storedDevices[uuid];
+      log.info("serializeServices", device);
       let services = device.services.map(function(s) {
         return {
           uuid: s.uuid,
@@ -250,6 +272,15 @@
       });
       return services;
     }
+  });
+  
+  // function disconnectAll() {
+  //   
+  // }
+  
+  app.on('quit', function() {
+    // Make sure device is disconnected before exiting.
+    // disconnectAll();
   });
 
 }());

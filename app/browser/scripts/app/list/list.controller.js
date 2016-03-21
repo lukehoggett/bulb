@@ -8,18 +8,9 @@ class ListCtrl {
 
   constructor($rootScope, $mdSidenav, bulbScannerService) {
 
-    this.$mdSidenav = $mdSidenav;
     this.$rootScope = $rootScope;
-    this.devices = {};
-    console.log(this);
-    this.setDevices(bulbScannerService.getDevices());
-    
-    $rootScope.$on('device-update', function() {
-      console.log("Received Broadcast: device-update", this);
-      this.setDevices(bulbScannerService.getDevices());
-      console.log(this.getDevices());
-    }.bind(this));
-    
+    this.$mdSidenav = $mdSidenav;
+    this.bulbScanner = bulbScannerService;
   }
 
   selectDevice(device) {
@@ -44,15 +35,10 @@ class ListCtrl {
     this.$mdSidenav('characteristic').toggle();
   }
   
-  getDevices() {
-    return this.devices;
+  updateDeviceName(uuid) {
+    console.log("updateDeviceName", uuid, this.bulbScanner.devices[uuid]);
+    // send update command to main process
   }
-  
-  setDevices(devices) {
-    this.devices = devices;
-    console.log("listctrl SETTING DEVICES", devices, this.devices);
-  }
-
 }
 
 ListCtrl.$inject = ['$rootScope', '$mdSidenav', 'bulbScannerService'];
