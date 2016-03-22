@@ -6,11 +6,11 @@ const ipc = require('electron').ipcRenderer;
 
 class ListCtrl {
 
-  constructor($rootScope, $mdSidenav, bulbScannerService) {
+  constructor($rootScope, $mdSidenav, bulbService) {
 
     this.$rootScope = $rootScope;
     this.$mdSidenav = $mdSidenav;
-    this.bulbScanner = bulbScannerService;
+    this.bulbScanner = bulbService;
   }
 
   selectDevice(device) {
@@ -41,7 +41,7 @@ class ListCtrl {
   }
 }
 
-ListCtrl.$inject = ['$rootScope', '$mdSidenav', 'bulbScannerService'];
+ListCtrl.$inject = ['$rootScope', '$mdSidenav', 'bulbService'];
 
 export {
   ListCtrl

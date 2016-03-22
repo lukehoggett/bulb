@@ -21,7 +21,7 @@ import {
 console.log("Imported Controllers");
 
 import {
-  BulbScannerService
+  BulbService
 } from './services/bulb-scanner.service'
 console.log("Imported Services");
 
@@ -33,7 +33,7 @@ angular.module('bulb', [
     'ngMaterial',
     'ngAnimate'
   ])
-  .service('bulbScannerService', BulbScannerService)
+  .service('bulbService', BulbService)
   .controller('appCtrl', AppCtrl)
   .controller('menuCtrl', MenuCtrl)
   .controller('listCtrl', ListCtrl)

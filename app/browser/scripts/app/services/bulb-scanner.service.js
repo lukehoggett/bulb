@@ -3,7 +3,7 @@
 'use strict';
 const ipc = require('electron').ipcRenderer;
 
-class BulbScannerService {
+class BulbService {
     constructor($rootScope) {
       this.devices = {};
       this.scanning = false;
@@ -12,23 +12,23 @@ class BulbScannerService {
       
       // request any stored devices from the main process
       ipc.send('get-stored-devices', function(event) {
-        console.log("BulbScannerService: get stored devices", event);
+        console.log("BulbService: get stored devices", event);
       });
       
       ipc.on('get-stored-devices-reply', function(event, device, uuid) {
-        console.log("BulbScannerService: receiving stored devices", device, uuid);
+        console.log("BulbService: receiving stored devices", device, uuid);
         this.devices[device.uuid] = device;
       }.bind(this));
 
       ipc.on('discovered', function(event, device) {
-        console.log("BulbScannerService: Discovered Device", device);
+        console.log("BulbService: Discovered Device", device);
         
         
         if (device.uuid in this.devices) {
           console.log("Existing device");
         }
         this.devices[device.uuid] = device;
-        console.log("BulbScannerService: Devices", this.devices);
+        console.log("BulbService: Devices", this.devices);
         // $rootScope.$broadcast('device.update');
         
       }.bind(this));
@@ -61,10 +61,10 @@ class BulbScannerService {
     }
     
     getDevices() {
-      console.log("BulbScannerService getDevices called: ", this.devices);
+      console.log("BulbService getDevices called: ", this.devices);
       return this.devices;
     }
 }
 export {
-  BulbScannerService
+  BulbService
 };
