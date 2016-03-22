@@ -1,5 +1,6 @@
 /* jshint esnext: true */
 /* jshint node: true */
+
 'use strict';
 
 const ipc = require('electron').ipcRenderer;
@@ -11,7 +12,7 @@ class AppCtrl {
     this.mdSidenav = $mdSidenav;
     this.scanner = bulbService;
     
-    this.scanStateMessage = "Start Scan"
+    this.scanStateMessage = "Start Scan";
 
   }
   

@@ -1,5 +1,6 @@
 /* jshint esnext: true */
 /* jshint node: true */
+()=> {
 'use strict';
 const ipc = require('electron').ipcRenderer;
 
@@ -61,20 +62,23 @@ class BulbService {
     }
     
     connect(device) {
-      
-      console.log("connecting to ", device.uuid);
+      console.log("BulbService: connecting to ", device.uuid);
       ipc.send('device.connect', device.uuid);
     }
     
-    setDeviceName(name) {
-      ipc.send('device.set-name', name);
+    setDeviceName(uuid, name) {
+      console.log("BulbService: setDeviceName", uuid, name);
+      ipc.send('device.set-name', uuid, name);
     }
     
     getDevices() {
-      console.log("BulbService getDevices called: ", this.devices);
+      console.log("BulbService: getDevices called: ", this.devices);
       return this.devices;
     }
 }
+
+}();
+
 export {
   BulbService
 };

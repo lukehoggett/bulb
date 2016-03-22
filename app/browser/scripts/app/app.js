@@ -22,7 +22,7 @@ console.log("Imported Controllers");
 
 import {
   BulbService
-} from './services/bulb-scanner.service'
+} from './services/bulb-scanner.service';
 console.log("Imported Services");
 
 const _templateBase = './scripts/';

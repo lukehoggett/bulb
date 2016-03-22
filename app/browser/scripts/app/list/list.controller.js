@@ -32,10 +32,12 @@ class ListCtrl {
   updateDeviceName(uuid) {
     console.log("updateDeviceName", uuid, this.bulb.devices[uuid]);
     // send update command to main process
+    this.bulb.setDeviceName(uuid, this.bulb.devices[uuid].name);
   }
 }
 
 ListCtrl.$inject = ['$rootScope', '$mdSidenav', 'bulbService'];
+
 
 export {
   ListCtrl
