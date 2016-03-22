@@ -51,13 +51,17 @@ class BulbService {
     }
     
     startScan() {
-      ipc.send('startScan');
+      ipc.send('scan.start');
       this.scanning = true;
     }
     
     stopScan() {
-      ipc.send('stopScan');
+      ipc.send('scan.stop');
       this.scanning = false;
+    }
+    
+    setDeviceName(name) {
+      ipc.send('device.set-name', name);
     }
     
     getDevices() {

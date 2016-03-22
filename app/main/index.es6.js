@@ -104,7 +104,7 @@
       }
     });
     
-    ipcMain.on('startScan', function() {
+    ipcMain.on('scan.start', function() {
       // Start scanning only if already powered up.
       if (noble.state === 'poweredOn') {
         log.info('Starting scan... ');
@@ -112,13 +112,13 @@
       }
     });
 
-    ipcMain.on('stopScan', function() {
+    ipcMain.on('scan.stop', function() {
       // Stop scanning for devices.
       log.info('Stopping scan...');
       noble.stopScanning();
     });
 
-    ipcMain.on('connect', function(event, deviceUUID) {
+    ipcMain.on('device.connect', function(event, deviceUUID) {
       noble.stopScanning();
       log.info("Connect: deviceUUID", deviceUUID);
       log.info("Connect: storedDevices", storedDevices[deviceUUID]);
@@ -147,7 +147,7 @@
       });
     });
     
-    ipcMain.on('get-characteristics', function(event, deviceUUID) {
+    ipcMain.on('device.get-characteristics', function(event, deviceUUID) {
       let device = storedDevices[deviceUUID];
       let characteristicsAndServices = device.discoverAllServicesAndCharacteristics(function(error, services, characteristics) {
         log.info("error", error);
@@ -197,7 +197,7 @@
       
     });
     
-    ipcMain.on('get-device', (event, uuid) => {
+    ipcMain.on('device.get', (event, uuid) => {
       log.info(event, uuid, storedDevices[uuid]);
     });
 

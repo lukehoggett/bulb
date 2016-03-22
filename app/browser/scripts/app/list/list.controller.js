@@ -22,7 +22,7 @@ class ListCtrl {
   connect(device) {
     
     console.log("connecting to ", device.uuid);
-    ipc.send('connect', device.uuid);
+    ipc.send('device.connect', device.uuid);
   }
   
   getCharacterisics(device) {
