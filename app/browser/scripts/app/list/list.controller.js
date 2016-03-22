@@ -10,19 +10,13 @@ class ListCtrl {
 
     this.$rootScope = $rootScope;
     this.$mdSidenav = $mdSidenav;
-    this.bulbScanner = bulbService;
+    this.bulb = bulbService;
   }
 
   selectDevice(device) {
     console.log("ListCtrl: selectDevice", device);
     this.$rootScope.$broadcast('device_selected', device.uuid);
     this.showCharacteristicsPanel();
-  }
-  
-  connect(device) {
-    
-    console.log("connecting to ", device.uuid);
-    ipc.send('device.connect', device.uuid);
   }
   
   getCharacterisics(device) {
@@ -36,7 +30,7 @@ class ListCtrl {
   }
   
   updateDeviceName(uuid) {
-    console.log("updateDeviceName", uuid, this.bulbScanner.devices[uuid]);
+    console.log("updateDeviceName", uuid, this.bulb.devices[uuid]);
     // send update command to main process
   }
 }

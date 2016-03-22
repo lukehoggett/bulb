@@ -1,8 +1,8 @@
 <div ng-controller="listCtrl as list" id="list">
-  {{list.bulbScanner.devices}}
+  {{list.bulb.devices}}
   <md-content class="md-padding" layout-xs="column" layout="row">
     <div flex-xs flex-gt-xs="100" layout="column">
-      <md-card ng-repeat="device in list.bulbScanner.devices">
+      <md-card ng-repeat="device in list.bulb.devices">
         <!-- <md-card-header>
         <md-card-avatar>
           <img class="md-user-avatar" src="avatar.png">
@@ -27,7 +27,7 @@
           </md-card-title-text>
         </md-card-title>
         <md-card-actions layout="row" layout-align="start center">
-          <md-button ng-click="list.connect(device)" class="md-raised md-primary">Connect</md-button>
+          <md-button ng-click="list.bulb.connect(device)" class="md-raised md-primary">Connect</md-button>
           <md-button ng-click="list.getCharacterisics(device)" class="md-raised md-primary">Get Characteristics</md-button>
           <md-button ng-click="list.selectDevice(device)" class="md-raised md-primary">Edit Characteristics</md-button>
         </md-card-actions>

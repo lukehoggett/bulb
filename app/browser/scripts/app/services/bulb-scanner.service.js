@@ -60,6 +60,12 @@ class BulbService {
       this.scanning = false;
     }
     
+    connect(device) {
+      
+      console.log("connecting to ", device.uuid);
+      ipc.send('device.connect', device.uuid);
+    }
+    
     setDeviceName(name) {
       ipc.send('device.set-name', name);
     }
