@@ -1,6 +1,5 @@
 /* jshint esnext: true */
 /* jshint node: true */
-()=> {
 'use strict';
 const ipc = require('electron').ipcRenderer;
 
@@ -76,8 +75,6 @@ class BulbService {
       return this.devices;
     }
 }
-
-}();
 
 export {
   BulbService

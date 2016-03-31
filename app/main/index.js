@@ -28,6 +28,31 @@
   var mainWindow = null;
 
   var storedDevices = {};
+  
+  var types = {
+    COLOR: {
+        colorUuid: "0018",
+        effectsUuid: "0016",
+        modes: {
+            FLASH: 0,
+            PULSE: 1,
+            RAINBOWJUMP: 2,
+            RAINBOWFADE: 3
+        },
+        nameUuid: "001c"
+    },
+    CANDLE: {
+        colorUuid: "fffc",
+        effectsUuid: "fffb",
+        modes: {
+            FADE: 0,
+            JUMPRGB: 1,
+            FADERGB: 2,
+            FLICKER: 3
+        },
+        nameUuid: "2a00"
+    }
+};
 
   log.info("__dirname", __dirname + '/../data/');
   // initialise storage
@@ -122,27 +147,55 @@
     ipcMain.on('device.connect', (event, deviceUUID) => {
       noble.stopScanning();
       log.info("Connect: deviceUUID", deviceUUID);
-      log.info("Connect: storedDevices", storedDevices[deviceUUID]);
       let device = storedDevices[deviceUUID];
-      log.info("Connecting to device", device);
 
       device.connect(error => {
         if (error) {
           log.error("connect error", error);
         } else {
-          log.info("Connected to device: ", deviceUUID, device);
-          device.discoverAllServicesAndCharacteristics();
+          log.info("Connected to device: ", deviceUUID);
+          device.discoverAllServicesAndCharacteristics(error => {
+            if (error) {
+              console.error(error);
+            }
+          });
         }
       });
     });
 
     ipcMain.on('device.get-characteristics', (event, deviceUUID) => {
+
       let device = storedDevices[deviceUUID];
-      device.discoverAllServicesAndCharacteristics();
+      log.info("device.get-characteristics", deviceUUID, device);
+      device.discoverAllServicesAndCharacteristics(error => {
+        if (error) {
+          console.error(error);
+        }
+      });
     });
 
     ipcMain.on('device.set-name', (event, uuid, name) => {
-      console.log('device.set-name', uuid, name);
+      console.log('device.set-name', uuid, name, nameChar);
+      var data = new Buffer(name);
+      nameChar.write(data, true, error => {
+        if (error) {
+          console.error("Write Error");
+        }
+        storedDevices[uuid].name = name;
+        storedDevices[uuid].advertisement.advertisement = name;
+        log.info("))))))))))))))))))))", storedDevices[uuid], ")))))))))))))))))))))", serializeDevice(storedDevices[uuid]), "((((((((((((((((()))))))))))))))))");
+        storage.setItem(uuid, serializeDevice(storedDevices[uuid]));
+        storage.setItem(uuid, serializeDevice(storedDevices[uuid]), error => {
+          if (error) {
+            log.info("Storage error: on name change", error);
+          }
+        });
+      });
+      // nameChar.once('write', true, arg => {
+        // update storage and local devices
+        // log.info(/*storedDevices[uuid], */storedDevices[uuid].advertisement);
+        
+      // });
     });
 
     ipcMain.on('device.get', (event, uuid) => {
@@ -159,7 +212,7 @@
           let match = storage.valuesWithKeyMatch(device.uuid);
           log.info(">>>>>>>>>>>>>> Match", match);
           if (match.length === 0) {
-            log.info("Adding devic to storage");
+            log.info("Adding device to storage");
             storage.setItem(device.uuid, serializeDevice(device), error => {
               if (error) {
                 log.info("Storage error: ", error);
@@ -179,24 +232,49 @@
           let serializedDevice = serializeDevice(device);
           log.info("Sending discovered device to renderer", serializedDevice);
           webContents.send('discovered', serializedDevice);
+
+          // add listeners for service and characteristic discovery
+          device.on('servicesDiscover', mapDiscoveredService);
+
         }
         log.info("===========================================");
       }
     });
 
-    noble.on('servicesDiscover', mapDiscoveredService);
+
 
     function mapDiscoveredService(services) {
-      log.info("mapDiscoveredService: services", services);
+      log.info("#######################################");
+      log.info("#######################################");
       services.map(service => {
-        noble.on('characteristicsDiscover', mapDiscoveredCharacteristics);
+        log.info("mapDiscoveredService: service", service.uuid, service.name);
+        service.on('characteristicsDiscover', mapDiscoveredCharacteristics);
       });
     }
-
+    var colorChar = null, 
+        effectsChar = null,
+        nameChar = null;
+        
     function mapDiscoveredCharacteristics(characteristics) {
       characteristics.map(characteristic => {
-
-        log.info("characteristics", characteristics);
+        log.info("#######################################");
+        // log.info("mapDiscoveredCharacteristics: characteristics", characteristics);
+        characteristics.map(characteristic => {
+          log.info("         ");
+          log.info("************* ", characteristic.uuid, characteristic.name);
+          log.info("         ");
+          if (characteristic.uuid === types.CANDLE.colorUuid) {
+            colorChar = characteristic;
+          } else if (characteristic.uuid === types.CANDLE.effectsUuid) {
+            effectsChar = characteristic;
+          } else if (characteristic.uuid === types.CANDLE.nameUuid) {
+           nameChar = characteristic;
+         }
+        });
+        
+        log.info("+++++ color characteristic", colorChar);
+        log.info("+++++ effects characteristic", effectsChar);
+        log.info("+++++ name characteristic", nameChar);
         // storedDevices[deviceUUID].services = services;
         // let serializedServices = serializeServices(deviceUUID);
 
