@@ -11,11 +11,12 @@
   let BrowserWindow = require('browser-window');
   let noble = require('noble');
   let bunyan = require('bunyan');
+  const util = require('util');
 
   const storage = require('node-persist');
 
   crashReporter.start({
-    productName: 'es6-ng-electron',
+    productName: 'bulb',
     companyName: 'FooBar',
     submitURL: 'http://localhost:3000/',
     autoSubmit: true
@@ -145,22 +146,7 @@
     });
 
     ipcMain.on('device.connect', (event, deviceUUID) => {
-      noble.stopScanning();
-      log.info("Connect: deviceUUID", deviceUUID);
-      let device = storedDevices[deviceUUID];
-
-      device.connect(error => {
-        if (error) {
-          log.error("connect error", error);
-        } else {
-          log.info("Connected to device: ", deviceUUID);
-          device.discoverAllServicesAndCharacteristics(error => {
-            if (error) {
-              console.error(error);
-            }
-          });
-        }
-      });
+      connect(deviceUUID);
     });
 
     ipcMain.on('device.get-characteristics', (event, deviceUUID) => {
@@ -175,15 +161,17 @@
     });
 
     ipcMain.on('device.set-name', (event, uuid, name) => {
-      console.log('device.set-name', uuid, name, nameChar);
+      log.info('device.set-name', uuid, name, nameChar);
       var data = new Buffer(name);
       nameChar.write(data, true, error => {
         if (error) {
           console.error("Write Error");
         }
+        
+        connect(uuid);
         storedDevices[uuid].name = name;
         storedDevices[uuid].advertisement.advertisement = name;
-        log.info("))))))))))))))))))))", storedDevices[uuid], ")))))))))))))))))))))", serializeDevice(storedDevices[uuid]), "((((((((((((((((()))))))))))))))))");
+        // log.info("))))))))))))))))))))", storedDevices[uuid], ")))))))))))))))))))))", serializeDevice(storedDevices[uuid]), "((((((((((((((((()))))))))))))))))");
         storage.setItem(uuid, serializeDevice(storedDevices[uuid]));
         storage.setItem(uuid, serializeDevice(storedDevices[uuid]), error => {
           if (error) {
@@ -240,8 +228,39 @@
         log.info("===========================================");
       }
     });
+    
+    function getDeviceFromUUID(uuid) {
+      return storedDevices[uuid];
+    }
 
+    function connect(uuid) {
+      noble.stopScanning();
+      log.info("Connect: deviceUUID", uuid);
+      let device = getDeviceFromUUID(uuid); 
 
+      device.connect(error => {
+        if (error) {
+          log.error("Connect error", error);
+        } else {
+          log.info("Connected to device: ", uuid);
+          device.discoverAllServicesAndCharacteristics(error => {
+            if (error) {
+              console.error(error);
+            }
+          });
+        }
+      });
+    }
+    
+    function disconnect(uuid) {
+      let device = getDeviceFromUUID(uuid);
+      
+      device.disconnect(error => {
+        if (error) {
+          console.error();
+        }
+      });
+    }
 
     function mapDiscoveredService(services) {
       log.info("#######################################");
@@ -272,9 +291,9 @@
          }
         });
         
-        log.info("+++++ color characteristic", colorChar);
-        log.info("+++++ effects characteristic", effectsChar);
-        log.info("+++++ name characteristic", nameChar);
+        log.info("+++++ color characteristic", util.inspect(colorChar, { showHidden: true, depth: 5 }));
+        log.info("+++++ effects characteristic", util.inspect(effectsChar, { showHidden: true, depth: 5 }));
+        log.info("+++++ name characteristic", util.inspect(nameChar, { showHidden: true, depth: 5 }));
         // storedDevices[deviceUUID].services = services;
         // let serializedServices = serializeServices(deviceUUID);
 
@@ -298,7 +317,7 @@
       // Copies out all the attributes the renderer might need.  Seems to be
       // necessary as Noble's objects don't serialize well and lose attributes when
       // pass around with the ipc class.
-      log.info("Serializing device", device);
+      // log.info("Serializing device", device);
       return {
         id: device.id,
         name: device.advertisement.localName,
