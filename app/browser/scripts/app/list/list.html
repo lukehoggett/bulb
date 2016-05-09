@@ -2,7 +2,7 @@
   {{list.bulb.devices}}
   <md-content class="md-padding" layout-xs="column" layout="row">
     <div flex-xs flex-gt-xs="100" layout="column">
-      <md-card ng-repeat="device in list.bulb.devices">
+      <md-card ng-repeat="device in list.bulb.devices" | orderBy:'-power'>
         <!-- <md-card-header>
         <md-card-avatar>
           <img class="md-user-avatar" src="avatar.png">

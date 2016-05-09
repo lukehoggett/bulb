@@ -244,6 +244,8 @@
             log.error("Connect error", error);
           } else {
             log.info("Connected to device: ", uuid);
+            // send message to notify of connection
+            webContents.send("connected", serializeDevice(device));
             device.discoverAllServicesAndCharacteristics(error => {
               if (error) {
                 console.error(error);
