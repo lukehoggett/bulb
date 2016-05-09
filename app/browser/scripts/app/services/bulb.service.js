@@ -19,7 +19,7 @@ class BulbService {
       ipc.on('get-stored-devices-reply', (event, device, uuid) => {
         console.log("BulbService: receiving stored devices", device, uuid);
         this.devices[device.uuid] = device;
-      }.bind(this));
+      });
 
       ipc.on('discovered', (event, device) => {
         console.log("BulbService: Discovered Device", device);
@@ -31,15 +31,24 @@ class BulbService {
         // $rootScope.$broadcast('device.update');
         this.$timeout(function () {}, 0);
         
-      }.bind(this));
+      });
       
       
-      
+      ipc.on('scanning', (event) => {
+        console.log("scanning", event);
+        this.scanning = true;
+        this.$timeout(function () {}, 0);
+      });
       
       
       ipc.on('services', (event, services) => {
         console.log("services", services);
-      });
+      });      
+      // ipc.on('connected', (event, device) => {
+      //   
+      //   console.log("connected", device, device.uuid, this.devices, this);
+      //   this.devices[device.uuid] = device;
+      // });
       
       // receive info about devices that are connected
       ipc.on('connected', (event, device) => {

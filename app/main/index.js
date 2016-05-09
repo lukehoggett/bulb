@@ -118,6 +118,24 @@
     });
 
     var webContents = mainWindow.webContents;
+    
+    webContents.on("did-finish-load", (ev) => {
+      
+      log.info("Did Finish Load", ev);
+      // noble.on("stateChange", (state) => {
+        if (noble.state === "poweredOn") {
+          setTimeout(() => {
+            noble.startScanning();
+            log.info("Noble State = poweredOn - Sending scanning");
+            webContents.send("scanning");
+          }, 1500);
+          
+        }
+      // });
+    });
+    
+    
+    
 
     ipcMain.on("get-stored-devices", event => {
       let storedDeviceKeys = storage.keys();
@@ -197,7 +215,7 @@
 
           // on discovery check if device is in stored devices, if not update stored
           let match = storage.valuesWithKeyMatch(device.uuid);
-          log.info(">>>>>>>>>>>>>> Match", match);
+          // log.info(">>>>>>>>>>>>>> Match", match);
           if (match.length === 0) {
             log.info("Adding device to storage");
             let serializedDevice = serializeDevice(device);
@@ -219,7 +237,7 @@
           // log.info(webContents);
           // send notification to renderer that a device has been dicovered
           let serializedDevice = serializeDevice(device);
-          log.info("Sending discovered device to renderer", serializedDevice);
+          log.info("Sending discovered device to renderer", device.uuid);
           webContents.send("discovered", serializedDevice);
 
           // add listeners for service and characteristic discovery
