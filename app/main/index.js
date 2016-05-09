@@ -119,6 +119,8 @@
 
     var webContents = mainWindow.webContents;
     
+    webContents.openDevTools();
+    
     webContents.on("did-finish-load", (ev) => {
       
       log.info("Did Finish Load");

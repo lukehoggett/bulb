@@ -20,12 +20,16 @@ System.config({
     "angular-localforage": "npm:angular-localforage@1.2.5",
     "angular-material": "github:angular/bower-material@0.11.4",
     "angular-material-icons": "npm:angular-material-icons@0.6.0",
+    "angular-order-object-by": "bower:angular-order-object-by@1.3.0",
     "angular-route": "github:angular/bower-angular-route@1.5.5",
     "babel": "npm:babel-core@5.8.38",
     "babel-runtime": "npm:babel-runtime@5.8.38",
     "core-js": "npm:core-js@1.2.6",
     "mozilla/localForage": "github:mozilla/localForage@1.4.0",
     "ocombe/angular-localForage": "github:ocombe/angular-localForage@1.2.5",
+    "bower:angular-order-object-by@1.3.0": {
+      "angular": "bower:angular@1.5.5"
+    },
     "github:angular/bower-angular-animate@1.5.5": {
       "angular": "github:angular/bower-angular@1.5.5"
     },
@@ -48,7 +52,7 @@ System.config({
       "path-browserify": "npm:path-browserify@0.0.0"
     },
     "github:jspm/nodelibs-process@0.1.2": {
-      "process": "npm:process@0.11.2"
+      "process": "npm:process@0.11.3"
     },
     "github:jspm/nodelibs-util@0.1.0": {
       "util": "npm:util@0.10.3"
@@ -90,7 +94,7 @@ System.config({
     "npm:path-browserify@0.0.0": {
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
-    "npm:process@0.11.2": {
+    "npm:process@0.11.3": {
       "assert": "github:jspm/nodelibs-assert@0.1.0"
     },
     "npm:promise@5.0.0": {
