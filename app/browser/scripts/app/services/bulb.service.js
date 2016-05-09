@@ -28,16 +28,16 @@ class BulbService {
         }
         this.devices[device.uuid] = device;
         console.log("BulbService: Devices", this.devices);
-        // $rootScope.$broadcast('device.update');
-        this.$timeout(function () {}, 0);
+        this.$timeout(() => {}, 0);
         
       });
       
       
       ipc.on('scanning', (event) => {
-        console.log("scanning", event);
+        console.log("scanning");
         this.scanning = true;
-        this.$timeout(function () {}, 0);
+        this.$timeout(() => {}, 0);
+        console.log("Scanning?", this.scanning);
       });
       
       
@@ -55,7 +55,7 @@ class BulbService {
         
         console.log("connected", device, device.uuid, this.devices, this);
         this.devices[device.uuid] = device;
-        this.$timeout(function () {}, 0);
+        this.$timeout(() => {}, 0);
       });
       
       ipc.on('characteristics', (event, characteristics) => {

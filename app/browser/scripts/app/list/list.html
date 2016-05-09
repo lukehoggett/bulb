@@ -1,5 +1,5 @@
 <div ng-controller="listCtrl as list" id="list">
-  {{list.bulb.devices}}
+  <!-- {{list.bulb.devices}} -->
   <md-content class="md-padding" layout-xs="column" layout="row">
     <div flex-xs flex-gt-xs="100" layout="column">
       <md-card ng-repeat="device in list.bulb.devices" | orderBy:'-power'>

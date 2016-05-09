@@ -10,21 +10,27 @@ class AppCtrl {
   constructor($mdSidenav, bulbService) {
     
     this.mdSidenav = $mdSidenav;
-    this.scanner = bulbService;
+    this.bulbService = bulbService;
     
-    this.scanStateMessage = "Start Scan";
+    this.scanStateMessage = "Stop Scan";
+    
+    ipc.on('scanning', () => {
+      this.scanStateMessage = "Stop Scan";
+    });
 
   }
   
   toggleScan() {
-    if (this.scanner.isScanning()) {
-      this.scanner.stopScan();
+    if (this.bulbService.isScanning()) {
+      console.log("app.controller isScanning", this.bulbService.isScanning());
+      this.bulbService.stopScan();
       this.scanStateMessage = "Start Scan";
     } else {
-      this.scanner.startScan();
+      console.log("app.controller isScanning", this.bulbService.isScanning());
+      this.bulbService.startScan();
       this.scanStateMessage = "Stop Scan";
     }
-    this.scan = this.scanner.isScanning(); 
+    this.scan = this.bulbService.isScanning(); 
   }
   
   showDevices() {

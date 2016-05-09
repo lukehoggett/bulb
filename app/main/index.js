@@ -121,7 +121,7 @@
     
     webContents.on("did-finish-load", (ev) => {
       
-      log.info("Did Finish Load", ev);
+      log.info("Did Finish Load");
       // noble.on("stateChange", (state) => {
         if (noble.state === "poweredOn") {
           setTimeout(() => {
