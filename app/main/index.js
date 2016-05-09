@@ -237,20 +237,24 @@
     function connect(uuid) {
       noble.stopScanning();
       log.info("Connect: deviceUUID", uuid);
-      let device = getDeviceFromUUID(uuid); 
-
-      device.connect(error => {
-        if (error) {
-          log.error("Connect error", error);
-        } else {
-          log.info("Connected to device: ", uuid);
-          device.discoverAllServicesAndCharacteristics(error => {
-            if (error) {
-              console.error(error);
-            }
-          });
-        }
-      });
+      let device = getDeviceFromUUID(uuid);
+      if (typeof device.connect === "function") {
+        device.connect(error => {
+          if (error) {
+            log.error("Connect error", error);
+          } else {
+            log.info("Connected to device: ", uuid);
+            device.discoverAllServicesAndCharacteristics(error => {
+              if (error) {
+                console.error(error);
+              }
+            });
+          }
+        });
+      } else {
+        log.info("Device not found");
+      }
+      
     }
     
     function disconnect(uuid) {
