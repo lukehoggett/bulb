@@ -173,10 +173,11 @@
 
       let device = storedDevices[deviceUUID];
       log.info("device.get-characteristics", deviceUUID, device);
-      device.discoverAllServicesAndCharacteristics(error => {
+      device.discoverAllServicesAndCharacteristics((error, services, characteristics) => {
         if (error) {
           console.error(error);
         }
+        log.info(">>>>>>>>>>>>>>>>> services", services, ">>>>>>>>>>>>>> characteristics", characteristics);
       });
     });
 

@@ -5,17 +5,18 @@
 
 class CharacteristicCtrl {
 
-  constructor($scope, $mdSidenav) {
+  constructor($scope, $mdSidenav, bulbService) {
     this.mdSidenav = $mdSidenav;
     this.$scope = $scope;
+    this.bulbService = bulbService;
     
     this.type = "";
     this.effect = ""
     
     this.colour = {
-      red: 1,
-      green: 1,
-      blue: 1
+      red: 0,
+      green: 0,
+      blue: 0
     };
     
     this.saturation = 1;
@@ -32,6 +33,8 @@ class CharacteristicCtrl {
   togglePane() {
     console.log("Toggling Pane", this.mdSidenav);
     this.mdSidenav('characteristic').toggle();
+    
+    // this.bulbService
   }
   
 }

@@ -30,3 +30,31 @@ html > body {
   padding-top: 0;
   font-size: 14px;
 }
+
+md-sidenav.characteristics .controls {
+  padding: 10px;
+}
+
+
+
+#red-slider .md-thumb, 
+#red-slider .md-thumb:after,
+#red-slider  .md-track.md-track-fill, 
+#red-slider  .md-focus-ring {
+  border-color: rgb(255,0,0);
+  background-color: rgb(255,0,0);
+}
+#green-slider .md-thumb, 
+#green-slider .md-thumb:after,
+#green-slider .md-track.md-track-fill, 
+#green-slider .md-focus-ring {
+  border-color: rgb(0,255,0);
+  background-color: rgb(0,255,0);
+}
+#blue-slider .md-thumb, 
+#blue-slider .md-thumb:after,
+#blue-slider .md-track.md-track-fill, 
+#blue-slider .md-focus-ring {
+  border-color: rgb(0,0,255);
+  background-color: rgb(0,0,255);
+}
