@@ -169,16 +169,20 @@
       connect(deviceUUID);
     });
 
-    ipcMain.on("device.get-characteristics", (event, deviceUUID) => {
+    ipcMain.on("device.characteristics.get", (event, deviceUUID) => {
 
       let device = storedDevices[deviceUUID];
-      log.info("device.get-characteristics", deviceUUID, device);
+      log.info("device.characteristics.get", deviceUUID, device);
       device.discoverAllServicesAndCharacteristics((error, services, characteristics) => {
         if (error) {
           console.error(error);
         }
         log.info(">>>>>>>>>>>>>>>>> services", services, ">>>>>>>>>>>>>> characteristics", characteristics);
       });
+    });
+    
+    ipcMain.on("device.characteristic.get", (event, deviceUUID, characteristic) => {
+      log.info("device.characteristic.get", deviceUUID, characteristic);
     });
 
     ipcMain.on("device.set-name", (event, uuid, name) => {

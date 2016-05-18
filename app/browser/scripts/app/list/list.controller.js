@@ -21,7 +21,7 @@ class ListCtrl {
   
   getCharacterisics(device) {
     console.log("list get characteristics", device);
-    ipc.send('device.get-characteristics', device.uuid);
+    
   }
 
   showCharacteristicsPanel() {
