@@ -22,12 +22,15 @@ class CharacteristicCtrl {
     this.saturation = 1;
     this.speed = 1;
     
-    this.$scope.$on('device_selected', this.deviceSelected);
+    this.$scope.$on('device_selected', this.deviceSelected.bind(this));
     
   }
   
   deviceSelected(event, uuid) {
     console.log("CharCtrl device_selcted", uuid);
+    let characteristic = {};
+    console.info(this.bulbService.getDevice(uuid));
+    this.bulbService.getCharacteristicValue(uuid, characteristic);
   }
   
   togglePane() {

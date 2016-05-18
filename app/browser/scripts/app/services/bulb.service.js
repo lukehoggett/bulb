@@ -62,6 +62,8 @@ class BulbService {
         console.log("characteristics", characteristics);
       });
       
+      
+      // ipc.send("device.characteristic.get", )
     }
     
     isScanning() {
@@ -92,6 +94,15 @@ class BulbService {
     getDevices() {
       console.log("BulbService: getDevices called: ", this.devices);
       return this.devices;
+    }
+    
+    getDevice(uuid) {
+      console.log("BulbService: getDevices called: ", this.devices);
+      return this.devices[uuid];
+    }
+    
+    getCharacteristicValue(uuid, characteristic) {
+      console.log("getCharacteristicValue", uuid, characteristic);
     }
 }
 

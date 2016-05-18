@@ -178,6 +178,7 @@
           console.error(error);
         }
         log.info(">>>>>>>>>>>>>>>>> services", services, ">>>>>>>>>>>>>> characteristics", characteristics);
+        
       });
     });
     
@@ -323,9 +324,9 @@
          }
         });
         
-        // log.info("+++++ color characteristic", util.inspect(colorChar, { showHidden: true, depth: 5 }));
-        // log.info("+++++ effects characteristic", util.inspect(effectsChar, { showHidden: true, depth: 5 }));
-        // log.info("+++++ name characteristic", util.inspect(nameChar, { showHidden: true, depth: 5 }));
+        log.info("+++++ color characteristic", util.inspect(colorChar, { showHidden: true, depth: 5 }));
+        log.info("+++++ effects characteristic", util.inspect(effectsChar, { showHidden: true, depth: 5 }));
+        log.info("+++++ name characteristic", util.inspect(nameChar, { showHidden: true, depth: 5 }));
         // storedDevices[deviceUUID].services = services;
         // let serializedServices = serializeServices(deviceUUID);
 
