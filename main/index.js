@@ -2,8 +2,6 @@
 (function() {
   "use strict";
 
-
-
   let electron = require("electron");
   let app = electron.app;
   const ipcMain = require("electron").ipcMain;
@@ -112,8 +110,8 @@
       // width: 1000,
       height: 1200,
       // x: 2560,
-      x: 4000,
-      // x: 300,
+      // x: 4000,
+      x: 560,
       y: 100
     });
 
@@ -218,12 +216,11 @@
     noble.on("discover", device => {
 
       if (typeof device.advertisement.manufacturerData !== "undefined") {
-        log.info("discovered manufacturerData", device.uuid);
+        log.info("Discovered device with UUID", device.uuid);
         if (device.advertisement.manufacturerData.toString("hex") === "4d49504f57") {
-
+          log.info("Device matches mipow device");
           // on discovery check if device is in stored devices, if not update stored
           let match = storage.valuesWithKeyMatch(device.uuid);
-          // log.info(">>>>>>>>>>>>>> Match", match);
           if (match.length === 0) {
             log.info("Adding device to storage");
             let serializedDevice = serializeDevice(device);
@@ -249,7 +246,7 @@
           webContents.send("discovered", serializedDevice);
 
           // add listeners for service and characteristic discovery
-          device.on("servicesDiscover", mapDiscoveredService);
+          device.once("servicesDiscover", mapDiscoveredService.bind(this, device.uuid));
 
         }
         log.info("===========================================");
@@ -272,9 +269,15 @@
             log.info("Connected to device: ", uuid);
             // send message to notify of connection
             webContents.send("connected", serializeDevice(device));
-            device.discoverAllServicesAndCharacteristics(error => {
+            
+            // @TODO fix up to use generic arrays for candle and color
+            let serviceUUIDs = ["1800", "ff02"];
+            let characteristicUUIDs = ["2a00", "fffb", "fffc"];
+            device.discoverSomeServicesAndCharacteristics(serviceUUIDs, characteristicUUIDs, error => {  
+              
+              log.info("Discovering services and characteristics on connect");
               if (error) {
-                console.error(error);
+                console.error("discoverAllServicesAndCharacteristics", error);
               }
             });
           }
@@ -295,44 +298,82 @@
       });
     }
 
-    function mapDiscoveredService(services) {
-      log.info("#######################################");
-      log.info("#######################################");
+    function mapDiscoveredService(deviceUUID, services) {
+      log.info("UUIDUUIDUUID", deviceUUID, services);
+      log.info("SERVICES START #######################################");
       services.map(service => {
-        log.info("mapDiscoveredService: service", service.uuid, service.name);
-        service.on("characteristicsDiscover", mapDiscoveredCharacteristics);
+        log.info("mapDiscoveredService: service", service.deviceUUID, service.name);
+        service.once("characteristicsDiscover", mapDiscoveredCharacteristics.bind(this, deviceUUID));
       });
+      log.info("SERVICES END #######################################");
     }
+    
     var colorChar = null, 
         effectsChar = null,
         nameChar = null;
         
-    function mapDiscoveredCharacteristics(characteristics) {
+    function mapDiscoveredCharacteristics(deviceUUID, characteristics) {
+      
+      log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", deviceUUID);
       characteristics.map(characteristic => {
-        // log.info("#######################################");
-        // log.info("mapDiscoveredCharacteristics: characteristics", characteristics);
-        characteristics.map(characteristic => {
-          // log.info("         ");
-          // log.info("************* ", characteristic.uuid, characteristic.name);
-          // log.info("         ");
           if (characteristic.uuid === types.CANDLE.colorUuid) {
             colorChar = characteristic;
+            log.info("+++++ color characteristic", util.inspect(colorChar, { showHidden: true, depth: 2 }));
+            colorChar.read((error, data) => {
+              if (error) {
+                log.error("Could not read characteristic", error);
+              } 
+              log.info("color Char data", data.toJSON());
+              // let r = Math.floor(Math.random() * 256);
+              // let g = Math.floor(Math.random() * 256);
+              // let b = Math.floor(Math.random() * 256);
+              // log.info("Color", r, g, b);
+              // let colorBytes = new Buffer([0, r, g, b]);
+              // colorChar.write(colorBytes, true, (error) => {
+              //   if (error) {
+              //     log.error("Could not color name characteristic");
+              //   }
+              //   // @TODO update stored device
+              //   log.info("Wrote color characteristic");
+              // });
+            });
           } else if (characteristic.uuid === types.CANDLE.effectsUuid) {
             effectsChar = characteristic;
+            log.info("+++++ effects characteristic", util.inspect(effectsChar, { showHidden: true, depth: 2 }));
+            effectsChar.read((error, data) => {
+              if (error) {
+                log.error("Could not read characteristic", error);
+              } 
+              log.info("effects Char data", data.toJSON());
+            });
           } else if (characteristic.uuid === types.CANDLE.nameUuid) {
-           nameChar = characteristic;
-         }
-        });
+            nameChar = characteristic;
+            log.info("+++++ name characteristic", util.inspect(nameChar, { showHidden: true, depth: 2 }));
+            nameChar.read((error, data) => {
+            if (error) {
+              log.error("Could not read characteristic", error);
+            } 
+            log.info("name Char data", data.toString());
+            // nameChar.write(new Buffer("hello"), false, (error) => {
+            //   if (error) {
+            //     log.error("Could not write name characteristic");
+            //   }
+            //   // @TODO update stored device
+            //   log.info("Wrote name characteristic");
+            // });
+           });
+          }
         
-        log.info("+++++ color characteristic", util.inspect(colorChar, { showHidden: true, depth: 5 }));
-        log.info("+++++ effects characteristic", util.inspect(effectsChar, { showHidden: true, depth: 5 }));
-        log.info("+++++ name characteristic", util.inspect(nameChar, { showHidden: true, depth: 5 }));
+        
+        
+        
         // storedDevices[deviceUUID].services = services;
         // let serializedServices = serializeServices(deviceUUID);
 
         // event.sender.send("services", {deviceUUID: device.uuid, services: serializeServices(services)});
         // event.sender.send("characteristics", {deviceUUID: device.uuid, characteristics: characteristics});
       });
+      log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     }
 
     mainWindow.loadURL("file://" + __dirname + "/../browser/index.html");
