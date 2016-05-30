@@ -21,7 +21,7 @@ class ListCtrl {
   
   getCharacterisics(device) {
     console.log("list get characteristics", device);
-    
+    this.bulb.getCharacteristics(device.uuid);
   }
 
   showCharacteristicsPanel() {

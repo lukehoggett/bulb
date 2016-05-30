@@ -101,6 +101,11 @@ class BulbService {
       return this.devices[uuid];
     }
     
+    getCharacteristics(uuid) {
+      console.log("getCharacteristics", uuid);
+      ipc.send('device.get-characteristics', uuid);
+    }
+    
     getCharacteristicValue(uuid, characteristic) {
       console.log("getCharacteristicValue", uuid, characteristic);
     }
