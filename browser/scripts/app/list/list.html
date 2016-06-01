@@ -27,6 +27,7 @@
         </md-card-title>
         <md-card-actions layout="row" layout-align="start center">
           <md-button ng-click="list.bulb.connect(device)" class="md-raised md-primary">Connect</md-button>
+          <md-button ng-click="list.bulb.disconnect(device)" class="md-raised md-primary">Disconnect</md-button>
           <md-button ng-click="list.getCharacterisics(device)" class="md-raised md-primary">Get Characteristics</md-button>
           <md-button ng-click="list.selectDevice(device)" class="md-raised md-primary">Edit Characteristics</md-button>
         </md-card-actions>
@@ -47,6 +48,10 @@
             Power:
             {{device.power}}
           </p>
+          <div ng-if="device.characteristics">
+            Have characteristics
+            <!-- <p ng-if="device.characteristics."></p> -->
+          </div>
         </md-card-content>
       </md-card>
     </div>

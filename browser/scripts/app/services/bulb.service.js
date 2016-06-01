@@ -86,6 +86,12 @@ class BulbService {
       ipc.send('device.connect', device.uuid);
     }
     
+    disconnect(device) {
+      console.log("BulbService: disconnecting to ", device.uuid);
+      console.info("BulbService: disconnecting device list ", this.devices);
+      ipc.send('device.disconnect', device.uuid);
+    }
+    
     setDeviceName(uuid, name) {
       console.log("BulbService: setDeviceName", uuid, name);
       ipc.send('device.set-name', uuid, name);
