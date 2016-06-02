@@ -56,6 +56,6 @@ function routes($routeProvider) {
 
 function config($mdThemingProvider) {
   $mdThemingProvider.theme('default')
-    .primaryPalette('teal')
-    .accentPalette('cyan');
+    .primaryPalette('brown')
+    .accentPalette('blue');
 }

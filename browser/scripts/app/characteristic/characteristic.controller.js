@@ -10,6 +10,8 @@ class CharacteristicCtrl {
     this.$scope = $scope;
     this.bulbService = bulbService;
     
+    this.device = null;
+    
     this.type = "";
     this.effect = ""
     
@@ -29,8 +31,9 @@ class CharacteristicCtrl {
   deviceSelected(event, uuid) {
     console.log("CharCtrl device_selcted", uuid);
     let characteristic = {};
-    console.info(this.bulbService.getDevice(uuid));
-    this.bulbService.getCharacteristicValue(uuid, characteristic);
+    this.device = this.bulbService.getDevice(uuid);
+    console.info("characteristic panel device", this.device);
+    // this.bulbService.getCharacteristicValue(uuid, characteristic);
   }
   
   togglePane() {

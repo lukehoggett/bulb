@@ -47,6 +47,10 @@
     }
   };
   
+  let colorChar = null;
+  let effectsChar = null;
+  let nameChar = null;
+  
   // open dev tools
   ipcMain.on("devTools", (event, arg) => {
     log.info("DevTools", arg);
@@ -163,12 +167,6 @@
     ipcMain.on("device.get", (event, uuid) => {
       log.info("ipc: device.get", event, uuid, deviceStorage.getByUUID(uuid));
     });
-    
-    ipcMain.on("device.get-characteristics", (event, uuid) => {
-      let device = deviceStorage.getByUUID(uuid);
-      log.info("ipc: device.get-characteristics: ", uuid, device.state, device);
-      
-    });
 
     noble.on("discover", device => {
 
@@ -221,11 +219,15 @@
             // send message to notify of connection
             webContents.send("connected", serializeDevice(device));
             
-            device.once("servicesDiscover", mapDiscoveredService.bind(this, uuid));
+            // device.on("servicesDiscover", mapDiscoveredService.bind(this, uuid));
             
             // @TODO fix up to use generic arrays for candle and color
             log.info("service and characteristic discovery from connect");
-            discoverServicesAndCharacteristics(device);
+            setTimeout(() => {
+              log.info("Timeout before discoverServicesAndCharacteristics");
+              discoverServicesAndCharacteristics(device);
+            }, 50);
+            
           }
         });
         
@@ -236,29 +238,70 @@
     }
     
     function discoverServicesAndCharacteristics(device) {
+      
+      // just discover known name, color and effects
       let serviceUUIDs = ["1800", "ff02"];
       let characteristicUUIDs = ["2a00", "fffb", "fffc"];
       log.info("Discovering services and characteristics for ", serviceUUIDs, characteristicUUIDs);
-      device.discoverSomeServicesAndCharacteristics(serviceUUIDs, characteristicUUIDs, error => { 
-        log.info("Discovering some services and characteristics");
+      device.discoverSomeServicesAndCharacteristics(serviceUUIDs, characteristicUUIDs, (error, services, characteristics) => { 
+        log.info("Discovering SOME services and characteristics");
+        
         if (error) {
           log.error("discoverSomeServicesAndCharacteristics", error);
         }
+        log.info("Services", services);
+        log.info("Characteristics", characteristics);
+        mapDiscoveredCharacteristics(device.uuid, characteristics);
       });
+      
+      // discover all - useful for dev and sniffing
+      // device.discoverAllServicesAndCharacteristics((error, services, characteristics) => { 
+      //   log.info("Discovering ALL services and characteristics");
+      //   
+      //   if (error) {
+      //     log.error("discoverAllServicesAndCharacteristics", error);
+      //   }
+      //   log.info("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+      //   // log.info("%%%%% ALL Services", services);
+      //   // log.info("%%%%% ALL Characteristics", characteristics);
+      //   log.info("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+      //   characteristics.map(c => {
+      //     c.read((error, data) => {
+      //       if (error) {
+      //         log.error("Could not read characteristic", c.uuid, error);
+      //       }
+      //     
+      //       log.info("ALL Characteristic data",
+      //         "\nCharacteristic UUID", c.uuid,
+      //         "\Service UUID", c._serviceUuid,
+      //         "\nName", c.name,
+      //         "\nType", c.type,
+      //         "\nDATA", data,
+      //         "\nDATA JSON", data.toJSON(),
+      //         "\nDATA STRING", data.toString()
+      //       );
+      //     });
+      //   });
+      // });
     }
+    
+    
     
     function mapDiscoveredService(deviceUUID, services) {
-      log.info("DISCOVER SERVICES START #######################################", services);
-      services.map(service => {
-        log.info("mapDiscoveredService: service", service.deviceUUID, service.name);
-        service.once("characteristicsDiscover", mapDiscoveredCharacteristics.bind(this, deviceUUID));
-      });
-      log.info("DISCOVER SERVICES END #######################################");
+      try {
+        log.info("DISCOVER SERVICES START #######################################", services, deviceUUID);
+        services.map(service => {
+          log.info("mapDiscoveredService: service", service.deviceUUID, service.name);
+          service.on("characteristicsDiscover", mapDiscoveredCharacteristics.bind(this, deviceUUID));
+        });
+        log.info("DISCOVER SERVICES END #######################################");
+      } catch (e) {
+        log.info("mapDiscoveredService()", e);
+      } finally {
+        log.info("finally");
+      }
+      
     }
-    
-    var colorChar = null, 
-        effectsChar = null,
-        nameChar = null;
         
     function mapDiscoveredCharacteristics(deviceUUID, characteristics) {
       
@@ -301,7 +344,7 @@
           log.error("Promise.all failed ", error);
         })
         .catch(error => {
-          log.error("Promise.all catch ", error);
+          log.error("Promise.all catch ", error.message, error.name);
         });
       }
       log.info("DISCOVER CHARACTERISTICS END >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -315,22 +358,36 @@
             log.error("Could not read characteristic", characteristic.uuid, error);
             reject("Could not read characteristic", error);
           }
-          if (type === "color") {
-            let r = Math.floor(Math.random() * 256);
-            let g = Math.floor(Math.random() * 256);
-            let b = Math.floor(Math.random() * 256);
-            log.info("Color", r, g, b);
-            let colorBytes = new Buffer([0, r, g, b]);
-            colorChar.write(colorBytes, true, (error) => {
+          let saturation = Math.floor(Math.random() * 256); 
+          let r = Math.floor(Math.random() * 256);
+          let g = Math.floor(Math.random() * 256);
+          let b = Math.floor(Math.random() * 256);
+          log.info("Color", saturation, r, g, b);
+          /*if (type === "color") {
+            
+            
+            let colorBytes = new Buffer([saturation, r, g, b]);
+            characteristic.write(colorBytes, true, (error) => {
               if (error) {
-                log.error("Could not color name characteristic");
+                log.error("Could not write color name characteristic");
               }
               // @TODO update stored device
               log.info("Wrote color characteristic");
             });
+          } else */if (type === "effects") {
+            let mode = "0" + (Math.floor(Math.random() * 4) + 1);
+            let speed = "0" + (Math.floor(Math.random() * 2) + 1);
+            let effectBytes = new Buffer([saturation, r, g, b, mode, "00", speed, "00"]);
+            characteristic.write(effectBytes, true, (error) => {
+              if (error) {
+                log.error("Could not write effect name characteristic");
+              }
+              // @TODO update stored device
+              log.info("Wrote effect characteristic");
+            });
           }
           log.info(`Characteristic data for ${type}`, characteristic.uuid, data.toJSON(), data);
-          resolve({type: type, characteristic: characteristic, data: data.toJSON()});
+          resolve({type: type, characteristic: characteristic, data: data});
         });
       });
     }
@@ -407,12 +464,11 @@
           uuid: c.characteristic.uuid,
           name: c.characteristic.name,
           type: c.characteristic.type,
-          value: c.data,
-          jsonvalue: JSON.stringify(c.data)
+          value: c.data
         };
       });
       device.characteristics = charList;
-      log.info("device", device);
+      // log.info("device", device);
       return device;
     }
 

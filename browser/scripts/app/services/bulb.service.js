@@ -27,7 +27,7 @@ class BulbService {
           console.log("Existing device");
         }
         this.devices[device.uuid] = device;
-        console.log("BulbService: Devices", this.devices);
+        // console.log("BulbService: Devices", this.devices);
         this.$timeout(() => {}, 0);
         
       });
@@ -109,7 +109,7 @@ class BulbService {
     
     getCharacteristics(uuid) {
       console.log("getCharacteristics", uuid);
-      ipc.send('device.get-characteristics', uuid);
+      ipc.send('device.characteristics.get', uuid);
     }
     
     getCharacteristicValue(uuid, characteristic) {
