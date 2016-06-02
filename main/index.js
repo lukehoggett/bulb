@@ -455,7 +455,7 @@
     }
     
     function serializeCharacteristics(deviceUUID, characteristicValues) {
-      log.info("serializeCharacteristics", deviceUUID, characteristicValues);
+      // log.info("serializeCharacteristics", deviceUUID, characteristicValues);
       let device = serializeDevice(deviceStorage.getByUUID(deviceUUID));
       let charList = {};
       characteristicValues.forEach(c => {
@@ -466,6 +466,7 @@
           type: c.characteristic.type,
           value: c.data
         };
+        log.info("####################### DATA", c.type, c.data);
       });
       device.characteristics = charList;
       // log.info("device", device);
