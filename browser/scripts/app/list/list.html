@@ -26,8 +26,7 @@
           </md-card-title-text>
         </md-card-title>
         <md-card-actions layout="row" layout-align="start center">
-          <md-button ng-click="list.bulb.connect(device)" class="md-raised md-primary">Connect</md-button>
-          <md-button ng-click="list.bulb.disconnect(device)" class="md-raised md-primary">Disconnect</md-button>
+          <md-button ng-click="list.bulb.handleConnection(device)" class="md-raised md-primary">{{device.state == "disconnected" ? "Connect" : "Disconnect"}}</md-button>
           <md-button ng-click="list.getCharacterisics(device)" class="md-raised md-primary">Get Characteristics</md-button>
           <md-button ng-click="list.selectDevice(device)" class="md-raised md-primary">Edit Characteristics</md-button>
         </md-card-actions>

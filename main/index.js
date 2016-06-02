@@ -78,7 +78,7 @@
       y: 100
     });
 
-    var webContents = win.webContents;
+    let webContents = win.webContents;
     
     webContents.openDevTools();
     
@@ -509,20 +509,23 @@
       });
       return services;
     }
+    
+    function disconnect(device) {
+      if (typeof device == "string") {
+        device = deviceStorage.getByUUID(device);
+      }
+      log.info("Disconnecting", device.uuid);
+      device.disconnect(error => {
+        if (error) {
+          log.error();
+        }
+        webContents.send("disconnected", serializeDevice(device));
+      });
+    }
+
+    
   });
   
-  function disconnect(device) {
-    if (typeof device == "string") {
-      device = deviceStorage.getByUUID(device);
-    }
-    log.info("Disconnecting", device.uuid);
-    device.disconnect(error => {
-      if (error) {
-        log.error();
-      }
-    });
-  }
-
   function disconnectAll() {
     log.info("disconnectAll");
     for (let uuid in storedDevices) {
@@ -532,6 +535,8 @@
       }
     }
   }
+  
+  
 
   app.on("quit", function() {
     // Make sure device is disconnected before exiting.

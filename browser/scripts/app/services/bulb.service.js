@@ -58,6 +58,11 @@ class BulbService {
         this.$timeout(() => {}, 0);
       });
       
+      ipc.on('disconnected', (event, device) => {
+        console.info("disconnected event");
+        this.devices[device.uuid] = device;
+      });
+      
       ipc.on('characteristics', (event, characteristics) => {
         console.log("characteristics", characteristics);
       });
@@ -80,15 +85,23 @@ class BulbService {
       this.scanning = false;
     }
     
+    handleConnection(device) {
+      console.info("Handling connection", device.state, device.uuid);
+      console.info(`Handling connection: Device ${device.name} [${device.uuid}] is ${device.state}`);
+      if (device.state == "disconnected") {
+        this.connect(device);
+      } else {
+        this.disconnect(device);
+      }
+    }
+    
     connect(device) {
-      console.log("BulbService: connecting to ", device.uuid);
-      console.info("BulbService: connecting device list ", this.devices);
+      console.log("BulbService: connecting");
       ipc.send('device.connect', device.uuid);
     }
     
     disconnect(device) {
-      console.log("BulbService: disconnecting to ", device.uuid);
-      console.info("BulbService: disconnecting device list ", this.devices);
+      console.log("BulbService: disconnecting");
       ipc.send('device.disconnect', device.uuid);
     }
     
