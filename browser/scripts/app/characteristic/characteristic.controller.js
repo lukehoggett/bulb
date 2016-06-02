@@ -13,7 +13,6 @@ class CharacteristicCtrl {
     this.device = null;
     
     this.type = "";
-    // this.type = "Colour";
     this.effect = {
       saturation: 0,
       red: 0,
@@ -23,7 +22,7 @@ class CharacteristicCtrl {
       speed: 0
     }
     
-    this.colour = {
+    this.color = {
       saturation: 0,
       red: 0,
       green: 0,
@@ -40,7 +39,7 @@ class CharacteristicCtrl {
     let characteristics = this.device.characteristics;
     console.info("characteristic panel device", characteristics);
     
-    this.colour = {
+    this.color = {
       saturation: characteristics.color.value[0],
       red: characteristics.color.value[1],
       green: characteristics.color.value[2],
@@ -55,7 +54,7 @@ class CharacteristicCtrl {
       mode: characteristics.effects.value[4],
       speed: characteristics.effects.value[6]
     }
-    console.info("DeviceSelected color", this.colour);
+    console.info("DeviceSelected color", this.color);
     console.info("DeviceSelected effect", this.effect);
   }
   
@@ -64,6 +63,14 @@ class CharacteristicCtrl {
     this.mdSidenav('characteristic').toggle();
     
     // this.bulbService
+  }
+  
+  save(characteristic) {
+    // send new values to the event process
+    console.log("Save characteristic", characteristic);
+    console.log("Save color", this.color);
+    console.log("Save effect", this.effect);
+    console.log("Save type", this.type);
   }
   
 }
