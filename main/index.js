@@ -245,6 +245,7 @@
         });
         
       } else {
+        webContents.send("error", `Device ${device.name} [${uuid}] not connectable.`);
         log.error("Device not found");
       }
       

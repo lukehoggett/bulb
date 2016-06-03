@@ -8,6 +8,7 @@ class BulbService {
       this.devices = {};
       this.scanning = false;
       
+      
       this.$rootScope = $rootScope;
       this.$timeout = $timeout;
       
@@ -31,6 +32,14 @@ class BulbService {
         this.$timeout(() => {}, 0);
         
       });
+      
+      
+      
+      
+      
+      
+      
+      
       
       
       ipc.on('scanning', (event) => {

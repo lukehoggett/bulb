@@ -7,10 +7,21 @@ const ipc = require('electron').ipcRenderer;
 
 class AppCtrl {
 
-  constructor($mdSidenav, bulbService) {
+  constructor($mdSidenav, $mdToast, bulbService) {
     
     this.mdSidenav = $mdSidenav;
     this.bulbService = bulbService;
+    this.toast = $mdToast;
+    // this.errorMessage = ""
+    
+    ipc.on('error', (event, message) => {
+      console.info("Error:", message);
+      // this.errorMessage = message;
+      this.showErrorToast(message);
+      // this.$timeout(() => {
+      //   this.errorMessage = "";
+      // }, 2000);
+    });
     
     this.scanStateMessage = "Stop Scan";
     
@@ -22,6 +33,15 @@ class AppCtrl {
       this.scanStateMessage = "Start Scan";
     });
 
+  }
+  
+  showErrorToast(message) {
+    this.toast.show(
+      this.toast.simple()
+        .textContent(message)
+        .position("bottom left")
+        .hideDelay(5000)
+    );
   }
   
   toggleScan() {
@@ -69,7 +89,7 @@ class AppCtrl {
 
 }
 
-AppCtrl.$inject = ['$mdSidenav', 'bulbService'];
+AppCtrl.$inject = ['$mdSidenav', '$mdToast', 'bulbService'];
 export {
   AppCtrl
 };

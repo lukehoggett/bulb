@@ -1,5 +1,4 @@
 <div ng-controller="listCtrl as list" id="list">
-  <!-- {{list.bulb.devices}} -->
   <md-content class="md-padding" layout-xs="column" layout="row">
     <div flex-xs flex-gt-xs="100" layout="column">
       <md-card ng-repeat="device in list.bulb.devices | orderObjectBy: 'power' : true">
@@ -35,10 +34,6 @@
             Power:
             {{device.power}}
           </p>
-          <div ng-if="device.characteristics">
-            Have characteristics
-            <!-- <p ng-if="device.characteristics."></p> -->
-          </div>
         </md-card-content>
       </md-card>
     </div>
