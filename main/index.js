@@ -2,17 +2,29 @@
 (function() {
   "use strict";
 
-  let electron = require("electron");
-  let app = electron.app;
-  const ipcMain = require("electron").ipcMain;
-  // let crashReporter = require("crash-reporter");
-  let BrowserWindow = require("browser-window");
-  let noble = require("noble");
-  let bunyan = require("bunyan");
+  const electron = require("electron");
+  // Module to control application life.
+  const {app} = electron;
+  // Module to create native browser window.
+  const {BrowserWindow} = electron;
+  // Module to communicate asynchronously from the main process to renderer processes
+  const {ipcMain} = electron;
+  // bluetooth module
+  const noble = require("noble");
+  // logging module
+  const bunyan = require("bunyan");
+  // util module
   const util = require("util");
-
-  // const storage = require("node-persist");
+  // local module for device storage and retrieval from persistent storage
   const deviceStorage = require("./device-storage");
+  
+  /* ------------------------------------------- */
+  console.info("Electron Version", process.versions.electron);
+  console.info("Chrome Version", process.versions.chrome);
+  
+  /* ------------------------------------------- */
+  
+  
   // hold a local copy of augmented device objects
   let storedDevices = {};
   
