@@ -3,12 +3,18 @@
 'use strict';
 
 
+
 class CharacteristicCtrl {
 
   constructor($scope, $mdSidenav, bulbService) {
     this.mdSidenav = $mdSidenav;
     this.$scope = $scope;
     this.bulbService = bulbService;
+      
+    this.TYPE_COLOR = 'color';
+    this.TYPE_EFFECT = 'effect';
+    this.EFFECTS_OFF_VALUES = [0,0,0,0,255,0,1,0];
+    
     
     this.device = null;
     
@@ -56,13 +62,24 @@ class CharacteristicCtrl {
     }
     console.info("DeviceSelected color", this.color);
     console.info("DeviceSelected effect", this.effect);
+    this.detectType();
   }
   
   togglePane() {
     console.log("Toggling Pane", this.mdSidenav);
     this.mdSidenav('characteristic').toggle();
-    
-    // this.bulbService
+  }
+  
+  detectType() {
+    let currentEffectValues = Array.from(this.device.characteristics.effects.value)
+    let match = (this.EFFECTS_OFF_VALUES.length === currentEffectValues.length) && this.EFFECTS_OFF_VALUES.every((value, index) => {
+      return value == currentEffectValues[index];
+    });
+    if (match) {
+      this.type = this.TYPE_COLOR;
+    } else {
+      this.type = this.TYPE_EFFECT;
+    }
   }
   
   save(characteristic) {

@@ -196,7 +196,7 @@
           }
           
           device.stored = true;
-          device.power = true;
+          device.discovered = true;
           // check if device is in the local variable and update stored devices local variable with some extra data (powered on etc)
           if (!(device.uuid in deviceStorage.getAll())) {
             log.info("Device " + device.uuid + " not in local variable");
@@ -377,49 +377,58 @@
           let g = Math.floor(Math.random() * 256);
           let b = Math.floor(Math.random() * 256);
           log.info("Color", saturation, r, g, b);
-          /*if (type === "color") {
-            
-            
-            let colorBytes = new Buffer([saturation, r, g, b]);
-            characteristic.write(colorBytes, true, (error) => {
-              if (error) {
-                log.error("Could not write color name characteristic");
-              }
-              // @TODO update stored device
-              log.info("Wrote color characteristic");
-            });
-          } else */if (type === "effects") {
-            let mode = "0" + (Math.floor(Math.random() * 4) + 1);
-            let speed = "0" + (Math.floor(Math.random() * 2) + 1);
-            let effectBytes = new Buffer([saturation, r, g, b, mode, "00", speed, "00"]);
-            characteristic.write(effectBytes, true, (error) => {
-              if (error) {
-                log.error("Could not write effect name characteristic");
-              }
-              // @TODO update stored device
-              log.info("Wrote effect characteristic");
-            });
-          }
+          
+          // write color
+          // let colorBytes = new Buffer([saturation, r, g, b]);
+          // writeCharacteristic(characteristic, colorBytes, type)
+          // .catch((error) => {
+          //   log.error("write catch error", error);
+          // });
+          
+          // write effect  
+          let mode = "0" + (Math.floor(Math.random() * 4) + 1);
+          let speed = "0" + (Math.floor(Math.random() * 2) + 1);
+          let effectBytes = new Buffer([saturation, r, g, b, mode, "00", speed, "00"]);
+          writeCharacteristic(characteristic, effectBytes, type)
+          .catch((error) => {
+            log.error("write catch error", error);
+          });
+          
           log.info(`Characteristic data for ${type}`, characteristic.uuid, data.toJSON(), data);
           resolve({type: type, characteristic: characteristic, data: data});
         });
       });
     }
     
-    function writeCharacteristic() {
-      // let r = Math.floor(Math.random() * 256);
-      // let g = Math.floor(Math.random() * 256);
-      // let b = Math.floor(Math.random() * 256);
-      // log.info("Color", r, g, b);
-      // let colorBytes = new Buffer([0, r, g, b]);
-      // colorChar.write(colorBytes, true, (error) => {
-      //   if (error) {
-      //     log.error("Could not color name characteristic");
-      //   }
-      //   // @TODO update stored device
-      //   log.info("Wrote color characteristic");
-      // });
+    function writeCharacteristic(characteristic, value, type) {
+      log.info(`Writing ${type} Characteristic with value ${value}`);
+      return new Promise((resolve, reject) => {
+        characteristic.write(value, true, (error) => {
+          if (error) {
+            let errorMessage = `Could not write characteristic ${type} with value ${value}. Error: ${error}`;
+            log.error(errorMessage);
+            reject(errorMessage);
+          }
+          log.info(`Wrote characteristic ${type} with value ${value}`);
+          resolve(true);
+        });
+      });
     }
+    
+    // function writeCharacteristic() {
+    //   // let r = Math.floor(Math.random() * 256);
+    //   // let g = Math.floor(Math.random() * 256);
+    //   // let b = Math.floor(Math.random() * 256);
+    //   // log.info("Color", r, g, b);
+    //   // let colorBytes = new Buffer([0, r, g, b]);
+    //   // colorChar.write(colorBytes, true, (error) => {
+    //   //   if (error) {
+    //   //     log.error("Could not color name characteristic");
+    //   //   }
+    //   //   // @TODO update stored device
+    //   //   log.info("Wrote color characteristic");
+    //   // });
+    // }
     
     function colorCharacteristicChange(data, isNotification) {
       log.info("change", data, isNotification);
@@ -462,7 +471,7 @@
         uuid: device.uuid,
         addressType: device.addressType,
         connectable: device.connectable,
-        power: device.power || false,
+        discovered: device.discovered || false,
         stored: device.stored || false,
         lastSeen: Date.now()
       };
@@ -545,7 +554,7 @@
     for (let uuid in storedDevices) {
       if (typeof storedDevices[uuid].disconnect === "function") {
         
-        disconnect(storedDevices[uuid]);
+        // disconnect(storedDevices[uuid]);
       }
     }
   }

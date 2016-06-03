@@ -1,4 +1,5 @@
 <div ng-controller="characteristicCtrl as char">
+  {{char.TYPE_COLOR}} {{char.TYPE_EFFECT}}
   <md-sidenav class="characteristics site-sidenav md-sidenav-right md-whiteframe-z2" md-component-id="characteristic" layout="column">
     <md-toolbar class="md-theme-light">
       <h1 class="md-toolbar-tools">Device/Group Settings</h1>
@@ -7,10 +8,10 @@
       Type: {{char.type}}, Effect: {{char.effect}}
       <md-radio-group ng-model="char.type">
         <h3>Type</h3>
-        <md-radio-button value="color" class="md-primary">Colour</md-radio-button>
-        <md-radio-button value="Effect">Effect</md-radio-button>
+        <md-radio-button value="{{char.TYPE_COLOR}}" class="md-primary">Colour</md-radio-button>
+        <md-radio-button value="{{char.TYPE_EFFECT}}" class="md-primary">Effect</md-radio-button>
       </md-radio-group>
-      <div ng-if="char.type == 'color'">
+      <div ng-if="char.type == char.TYPE_COLOR">
         <h4>
           <span ng-attr-style="width: 20px; height: 20px; display: block;border: 1px solid #333; background: rgba({{char.color.red}},{{char.color.green}},{{char.color.blue}},{{(char.color.saturation / 255).toFixed(2)}})">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
           RGBA {{char.color.red}},{{char.color.green}},{{char.color.blue}},{{(char.color.saturation / 255).toFixed(2)}}
@@ -56,8 +57,8 @@
           </md-input-container>
         </div>
       </div>
-      <div ng-if="char.type == 'Effect'">
-        <md-radio-group ng-model="char.effect.mode" ng-if="char.type == 'Effect'">
+      <div ng-if="char.type == char.TYPE_EFFECT">
+        <md-radio-group ng-model="char.effect.mode" ng-if="char.type == 'char.TYPE_EFFECT'">
           <h3>Effect</h3>
           <md-radio-button value="01" class="md-primary" >Fade</md-radio-button>
           <md-radio-button value="02">Jump RGB (rainbow)</md-radio-button>

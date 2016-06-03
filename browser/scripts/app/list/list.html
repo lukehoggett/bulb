@@ -1,41 +1,61 @@
 <div ng-controller="listCtrl as list" id="list">
-  <md-content class="md-padding" layout-xs="column" layout="row">
-    <div flex-xs flex-gt-xs="100" layout="column">
-      <md-card ng-repeat="device in list.bulb.devices | orderObjectBy: 'power' : true">
-        <md-card-title>
-          <md-card-title-text>
-            <span class="md-headline">
-              <md-input-container>
-                <input ng-model="device.name" ng-model-options="{ updateOn: 'mousedown blur' }" ng-change="list.updateDeviceName(device.uuid)" aria-label="device name"/>
-              </md-input-container>
-            </span>
-            <span class="md-subhead">{{device.uuid}}</span>
-          </md-card-title-text>
-        </md-card-title>
-        <md-card-actions layout="row" layout-align="start center">
-          <md-button ng-click="list.bulb.handleConnection(device)" class="md-raised md-primary">{{device.state == "disconnected" ? "Connect" : "Disconnect"}}</md-button>
-          <md-button ng-click="list.getCharacterisics(device)" class="md-raised md-primary">Get Characteristics</md-button>
-          <md-button ng-click="list.selectDevice(device)" class="md-raised md-primary">Edit Characteristics</md-button>
-        </md-card-actions>
-        <md-card-content>
-          <p>
-            RSSI:
-            {{device.rssi}}
-          </p>
-          <p>
-            State:
-            {{device.state}}
-          </p>
-          <p>
-            Stored:
-            {{device.stored}}
-          </p>
-          <p>
-            Power:
-            {{device.power}}
-          </p>
-        </md-card-content>
-      </md-card>
-    </div>
-  </md-content>
+    <md-grid-list md-cols-xs="1" md-cols-sm="2" md-cols-md="4" md-cols-gt-md="6" md-row-height-gt-md="3:2" md-row-height="2:2" md-gutter="12px" md-gutter-gt-sm="8px">
+        <md-grid-tile ng-repeat="device in list.bulb.devices | orderObjectBy: 'discovered' : true" md-rowspan="3" md-colspan="2" md-colspan-sm="1" md-colspan-xs="1">
+            <md-grid-tile-header>
+                <md-input-container>
+                    <input ng-model="device.name" ng-model-options="{ updateOn: 'mousedown blur' }" ng-change="list.updateDeviceName(device.uuid)" aria-label="device name"/>
+                </md-input-container>
+            </md-grid-tile-header>
+            <md-list flex role="list" class="md-dense">
+                <md-subheader class="md-no-sticky">{{device.uuid}}</md-subheader>
+                <md-subheader class="md-no-sticky">color: {{device.characteristics.color.value}}</md-subheader>
+                <md-subheader class="md-no-sticky">effects: {{device.characteristics.effects.value}}</md-subheader>
+                <md-list-item>
+                    <div>
+                        <md-icon aria-label="Discovered" class="material-icons" class="md-avatar-icon" ng-class="device.discovered ? 'green' : 'red'">{{device.discovered ? 'check' : 'close'}}</md-icon>
+                        <span class="md-list-item-text">Discovered</span>
+                    </div>
+                </md-list-item>
+                <md-list-item>
+                    <div>
+                        <md-icon aria-label="Connected" class="material-icons" class="md-avatar-icon" ng-class="device.state == 'connected' ? 'green' : 'red'">{{device.state == 'connected' ? 'check' : 'close'}}</md-icon>
+                        <span>Connected</span>
+                    </div>
+                </md-list-item>
+                <md-list-item>
+                    <div>
+                        <md-icon aria-label="Stored" class="material-icons" class="md-avatar-icon" ng-class="device.stored ? 'green' : 'red'">{{device.stored ? 'check' : 'close'}}</md-icon>
+                        <span>Stored</span>
+                    </div>
+                </md-list-item>
+                <md-list-item>
+                    <div>
+                        <span>RSSI:
+                            {{device.discovered ? device.rssi : '-'}}</span>
+                    </div>
+                </md-list-item>
+            </md-list>
+            <md-grid-tile-footer class="md-accent">
+                <md-button ng-click="list.bulb.handleConnection(device)" class="md-fab md-raised md-primary" aria-label="{{device.state == 'connected' ? 'Disconnect' : 'Connect'}}">
+                    <md-icon ng-if="device.state == 'connected'" aria-label="Disconnect" class="material-icons">close</md-icon>
+                    <md-icon ng-if="device.state == 'disconnected'" aria-label="Connect" class="material-icons">check</md-icon>
+                    <md-tooltip md-direction="top">
+                        {{device.state == 'connected' ? 'Disconnect' : 'Connect'}}
+                    </md-tooltip>
+                </md-button>
+                <md-button ng-click="list.getCharacterisics(device)" class="md-fab md-raised md-primary" aria-label="Get Characteristics">
+                    <md-icon aria-label="Get Characteristics" class="material-icons">system_update_alt</md-icon>
+                    <md-tooltip md-direction="top">
+                        Get Characteristics
+                    </md-tooltip>
+                </md-button>
+                <md-button ng-click="list.selectDevice(device)" class="md-fab md-raised md-primary" aria-label="Edit Characteristics">
+                    <md-icon aria-label="Edit Characteristics" class="material-icons">edit</md-icon>
+                    <md-tooltip md-direction="top">
+                        Edit Characteristics
+                    </md-tooltip>
+                </md-button>
+            </md-grid-tile-footer>
+        </md-grid-tile>
+    </md-grid-list>
 </div>

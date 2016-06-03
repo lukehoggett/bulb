@@ -1,6 +1,14 @@
 html > body {
   background-color: #fff;
 }
+
+.green {
+  color: #4CAF50;
+}
+.red {
+  color: #F44336;
+}
+
 #container {}
 #header {}
 #header button {
@@ -12,16 +20,32 @@ html > body {
 #content {
   height: 100%;
 }
+
+
+
+
 #list {}
-#list .md-headline {
+#list md-grid-list {
+  margin: 8px;
+}
+#list md-grid-tile-header {
   color: #333;
   font-size: 24px;
   font-weight: 400;
   line-height: 32px;
+  
 }
-#list md-card-title {
-  padding: 24px 16px 16px;
+#list md-grid-tile-header md-input-container {
+  height: 48px;
+  padding: 0;
+  margin: 0 0 0 4px;
+  width: 100%;
 }
+#list md-grid-tile-header md-input-container input {
+  margin: 12px 0;
+  padding: 0 8px; 
+}
+
 #list .md-subhead {
   rgba(0, 0, 0, 0.54) font-size: 16px;
   font-weight: 400;
@@ -30,6 +54,16 @@ html > body {
   padding-top: 0;
   font-size: 14px;
 }
+
+#list md-grid-tile-footer {
+  height: 80px;
+}
+
+
+
+
+
+
 
 md-sidenav.characteristics .controls {
   padding: 10px;
