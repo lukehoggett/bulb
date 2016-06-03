@@ -3,24 +3,12 @@
   <md-content class="md-padding" layout-xs="column" layout="row">
     <div flex-xs flex-gt-xs="100" layout="column">
       <md-card ng-repeat="device in list.bulb.devices | orderObjectBy: 'power' : true">
-        <!-- <md-card-header>
-        <md-card-avatar>
-          <img class="md-user-avatar" src="avatar.png">
-        </md-card-avatar>
-        <md-card-header-text>
-          <span class="md-title">{{device.uuid}}</span>
-          <span class="md-subhead">Sub header</span>
-        </md-card-header-text>
-      </md-card-header> -->
-        <!-- <img ng-src="card-image.png" class="md-card-image" alt="image caption"> -->
         <md-card-title>
           <md-card-title-text>
             <span class="md-headline">
               <md-input-container>
-                <!-- <label>Title</label> -->
                 <input ng-model="device.name" ng-model-options="{ updateOn: 'mousedown blur' }" ng-change="list.updateDeviceName(device.uuid)" aria-label="device name"/>
-              </md-input-container
-             
+              </md-input-container>
             </span>
             <span class="md-subhead">{{device.uuid}}</span>
           </md-card-title-text>
