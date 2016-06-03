@@ -102,7 +102,7 @@
           setTimeout(() => {
             noble.startScanning();
             log.info("Noble State = poweredOn - Sending scanning");
-            webContents.send("scanning");
+            webContents.send("scanning.start");
           }, 1500);
         }
       // });
@@ -219,6 +219,7 @@
 
     function connect(uuid) {
       noble.stopScanning();
+      webContents.send("scanning.stop");
       log.info("Connect: to uuid", uuid);
       let device = deviceStorage.getByUUID(uuid);
       if (typeof device.connect === "function") {

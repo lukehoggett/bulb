@@ -14,8 +14,12 @@ class AppCtrl {
     
     this.scanStateMessage = "Stop Scan";
     
-    ipc.on('scanning', () => {
+    ipc.on('scanning.start', () => {
       this.scanStateMessage = "Stop Scan";
+    });
+    
+    ipc.on('scanning.stop', () => {
+      this.scanStateMessage = "Start Scan";
     });
 
   }
