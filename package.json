@@ -53,6 +53,7 @@
     "electron-prebuilt": "^1.2.1",
     "noble": "^1.5.0",
     "node-persist": "0.0.8",
-    "playbulb": "git+https://github.com/lukehoggett/playbulb-live.git"
+    "playbulb": "git+https://github.com/lukehoggett/playbulb-live.git",
+    "yargs": "^4.7.1"
   }
 }

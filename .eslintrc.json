@@ -1,5 +1,11 @@
 {
+    "ecmaFeatures": {
+        "modules": true,
+        "spread": true,
+        "restParams": true
+    },
     "env": {
+        "browser": true,
         "es6": true,
         "node": true
     },
@@ -14,5 +20,8 @@
             "warn",
             "double"
         ]
+    },
+    "parserOptions": {
+        "sourceType": "module"
     }
 }

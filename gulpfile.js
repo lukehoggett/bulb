@@ -1,17 +1,17 @@
-var gulp = require('gulp'),
-  babel = require('gulp-babel'),
-  runSequence = require('run-sequence'),
+let gulp = require("gulp"),
+  babel = require("gulp-babel"),
+  runSequence = require("run-sequence"),
   runElectron = require("gulp-run-electron"),
-  rename = require('gulp-rename'),
-  electron  = require('gulp-atom-electron'),
-  del = require('del'),
-  exec = require('child_process').exec;
+  rename = require("gulp-rename"),
+  electron  = require("gulp-atom-electron"),
+  del = require("del"),
+  exec = require("child_process").exec;
 
-gulp.task('transpile:app', function() {
-  return gulp.src('main/index.es6.js')
+gulp.task("transpile:app", function() {
+  return gulp.src("main/index.es6.js")
     .pipe(babel())
-    .pipe(rename('index.js'))
-    .pipe(gulp.dest('main'));
+    .pipe(rename("index.js"))
+    .pipe(gulp.dest("main"));
 });
 
 
@@ -63,4 +63,4 @@ gulp.task('transpile:app', function() {
 
 // gulp.watch(["**/*.js", "**/*.html"], ["run", runElectron.rerun]);
 
-// gulp.task('default', ['transpile:app']);
+gulp.task("default", ["transpile:app"]);

@@ -25,6 +25,30 @@ html > body {
 
 
 #list {}
+  
+#list md-list {
+  margin:0 8px;
+}
+
+#list md-input-container {
+  margin: 2px 0;
+  height: 30px;
+}
+#list md-list-item button {
+    min-width: 42px;
+}
+#list md-icon {
+  width: 30px;
+  margin: 0;
+}
+#list md-list-item {
+  border-bottom: 1px solid #efefef;
+}
+
+
+
+
+
 #list md-grid-list {
   margin: 8px;
 }
@@ -54,6 +78,14 @@ html > body {
   padding-top: 0;
   font-size: 14px;
 }
+
+
+
+
+
+
+
+
 
 #list md-grid-tile-footer {
   height: 80px;
