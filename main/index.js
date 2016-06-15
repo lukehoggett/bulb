@@ -1,17 +1,15 @@
 /* jshint esnext: true */
 
 // import electron from "electron"; 
-import { app, BrowserWindow, ipcMain } from "electron";
 
 (function () {
   "use strict";
 
-  // const electron = require("electron");
+  const electron = require("electron");
 
   // Modules for electron
-  // const {app, BrowserWindow, ipcMain} = electron;
+  const {app, BrowserWindow, ipcMain} = electron;
   // bluetooth module
-
   const noble = require("noble");
   // logging module
   const bunyan = require("bunyan");
@@ -80,16 +78,11 @@ import { app, BrowserWindow, ipcMain } from "electron";
 
   // hold a local copy of augmented device objects
   let storedDevices = {};
+  let discoveredDevices = {};
 
   let colorChar = null;
-  let effectsChar = null;
+  let effectChar = null;
   let nameChar = null;
-
-  // open dev tools
-  ipcMain.on("devTools", (event, arg) => {
-    log.info("DevTools", arg);
-    win.openDevTools();
-  });
 
   // handle quitting
   app.on("window-all-closed", () => {
@@ -146,83 +139,84 @@ import { app, BrowserWindow, ipcMain } from "electron";
       // });
     });
 
-    ipcMain.on("get-stored-devices", event => {
-      log.info("Stored Devices Requested by renderer");
-      storedDevices = deviceStorage.getAll();
-      for (var uuid in storedDevices) {
-        if (storedDevices.hasOwnProperty(uuid)) {
-          event.sender.send("get-stored-devices-reply", storedDevices[uuid], uuid);
-        }
-      }
-    });
+    
+    
+    
 
-    ipcMain.on("scan.start", () => {
+    // adding ipcMain listeners
+    ipcMain.on("scan.start", onScanStart);
+    ipcMain.on("scan.stop", onScanStop);
+    ipcMain.on("device.connect", onDeviceConnect);
+    ipcMain.on("device.disconnect", onDeviceDisconnect);
+    ipcMain.on("device.characteristics.get", onDeviceGetCharacteristics);
+    ipcMain.on("device.characteristic.set-test", onDeviceSetCharacteristic);
+    ipcMain.on("device.get", onDeviceGet);
+    ipcMain.on("dev.tools.open", onDevToolsOpen);
+    ipcMain.on("device.get.stored", onDeviceGetStored);
+    
+    // ipcMain listener functions
+    function onScanStart() {
       // Start scanning only if already powered up.
       if (noble.state === "poweredOn") {
         log.info("Starting scan... ");
         noble.startScanning();
       }
-    });
-
-    ipcMain.on("scan.stop", () => {
+    }
+    
+    function onScanStop() {
       // Stop scanning for devices.
       log.info("Stopping scan...");
       noble.stopScanning();
-    });
-
-    ipcMain.on("device.connect", (event, deviceUUID) => {
+    }
+    
+    function onDeviceConnect(event, deviceUUID) {
       connect(deviceUUID);
-    });
-
-    ipcMain.on("device.disconnect", (event, deviceUUID) => {
+    }
+    
+    function onDeviceDisconnect(event, deviceUUID) {
       disconnect(deviceUUID);
-    });
-
-    ipcMain.on("device.characteristics.get", (event, deviceUUID) => {
-
+    }
+    
+    function onDeviceGetCharacteristics(event, deviceUUID) {
       let device = deviceStorage.getByUUID(deviceUUID);
       log.info("service and characteristic discovery from get");
       discoverServicesAndCharacteristics(device);
-    });
+    }
 
-    ipcMain.on("device.characteristic.get", (event, deviceUUID, characteristic) => {
-      log.info("device.characteristic.get", deviceUUID, characteristic);
-    });
-
-    ipcMain.on("device.characteristic.set", (event, deviceUUID, characteristic, value, type) => {
-      log.info("device.characteristic.set", deviceUUID, characteristic, value, type);
-      writeCharacteristic(characteristic, value, type);
-    });
-
-    ipcMain.on("device.set-name", (event, uuid, name) => {
-      log.info("device.set-name", uuid, name, nameChar);
-      var data = new Buffer(name);
-      nameChar.write(data, true, error => {
-        if (error) {
-          console.error("Write Error");
-        }
-
-        connect(uuid);
-        let storedDevice = deviceStorage.getByUUID(uuid);
-        storedDevice.name = name;
-        storedDevice.advertisement.advertisement = name;
-        log.info("))))))))))))))))))))", storedDevice, ")))))))))))))))))))))", serializeDevice(storedDevice), "((((((((((((((((()))))))))))))))))");
-        // save device to persistent storage
-        deviceStorage.set(uuid, serializeDevice(storedDevice));
+    function onDeviceSetCharacteristic(event, deviceUUID, value, characteristic, type) {
+      log.info("device.characteristic.set TEST\n\n UUID", deviceUUID, "\n\n Characteristic", characteristic, "\n\nVALUE", value, "\n\nTYPE", type);
+      // get the characteristic
+      let device = deviceStorage.getByUUID(deviceUUID);
+      log.info("device.characteristic.set-test device \n", device);
+      writeCharacteristic(characteristic, value, type, deviceUUID).catch(error => {
+        log.error("write catch error from set characteristic event", error);
       });
-      // nameChar.once("write", true, arg => {
-      // update storage and local devices
-      // log.info(/*storedDevice, */storedDevice.advertisement);
-
-      // });
-    });
-
-    ipcMain.on("device.get", (event, uuid) => {
-      log.info("ipc: device.get", event, uuid, deviceStorage.getByUUID(uuid));
-    });
-
-    noble.on("discover", device => {
-
+    }
+    
+    function onDeviceGet(event, deviceUUID) {
+      log.info("ipc: device.get", event, deviceUUID, deviceStorage.getByUUID(deviceUUID));
+    }
+    
+    function onDevToolsOpen(event, arg) {
+      log.info("DevTools", arg);
+      win.openDevTools();
+    }
+    
+    function onDeviceGetStored(event) {
+      log.info("Stored Devices Requested by renderer");
+      storedDevices = deviceStorage.getAll();
+      for (var uuid in storedDevices) {
+        if (storedDevices.hasOwnProperty(uuid)) {
+          event.sender.send("device.get.stored.reply", storedDevices[uuid], uuid);
+        }
+      }
+    }
+    
+    // noble event listeners
+    noble.on("discover", handleDiscovered);
+    
+    function handleDiscovered(device) {
+      log.debug("handleDiscovered");
       if (typeof device.advertisement.manufacturerData !== "undefined") {
 
         if (device.advertisement.manufacturerData.toString("hex") === "4d49504f57") {
@@ -250,12 +244,9 @@ import { app, BrowserWindow, ipcMain } from "electron";
           // send notification to renderer that a device has been discovered
           log.info("Discover: Sending updated data about discovered device to renderer", device.uuid);
           webContents.send("discovered", serializeDevice(device));
-
-          // add listeners for service and characteristic discovery
-          // device.once("servicesDiscover", mapDiscoveredService.bind(this, device.uuid));
         }
       }
-    });
+    }
 
     function connect(uuid) {
       noble.stopScanning();
@@ -271,8 +262,6 @@ import { app, BrowserWindow, ipcMain } from "electron";
 
             // send message to notify of connection
             webContents.send("connected", serializeDevice(device));
-
-            // device.on("servicesDiscover", mapDiscoveredService.bind(this, uuid));
 
             // @TODO fix up to use generic arrays for candle and color
             log.info("service and characteristic discovery from connect");
@@ -352,31 +341,35 @@ import { app, BrowserWindow, ipcMain } from "electron";
     }
 
     function mapDiscoveredCharacteristics(deviceUUID, characteristics) {
-
-      log.info("DISCOVER CHARACTERISTICS START >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", deviceUUID);
+      let device = deviceStorage.getByUUID(deviceUUID);
+      log.info("DISCOVER CHARACTERISTICS START >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", deviceUUID, device, storedDevices);
       characteristics.map(characteristic => {
         if (characteristic.uuid === types.CANDLE.colorUuid) {
           colorChar = characteristic;
           // colorChar.on("read", colorCharacteristicChange);
         } else if (characteristic.uuid === types.CANDLE.effectsUuid) {
-            effectsChar = characteristic;
-            // colorChar.on("read", effectsCharacteristicChange);
-          } else if (characteristic.uuid === types.CANDLE.nameUuid) {
-              nameChar = characteristic;
-              // colorChar.on("read", nameCharacteristicChange);
-            }
+          effectChar = characteristic;
+          // colorChar.on("read", effectCharacteristicChange);
+        } else if (characteristic.uuid === types.CANDLE.nameUuid) {
+          nameChar = characteristic;
+          // colorChar.on("read", nameCharacteristicChange);
+        }
 
         // storedDevices[deviceUUID].services = services;
-        // let serializedServices = serializeServices(deviceUUID);
+        // let serializedServices = serializeServices(deviceUUID);x
 
         // event.sender.send("services", {deviceUUID: device.uuid, services: serializeServices(services)});
         // event.sender.send("characteristics", {deviceUUID: device.uuid, characteristics: characteristics});
       });
 
-      if (colorChar && effectsChar && nameChar) {
-        log.info("Have all required characteristics, getting values");
-        let all = [readCharacteristic("color", colorChar), readCharacteristic("effects", effectsChar), readCharacteristic("name", nameChar)];
-        log.info(all);
+      if (colorChar && effectChar && nameChar) {
+        log.info("+++++++++++ Have all required characteristics, getting values");
+        let all = [readCharacteristic("color", colorChar), readCharacteristic("effect", effectChar), readCharacteristic("name", nameChar)];
+        // log.info("A;ll", all);
+        
+        // add characteristics to the storedDevices cache
+        // storedDevices[deviceUUID].characteristics.push(colorChar);
+        // storedDevices[deviceUUID].characteristics.push(effectChar);
         Promise.all(all).then(values => {
           log.info("Have all characteristics");
           // send notification of values to ui
@@ -400,11 +393,11 @@ import { app, BrowserWindow, ipcMain } from "electron";
             log.error("Could not read characteristic", characteristic.uuid, error);
             reject("Could not read characteristic", error);
           }
-          let saturation = Math.floor(Math.random() * 256);
-          let r = Math.floor(Math.random() * 256);
-          let g = Math.floor(Math.random() * 256);
-          let b = Math.floor(Math.random() * 256);
-          log.info("Color", saturation, r, g, b);
+          // let saturation = Math.floor(Math.random() * 256);
+          // let r = Math.floor(Math.random() * 256);
+          // let g = Math.floor(Math.random() * 256);
+          // let b = Math.floor(Math.random() * 256);
+          // log.info("Color", saturation, r, g, b);
 
           // write color
           // let colorBytes = new Buffer([saturation, r, g, b]);
@@ -414,12 +407,12 @@ import { app, BrowserWindow, ipcMain } from "electron";
           // });
 
           // write effect 
-          let mode = "0" + (Math.floor(Math.random() * 4) + 1);
-          let speed = "0" + (Math.floor(Math.random() * 2) + 1);
-          let effectBytes = new Buffer([saturation, r, g, b, mode, "00", speed, "00"]);
-          writeCharacteristic(characteristic, effectBytes, type).catch(error => {
-            log.error("write catch error", error);
-          });
+          // let mode = "0" + (Math.floor(Math.random() * 4) + 1);
+          // let speed = "0" + (Math.floor(Math.random() * 2) + 1); 
+          // let effectBytes = new Buffer([saturation, r, g, b, mode, "00", speed, "00"]);
+          // writeCharacteristic(characteristic, effectBytes, type).catch(error => {
+          //   log.error("write catch error", error);
+          // });
 
           log.info(`Characteristic data for ${ type }`, characteristic.uuid, data.toJSON(), data);
           resolve({ type: type, characteristic: characteristic, data: data });
@@ -427,9 +420,11 @@ import { app, BrowserWindow, ipcMain } from "electron";
       });
     }
 
-    function writeCharacteristic(characteristic, value, type) {
-      log.info(`Writing ${ type } Characteristic with value ${ value }`);
+    function writeCharacteristic(characteristic, value, type, uuid) {
+      log.info(storedDevices);
+      log.info(`Writing ${ type } Characteristic with value`, value, " and characteristic \n", characteristic);
       return new Promise((resolve, reject) => {
+        log.info("in write Promise", characteristic);
         characteristic.write(value, true, error => {
           if (error) {
             let errorMessage = `Could not write characteristic ${ type } with value ${ value }. Error: ${ error }`;

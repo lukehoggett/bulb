@@ -1,83 +1,34 @@
 /* jshint esnext: true */
 /* jshint node: true */
-'use strict';
-const ipc = require('electron').ipcRenderer;
+"use strict";
+const ipc = require("electron").ipcRenderer;
 
 class BulbService {
     constructor($rootScope, $timeout) {
-      this.devices = {};
-      this.scanning = false;
-      
-      
       this.$rootScope = $rootScope;
       this.$timeout = $timeout;
       
+      this.devices = {};
+      this.scanning = false;
+      
       // request any stored devices from the main process
-      ipc.send('get-stored-devices', (event) => {
+      this.getStoredDevices();
+      
+      // listening to messages from the main
+      ipc.on("device.get.stored.reply", (event, device, uuid) => this.onDeviceGetStoredReply(event, device, uuid));
+      ipc.on("discovered", (event, devices) => this.onDiscovered(event, devices));
+      ipc.on("scanning", (event) => this.onScanning(event));
+      ipc.on("services", (event, services) => this.onServices(event, services));
+      ipc.on("connected", (event, device) => this.onConnected(event, device));
+      ipc.on("disconnected", (event, device) => this.onDisconnected(event, device));
+      ipc.on("characteristics", (event, characteristic) => this.onCharacteristics(event, characteristic));
+
+    }
+    
+    getStoredDevices() {
+      ipc.send("device.get.stored", (event) => {
         console.log("BulbService: get stored devices", event);
       });
-      
-      ipc.on('get-stored-devices-reply', (event, device, uuid) => {
-        console.log("BulbService: receiving stored devices", device, uuid);
-        this.devices[device.uuid] = device;
-      });
-
-      ipc.on('discovered', (event, device) => {
-        console.log("BulbService: Discovered Device", device);
-        if (device.uuid in this.devices) {
-          console.log("Existing device");
-        }
-        this.devices[device.uuid] = device;
-        // console.log("BulbService: Devices", this.devices);
-        this.$timeout(() => {}, 0);
-        
-      });
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      ipc.on('scanning', (event) => {
-        console.log("scanning");
-        this.scanning = true;
-        this.$timeout(() => {}, 0);
-        console.log("Scanning?", this.scanning);
-      });
-      
-      
-      ipc.on('services', (event, services) => {
-        console.log("services", services);
-      });      
-      // ipc.on('connected', (event, device) => {
-      //   
-      //   console.log("connected", device, device.uuid, this.devices, this);
-      //   this.devices[device.uuid] = device;
-      // });
-      
-      // receive info about devices that are connected
-      ipc.on('connected', (event, device) => {
-        
-        console.log("connected", device, device.uuid, this.devices, this);
-        this.devices[device.uuid] = device;
-        this.$timeout(() => {}, 0);
-      });
-      
-      ipc.on('disconnected', (event, device) => {
-        console.info("disconnected event");
-        this.devices[device.uuid] = device;
-      });
-      
-      ipc.on('characteristics', (event, characteristics) => {
-        console.log("characteristics", characteristics);
-      });
-      
-      
-      // ipc.send("device.characteristic.get", )
     }
     
     isScanning() {
@@ -85,12 +36,12 @@ class BulbService {
     }
     
     startScan() {
-      ipc.send('scan.start');
+      ipc.send("scan.start");
       this.scanning = true;
     }
     
     stopScan() {
-      ipc.send('scan.stop');
+      ipc.send("scan.stop");
       this.scanning = false;
     }
     
@@ -106,17 +57,16 @@ class BulbService {
     
     connect(device) {
       console.log("BulbService: connecting");
-      ipc.send('device.connect', device.uuid);
+      ipc.send("device.connect", device.uuid);
     }
     
     disconnect(device) {
       console.log("BulbService: disconnecting");
-      ipc.send('device.disconnect', device.uuid);
+      ipc.send("device.disconnect", device.uuid);
     }
     
     setDeviceName(uuid, name) {
       console.log("BulbService: setDeviceName", uuid, name);
-      ipc.send('device.set-name', uuid, name);
     }
     
     getDevices() {
@@ -131,7 +81,7 @@ class BulbService {
     
     getCharacteristics(uuid) {
       console.log("getCharacteristics", uuid);
-      ipc.send('device.characteristics.get', uuid);
+      ipc.send("device.get.characteristics", uuid);
     }
     
     getCharacteristic(uuid, characteristic) {
@@ -143,7 +93,52 @@ class BulbService {
     }
     
     setCharacteristic(uuid, characteristic, value, type) {
-      ipc.send('device.characteristics.set', uuid, characteristic, value, type);
+      console.log("setCharacteristic", uuid, characteristic, value, type);
+      // ipc.send("value", value);
+      // ipc.send("device.characteristic.set", uuid, characteristic, value, type);
+      ipc.send("device.characteristic.set-test", uuid, value, characteristic, type);
+    }
+    
+    // IPC listeners
+    onDeviceGetStoredReply(event, device, uuid) {
+      console.log("BulbService:", this);
+      console.log("BulbService: device.get.stored.reply", device, uuid, this.devices, this);
+      this.devices[device.uuid] = device;
+    }
+    
+    onDiscovered(event, device) {
+      console.log("BulbService: Discovered Device", device);
+      if (device.uuid in this.devices) {
+        console.log("Existing device");
+      }
+      this.devices[device.uuid] = device;
+      this.$timeout(() => {}, 0);
+    }
+    
+    onScanning(event) {
+      console.log("scanning");
+      this.scanning = true;
+      this.$timeout(() => {}, 0);
+      console.log("Scanning?", this.scanning);
+    }
+    
+    onServices(event, services) {
+      console.log("services", services);
+    }
+    
+    onConnected(event, device) {
+      console.log("connected", device, device.uuid, this.devices, this);
+      this.devices[device.uuid] = device;
+      this.$timeout(() => {}, 0);
+    }
+    
+    onDisconnected(event, device) {
+      console.info("disconnected event");
+      this.devices[device.uuid] = device;
+    }
+    
+    onCharacteristics(event, characteristics) {
+      console.log("characteristics", characteristics);
     }
 }
 

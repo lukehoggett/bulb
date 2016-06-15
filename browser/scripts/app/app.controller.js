@@ -81,7 +81,7 @@ class AppCtrl {
 
   openDevTools() {
     console.log("DevTools");
-    ipc.send('devTools', null);
+    ipc.send('dev.tools.open', null);
   }
   
   

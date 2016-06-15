@@ -1,6 +1,6 @@
 /* jshint esnext: true */
 /* jshint node: true */
-'use strict';
+"use strict";
 
 
 
@@ -11,8 +11,8 @@ class CharacteristicCtrl {
     this.$scope = $scope;
     this.bulbService = bulbService;
       
-    this.TYPE_COLOR = 'color';
-    this.TYPE_EFFECT = 'effect';
+    this.TYPE_COLOR = "color";
+    this.TYPE_EFFECT = "effect";
     this.EFFECTS_OFF_VALUES = [0,0,0,0,255,0,1,0];
     
     
@@ -26,7 +26,7 @@ class CharacteristicCtrl {
       blue: 0,
       mode: 0,
       speed: 0
-    }
+    };
     
     this.color = {
       saturation: 0,
@@ -35,7 +35,7 @@ class CharacteristicCtrl {
       blue: 0
     };
     
-    this.$scope.$on('device_selected', this.deviceSelected.bind(this));
+    this.$scope.$on("device_selected", this.deviceSelected.bind(this));
     
   }
   
@@ -53,13 +53,13 @@ class CharacteristicCtrl {
     };
     
     this.effect = {
-      saturation: characteristics.effects.value[0],
-      red: characteristics.effects.value[1],
-      green: characteristics.effects.value[2],
-      blue: characteristics.effects.value[3],
-      mode: characteristics.effects.value[4],
-      speed: characteristics.effects.value[6]
-    }
+      saturation: characteristics.effect.value[0],
+      red: characteristics.effect.value[1],
+      green: characteristics.effect.value[2],
+      blue: characteristics.effect.value[3],
+      mode: characteristics.effect.value[4],
+      speed: characteristics.effect.value[6]
+    };
     console.info("DeviceSelected color", this.color);
     console.info("DeviceSelected effect", this.effect);
     this.detectType();
@@ -67,11 +67,11 @@ class CharacteristicCtrl {
   
   togglePane() {
     console.log("Toggling Pane", this.mdSidenav);
-    this.mdSidenav('characteristic').toggle();
+    this.mdSidenav("characteristic").toggle();
   }
   
   detectType() {
-    let currentEffectValues = Array.from(this.device.characteristics.effects.value)
+    let currentEffectValues = Array.from(this.device.characteristics.effect.value);
     let match = (this.EFFECTS_OFF_VALUES.length === currentEffectValues.length) && this.EFFECTS_OFF_VALUES.every((value, index) => {
       return value == currentEffectValues[index];
     });
@@ -83,11 +83,20 @@ class CharacteristicCtrl {
   }
   
   save(characteristic) {
+    console.log(this);
+    let value = null;
+    if (this.type === this.TYPE_EFFECT) {
+      console.log("value is ", this.TYPE_EFFECT);
+      value = this.effect;
+    } else {
+      console.log("value is ", this.TYPE_COLOR);
+      value = this.color;
+    }
     // send new values to the event process
     console.log("Save characteristic", characteristic);
-    console.log("Save color", this.color);
-    console.log("Save effect", this.effect);
+    console.log("Save value", value);
     console.log("Save type", this.type);
+    this.bulbService.setCharacteristic(this.device.uuid, characteristic.device.characteristics[this.type], value, this.type);
   }
   
 }
