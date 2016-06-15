@@ -5,8 +5,6 @@ import ngMaterial from 'angular-material';
 import ngAnimate from 'angular-animate';
 import ngMdIcons from 'angular-material-icons';
 import ngOrderObjectBy from 'angular-order-object-by';
-// import ngOrderObjectBy from 'ngOrderObjectBy';
-console.log(ngOrderObjectBy);
 
 console.log("Imported vendor libraries");
 
@@ -28,7 +26,7 @@ import {
   BulbService
 } from './services/bulb.service';
 
-const _templateBase = './scripts/';
+const _templateBase = './app/';
 
 angular.module('bulb', [
     'ngRoute',
@@ -48,7 +46,7 @@ angular.module('bulb', [
 
 function routes($routeProvider) {
   $routeProvider.when('/', {
-    templateUrl: _templateBase + 'app/app.html',
+    templateUrl: _templateBase + '/app.html',
     controller: 'appCtrl',
     controllerAs: 'app'
   });
