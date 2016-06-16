@@ -16,10 +16,7 @@
         "no-undef": "off",
         "semi": [2, "always"],
         "linebreak-style": ["error", "unix"],
-        "quotes": [
-            "warn",
-            "double"
-        ]
+        "quotes": "off"
     },
     "parserOptions": {
         "sourceType": "module"
