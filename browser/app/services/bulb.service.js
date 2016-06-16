@@ -46,8 +46,7 @@ class BulbService {
     }
     
     toggleConnection(device) {
-      console.info("Handling connection", device.state, device.uuid);
-      console.info(`Handling connection: Device ${device.name} [${device.uuid}] is ${device.state}`);
+      console.info(`BulbService: Handling connection to device ${device.name} [${device.uuid}] with state ${device.state}`);
       if (device.state == "disconnected") {
         this.connect(device);
       } else {
@@ -80,12 +79,12 @@ class BulbService {
     }
     
     getCharacteristics(uuid) {
-      console.log("getCharacteristics", uuid);
+      console.log("BulbService: getCharacteristics", uuid);
       ipc.send("device.get.characteristics", uuid);
     }
     
     getCharacteristic(uuid, characteristic) {
-      console.log("getCharacteristic", uuid, characteristic);
+      console.log("BulbService: getCharacteristic", uuid, characteristic);
     }
     
     setCharacteristics(uuid, values) {
@@ -93,7 +92,7 @@ class BulbService {
     }
     
     setCharacteristic(uuid, characteristic, value, type) {
-      console.log("setCharacteristic", uuid, characteristic, value, type);
+      console.log("BulbService: setCharacteristic", uuid, characteristic, value, type);
       // ipc.send("value", value);
       // ipc.send("device.characteristic.set", uuid, characteristic, value, type);
       ipc.send("device.characteristic.set-test", uuid, value, characteristic, type);
@@ -107,7 +106,7 @@ class BulbService {
     }
     
     onDiscovered(event, device) {
-      console.log("BulbService: Discovered Device", device);
+      console.log("BulbService: onDiscovered", device);
       if (device.uuid in this.devices) {
         console.log("Existing device");
       }
@@ -116,29 +115,29 @@ class BulbService {
     }
     
     onScanning(event) {
-      console.log("scanning");
+      console.log("BulbService: scanning");
       this.scanning = true;
       this.$timeout(() => {}, 0);
       console.log("Scanning?", this.scanning);
     }
     
     onServices(event, services) {
-      console.log("services", services);
+      console.log("BulbService: services", services);
     }
     
     onConnected(event, device) {
-      console.log("connected", device, device.uuid, this.devices, this);
+      console.log("BulbService: connected", device, device.uuid, this.devices, this);
       this.devices[device.uuid] = device;
       this.$timeout(() => {}, 0);
     }
     
     onDisconnected(event, device) {
-      console.info("disconnected event");
+      console.info("BulbService: disconnected event");
       this.devices[device.uuid] = device;
     }
     
     onCharacteristics(event, characteristics) {
-      console.log("characteristics", characteristics);
+      console.log("BulbService: characteristics", characteristics);
     }
 }
 
