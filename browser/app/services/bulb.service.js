@@ -45,7 +45,7 @@ class BulbService {
       this.scanning = false;
     }
     
-    handleConnection(device) {
+    toggleConnection(device) {
       console.info("Handling connection", device.state, device.uuid);
       console.info(`Handling connection: Device ${device.name} [${device.uuid}] is ${device.state}`);
       if (device.state == "disconnected") {

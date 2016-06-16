@@ -24,7 +24,7 @@
                 </md-icon>
             </div>
             <div class="controls" layout="row" layout-align="start center">
-                <md-button ng-click="list.bulb.handleConnection(device)" class="md-primary md-icon-button" aria-label="{{device.state == 'connected' ? 'Disconnect' : 'Connect'}}">
+                <md-button ng-click="list.bulb.toggleConnection(device)" class="md-primary md-icon-button" aria-label="{{device.state == 'connected' ? 'Disconnect' : 'Connect'}}">
                     <md-icon ng-if="device.state == 'connected'" aria-label="Disconnect">close</md-icon>
                     <md-icon ng-if="device.state == 'disconnected'" aria-label="Connect">check</md-icon>
                     <md-tooltip md-direction="top">
