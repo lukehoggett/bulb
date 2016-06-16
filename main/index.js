@@ -210,7 +210,7 @@
     noble.on("discover", onNobleDiscovered);
     
     function onNobleDiscovered(device) {
-      log.debug("onNobleDiscovered");
+      log.info("onNobleDiscovered...");
       // check for Mipow devices
       if (typeof device.advertisement.manufacturerData !== "undefined" && device.advertisement.manufacturerData.toString("hex") === "4d49504f57") {
         log.info("onNobleDiscovered: Discovered Playbulb device with UUID", device.uuid);
@@ -229,7 +229,7 @@
 
         // this is needed to add the noble extra object stuff that can't be stored in the persistent storage
         discoveredDevices[device.uuid] = device;
-        log.info("onNobleDiscovered: Updating stored devices", discoveredDevices[device.uuid]);
+        log.info("onNobleDiscovered: Updating stored devices", device.uuid);
 
         // send notification to renderer that a device has been discovered
         log.info("onNobleDiscovered: Sending updated data about discovered device to renderer", device.uuid);
@@ -240,19 +240,24 @@
     function connect(uuid) {
       noble.stopScanning();
       webContents.send("scanning.stop");
-      log.info("Connect: to uuid", uuid);
+      log.info("connect: to uuid", uuid);
 
       let device = discoveredDevices[uuid];
-      if (typeof device.connect === "function") {
+      // log.info("connect device:", device);
+      if (device.state == 'connected') {
+        log.info(`connect: device ${device.uuid} already connected`);
+      } else if (typeof device.connect === "function") {
         device.connect(error => {
           if (error) {
-            log.error("Connect: error", error);
+            log.error("connect: error", error);
           } else {
-            log.info("Connect: success", uuid);
-
+            log.info("connect: success", uuid);
+            log.info("connect: device", serializeDevice(device));
+            // device.state = "connected";
+            log.info("connect: serializedDevice", serializeDevice(device));
             // send message to notify of connection
             webContents.send("connected", serializeDevice(device));
-
+            discoveredDevices[uuid] = device;
             // @TODO fix up to use generic arrays for candle and color
             log.info("service and characteristic discovery from connect");
             setTimeout(() => {
@@ -274,19 +279,19 @@
       let characteristicUUIDs = ["2a00", "fffb", "fffc"];
       log.info("discoverServicesAndCharacteristics: ", serviceUUIDs, characteristicUUIDs);
       device.discoverSomeServicesAndCharacteristics(serviceUUIDs, characteristicUUIDs, (error, services, characteristics) => {
-        log.info("Discovering SOME services and characteristics");
+        log.info("discoverServicesAndCharacteristics: some");
 
         if (error) {
           log.error("discoverSomeServicesAndCharacteristics", error);
         }
-        log.info("Services", services);
-        log.info("Characteristics", characteristics);
+        // log.info("Services", services);
+        // log.info("Characteristics", characteristics);
         mapDiscoveredCharacteristics(device.uuid, characteristics);
       });
 
       // discover all - useful for dev and sniffing
       // device.discoverAllServicesAndCharacteristics((error, services, characteristics) => {
-      //   log.info("Discovering ALL services and characteristics");
+      //   log.info("discoverServicesAndCharacteristics: all");
       //  
       //   if (error) {
       //     log.error("discoverAllServicesAndCharacteristics", error);
@@ -328,12 +333,9 @@
     }
 
     function mapDiscoveredCharacteristics(deviceUUID, characteristics) {
-      let device = discodev;
+      let device = discoveredDevices[deviceUUID];
       log.info("mapDiscoveredCharacteristics: \n\n", "deviceUUID\n\n", deviceUUID, "device\n\n", device, "discoveredDevices\n\n", discoveredDevices);
       characteristics.map(characteristic => {
-        log.info("mapDiscoveredCharacteristics:", characteristic);
-        
-        
         
         if (characteristic.uuid === types.CANDLE.colorUuid) {
           colorChar = characteristic;
@@ -354,18 +356,13 @@
       });
 
       if (colorChar && effectChar && nameChar) {
-        log.info("+++++++++++ Have all required characteristics, getting values");
         let all = [readCharacteristic("color", colorChar), readCharacteristic("effect", effectChar), readCharacteristic("name", nameChar)];
-        // log.info("A;ll", all);
-        
-        // add characteristics to the discoveredDevices cache
-        // discoveredDevices[deviceUUID].characteristics.push(colorChar);
-        // discoveredDevices[deviceUUID].characteristics.push(effectChar);
+
         Promise.all(all).then(values => {
-          log.info("Have all characteristics");
+          log.info("mapDiscoveredCharacteristics: have required characteristics");
           // send notification of values to ui
           let device = serializeCharacteristics(deviceUUID, values);
-          log.info("mapDiscoveredCharacteristics: Sending updated data about discovered device to renderer", device.uuid);
+          log.info("mapDiscoveredCharacteristics: sending updated data about discovered device to renderer", device.uuid, device);
           webContents.send("discovered", device);
         }, error => {
           log.error("Promise.all failed ", error);
@@ -490,7 +487,7 @@
 
     function serializeCharacteristics(deviceUUID, characteristicValues) {
       // log.info("serializeCharacteristics", deviceUUID, characteristicValues);
-      let device = serializeDevice(deviceStorage.getByUUID(deviceUUID));
+      let device = serializeDevice(discoveredDevices[deviceUUID]);
       let charList = {};
       characteristicValues.forEach(c => {
         log.info(c.characteristic.uuid, c.type);
