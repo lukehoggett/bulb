@@ -96,7 +96,7 @@ class CharacteristicCtrl {
     console.log("Save characteristic", characteristic);
     console.log("Save value", value);
     console.log("Save type", this.type);
-    this.bulbService.setCharacteristic(this.device.uuid, characteristic.device.characteristics[this.type], value, this.type);
+    this.bulbService.setCharacteristic(this.device.uuid, value, this.type);
   }
   
 }

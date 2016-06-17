@@ -138,7 +138,7 @@
     ipcMain.on("device.connect", onIpcDeviceConnect);
     ipcMain.on("device.disconnect", onIpcDeviceDisconnect);
     ipcMain.on("device.characteristics.get", onIpcDeviceGetCharacteristics);
-    ipcMain.on("device.characteristic.set-test", onIpcDeviceSetCharacteristic);
+    ipcMain.on("device.characteristic.set", onIpcDeviceSetCharacteristic);
     ipcMain.on("device.get", onIpcDeviceGet);
     ipcMain.on("dev.tools.open", onIpcDevToolsOpen);
     ipcMain.on("device.get.stored", onIpcDeviceGetStored);
@@ -175,12 +175,12 @@
       discoverServicesAndCharacteristics(device);
     }
 
-    function onIpcDeviceSetCharacteristic(event, deviceUUID, value, characteristic, type) {
+    function onIpcDeviceSetCharacteristic(event, deviceUUID, value, type) {
       log.info("onDeviceSetCharacteristic...");
       // get the characteristic
       let device = deviceStorage.getByUUID(deviceUUID);
-      log.info("device.characteristic.set-test device \n", device);
-      writeCharacteristic(characteristic, value, type, deviceUUID).catch(error => {
+      log.info("device.characteristic.set device \n", device);
+      writeCharacteristic(value, type, deviceUUID).catch(error => {
         log.error("write catch error from set characteristic event", error);
       });
     }
@@ -257,7 +257,14 @@
             log.info("connect: serializedDevice", serializeDevice(device));
             // send message to notify of connection
             webContents.send("connected", serializeDevice(device));
+            
+            // store the device as discovered
             discoveredDevices[uuid] = device;
+            
+            // update the local storage copy
+            deviceStorage.set(device.uuid, serializeDevice(device));
+            
+             
             // @TODO fix up to use generic arrays for candle and color
             log.info("service and characteristic discovery from connect");
             setTimeout(() => {
@@ -334,35 +341,29 @@
 
     function mapDiscoveredCharacteristics(deviceUUID, characteristics) {
       let device = discoveredDevices[deviceUUID];
-      log.info("mapDiscoveredCharacteristics: \n\n", "deviceUUID\n\n", deviceUUID, "device\n\n", device, "discoveredDevices\n\n", discoveredDevices);
+      log.info("mapDiscoveredCharacteristics: START \n\n", "deviceUUID\n\n", deviceUUID, "device\n\n", device, "discoveredDevices\n\n", discoveredDevices);
+      device.characteristics = {};
       characteristics.map(characteristic => {
         
         if (characteristic.uuid === types.CANDLE.colorUuid) {
-          colorChar = characteristic;
-          // colorChar.on("read", colorCharacteristicChange);
+          device.characteristics.color = characteristic;
         } else if (characteristic.uuid === types.CANDLE.effectsUuid) {
-          effectChar = characteristic;
-          // colorChar.on("read", effectCharacteristicChange);
+          device.characteristics.effect = characteristic;
         } else if (characteristic.uuid === types.CANDLE.nameUuid) {
-          nameChar = characteristic;
-          // colorChar.on("read", nameCharacteristicChange);
+          device.characteristics.name = characteristic;
         }
-
-        // discoveredDevices[deviceUUID].services = services;
-        // let serializedServices = serializeServices(deviceUUID);x
-
-        // event.sender.send("services", {deviceUUID: device.uuid, services: serializeServices(services)});
-        // event.sender.send("characteristics", {deviceUUID: device.uuid, characteristics: characteristics});
       });
+      
+      log.info("mapDiscoveredCharacteristics: END \n\n", "deviceUUID\n\n", deviceUUID, "device\n\n", device, "discoveredDevices\n\n", discoveredDevices);
 
-      if (colorChar && effectChar && nameChar) {
-        let all = [readCharacteristic("color", colorChar), readCharacteristic("effect", effectChar), readCharacteristic("name", nameChar)];
+      if (device.characteristics.color && device.characteristics.effect && device.characteristics.name) {
+        let all = [readCharacteristic("color", device.characteristics.color), readCharacteristic("effect", device.characteristics.effect), readCharacteristic("name", device.characteristics.name)];
 
         Promise.all(all).then(values => {
           log.info("mapDiscoveredCharacteristics: have required characteristics");
           // send notification of values to ui
           let device = serializeCharacteristics(deviceUUID, values);
-          log.info("mapDiscoveredCharacteristics: sending updated data about discovered device to renderer", device.uuid, device);
+          log.info("mapDiscoveredCharacteristics: sending updated data about discovered device to renderer uuid", device.uuid, "device serialized", device);
           webContents.send("discovered", device);
         }, error => {
           log.error("Promise.all failed ", error);
@@ -370,75 +371,55 @@
           log.error("Promise.all catch ", error.message, error.name);
         });
       }
-      log.info("DISCOVER CHARACTERISTICS END >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     }
 
     function readCharacteristic(type, characteristic) {
-      // log.info("readCharacteristic", characteristic);
+      log.info("readCharacteristic...");
       return new Promise((resolve, reject) => {
         characteristic.read((error, data) => {
           if (error) {
             log.error("Could not read characteristic", characteristic.uuid, error);
             reject("Could not read characteristic", error);
           }
-          // let saturation = Math.floor(Math.random() * 256);
-          // let r = Math.floor(Math.random() * 256);
-          // let g = Math.floor(Math.random() * 256);
-          // let b = Math.floor(Math.random() * 256);
-          // log.info("Color", saturation, r, g, b);
-
-          // write color
-          // let colorBytes = new Buffer([saturation, r, g, b]);
-          // writeCharacteristic(characteristic, colorBytes, type)
-          // .catch((error) => {
-          //   log.error("write catch error", error);
-          // });
-
-          // write effect 
-          // let mode = "0" + (Math.floor(Math.random() * 4) + 1);
-          // let speed = "0" + (Math.floor(Math.random() * 2) + 1); 
-          // let effectBytes = new Buffer([saturation, r, g, b, mode, "00", speed, "00"]);
-          // writeCharacteristic(characteristic, effectBytes, type).catch(error => {
-          //   log.error("write catch error", error);
-          // });
-
-          log.info(`Characteristic data for ${ type }`, characteristic.uuid, data.toJSON(), data);
           resolve({ type: type, characteristic: characteristic, data: data });
         });
       });
     }
 
-    function writeCharacteristic(characteristic, value, type, uuid) {
-      log.info("writeCharacteristic: ", discoveredDevices[uuid]);
-      log.info(`Writing ${ type } Characteristic with value`, value, " and characteristic \n", characteristic);
+    function writeCharacteristic(value, type, uuid) {
+      log.info("writeCharacteristic: ...");
+      let wChar = discoveredDevices[uuid].characteristics[type];
+      log.info(`writeCharacteristic: Writing ${ type } Characteristic with value`, value);
+      
       return new Promise((resolve, reject) => {
-        log.info("in write Promise", characteristic);
-        characteristic.write(value, true, error => {
+        log.info("writeCharacteristic: Promise", wChar);
+        wChar.write(getWriteValueBuffer(type, value), true, error => {
           if (error) {
             let errorMessage = `Could not write characteristic ${ type } with value ${ value }. Error: ${ error }`;
             log.error(errorMessage);
             reject(errorMessage);
           }
-          log.info(`Wrote characteristic ${ type } with value ${ value }`);
+          log.info(`writeCharacteristic: wrote characteristic ${ type } with value`, value);
           resolve(true);
         });
       });
     }
-
-    // function writeCharacteristic() {
-    //   // let r = Math.floor(Math.random() * 256);
-    //   // let g = Math.floor(Math.random() * 256);
-    //   // let b = Math.floor(Math.random() * 256);
-    //   // log.info("Color", r, g, b);
-    //   // let colorBytes = new Buffer([0, r, g, b]);
-    //   // colorChar.write(colorBytes, true, (error) => {
-    //   //   if (error) {
-    //   //     log.error("Could not color name characteristic");
-    //   //   }
-    //   //   // @TODO update stored device
-    //   //   log.info("Wrote color characteristic");
-    //   // });
-    // }
+    
+    function getWriteValueBuffer(type, value) {
+      let buffer = null;
+      switch (type) {
+        case "color":
+          buffer = new Buffer([value.saturation, value.red, value.green, value.blue]);
+          break;
+        case "effect":
+          buffer = new Buffer([value.saturation, value.red, value.green, value.blue, value.mode, "00", value.speed, "00"]);
+          break;
+        case "name":
+          buffer = new Buffer(value);
+          break;    
+      }
+      return buffer;
+    }
 
     function colorCharacteristicChange(data, isNotification) {
       log.info("change", data, isNotification);

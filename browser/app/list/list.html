@@ -6,7 +6,6 @@
                     <input ng-model="device.name" ng-model-options="{ updateOn: 'mousedown blur' }" ng-change="list.updateDeviceName(device.uuid)" aria-label="device name"/>
                 </md-input-container>
             </p>
-            {{device.state}}
             <div class="status" layout="row" layout-align="start center">
                 <md-icon aria-label="Discovered" class="md-avatar-icon" ng-class="device.discovered ? 'green' : 'red'">{{device.discovered ? 'cast_connected' : 'cast'}}
                     <md-tooltip md-direction="top">

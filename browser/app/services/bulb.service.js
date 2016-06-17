@@ -91,11 +91,9 @@ class BulbService {
       
     }
     
-    setCharacteristic(uuid, characteristic, value, type) {
-      console.log("BulbService: setCharacteristic", uuid, characteristic, value, type);
-      // ipc.send("value", value);
-      // ipc.send("device.characteristic.set", uuid, characteristic, value, type);
-      ipc.send("device.characteristic.set-test", uuid, value, characteristic, type);
+    setCharacteristic(uuid, value, type) {
+      console.log("BulbService: setCharacteristic", uuid, value, type);
+      ipc.send("device.characteristic.set", uuid, value, type);
     }
     
     // IPC listeners
