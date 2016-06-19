@@ -18,7 +18,7 @@ By running:
 npm install -g jspm gulp electron-prebuilt gulp-run-electron
 ```
 
-
+also need `jspm registry create bower jspm-bower-endpoint` for jspm 
 
 Whenever you run `npm install` you need to run
 ```
