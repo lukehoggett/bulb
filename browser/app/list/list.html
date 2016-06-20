@@ -1,6 +1,8 @@
 <div ng-controller="listCtrl as list" id="list" ng-cloak>
     <md-list>
         <md-list-item ng-repeat="device in list.bulb.devices | orderObjectBy: 'discovered' : true" class="noright">
+          Debug: 
+          {{device.getDevices()}}
             <p>
                 <md-input-container>
                     <input ng-model="device.name" ng-model-options="{ updateOn: 'mousedown blur' }" ng-change="list.updateDeviceName(device.uuid)" aria-label="device name"/>

@@ -13,9 +13,12 @@
   // util module
   const util = require("util");
   // local module for device storage and retrieval from persistent storage
-  const deviceStorage = require("./device-storage");
+  const deviceStore = require("./device-store");
+  const bulbStore = deviceStore.bulbStore;
   // cli arg parser
   const yargs = require("yargs");
+
+
 
   // configure bunyan logging
   let log = bunyan.createLogger({
@@ -34,6 +37,11 @@
   })
   .help("help").argv;
   // log.info("YAAARGS", argv, argv.displaysize);
+
+  // log.info("BulbStore", deviceStore.bulbStore);
+
+
+
 
   let win;
   let windowOptions = {
@@ -170,7 +178,7 @@
     
     function onIpcDeviceGetCharacteristics(event, deviceUUID) {
       log.info("onDeviceGetCharacteristics...");
-      let device = deviceStorage.getByUUID(deviceUUID);
+      let device = deviceStore.getByUUID(deviceUUID);
       log.info("service and characteristic discovery from get");
       discoverServicesAndCharacteristics(device);
     }
@@ -178,7 +186,7 @@
     function onIpcDeviceSetCharacteristic(event, deviceUUID, value, type) {
       log.info("onDeviceSetCharacteristic...");
       // get the characteristic
-      let device = deviceStorage.getByUUID(deviceUUID);
+      let device = deviceStore.getByUUID(deviceUUID);
       log.info("device.characteristic.set device \n", device);
       writeCharacteristic(value, type, deviceUUID).catch(error => {
         log.error("write catch error from set characteristic event", error);
@@ -187,7 +195,7 @@
     
     function onIpcDeviceGet(event, deviceUUID) {
       log.info("onDeviceGet...");
-      log.info("ipc: device.get", event, deviceUUID, deviceStorage.getByUUID(deviceUUID));
+      log.info("ipc: device.get", event, deviceUUID, deviceStore.getByUUID(deviceUUID));
     }
     
     function onIpcDevToolsOpen(event, arg) {
@@ -196,14 +204,18 @@
     }
     
     function onIpcDeviceGetStored(event) {
-      log.info("onDeviceGetStored...");
-      // discoveredDevices = deviceStorage.getAll();
-      let storedDevices = deviceStorage.getAll();
-      for (var uuid in storedDevices) {
-        if (storedDevices.hasOwnProperty(uuid)) {
-          event.sender.send("device.get.stored.reply", storedDevices[uuid], uuid);
-        }
-      }
+      log.info("onDeviceGetStored...", bulbStore.getStoredDevices());
+      // discoveredDevices = deviceStore.getAll();
+      // let storedDevices = bulbStore.getStoredDevices();
+      bulbStore.getStoredDevices().forEach((device, uuid) => {
+        log.info("onDeviceGetStored sending ", device, uuid);
+        event.sender.send("device.get.stored.reply", device);
+      });
+      // for (var uuid in storedDevices) {
+      //   if (storedDevices.hasOwnProperty(uuid)) {
+      //     event.sender.send("device.get.stored.reply", storedDevices[uuid], uuid);
+      //   }
+      // }
     }
     
     // noble event listeners
@@ -216,11 +228,11 @@
         log.info("onNobleDiscovered: Discovered Playbulb device with UUID", device.uuid);
         
         // on discovery check if device is in stored devices, if not update stored
-        let match = deviceStorage.storage.valuesWithKeyMatch(device.uuid);
+        let match = deviceStore.storage.valuesWithKeyMatch(device.uuid);
         if (match.length === 0) {
           // save discovered device to persistent storage
           log.info("onNobleDiscovered: Adding serialized device to storage", devie.uuid);
-          deviceStorage.set(device.uuid, serializeDevice(device));
+          deviceStore.set(device.uuid, serializeDevice(device));
         }
         
         // add properties to the device
@@ -262,7 +274,7 @@
             discoveredDevices[uuid] = device;
             
             // update the local storage copy
-            deviceStorage.set(device.uuid, serializeDevice(device));
+            deviceStore.set(device.uuid, serializeDevice(device));
             
              
             // @TODO fix up to use generic arrays for candle and color
@@ -486,7 +498,7 @@
 
     function disconnect(device) {
       if (typeof device == "string") {
-        device = deviceStorage.getByUUID(device);
+        device = deviceStore.getByUUID(device);
       }
       log.info("Disconnecting", device.uuid);
       device.disconnect(error => {
