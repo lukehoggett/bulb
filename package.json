@@ -4,7 +4,7 @@
   "description": "PLaybulb led control panel",
   "main": "main/index.js",
   "scripts": {
-    "start": "sudo ./node_modules/electron-prebuilt/dist/electron main/index.js | node_modules/bunyan/bin/bunyan",
+    "start": "sudo ./node_modules/electron-prebuilt/dist/electron main/index.js --displaysize=md | node_modules/bunyan/bin/bunyan",
     "postinstall": "jspm install"
   },
   "keywords": [

@@ -36,7 +36,8 @@
     describe: "what size to open the application window sm|md|lg|full"
   })
   .help("help").argv;
-  // log.info("YAAARGS", argv, argv.displaysize);
+  log.info("YAAARGS", argv, argv.displaysize);
+
 
   // log.info("BulbStore", deviceStore.bulbStore);
 
@@ -52,6 +53,25 @@
     backgroundColor: "#000",
     x: 2560,
     y: 100
+  };
+  
+  let displaySizeArgs = {
+    sm: {
+      width: 800,
+      height: 600
+    },
+    md: {
+      width: 1280,
+      height: 768
+    },
+    lg: {
+      width: 1920,
+      height: 1080
+    },
+    full: {
+      fullscreen: true,
+      frame: false
+    }
   };
 
   var types = {
@@ -98,15 +118,8 @@
 
   function getWindowOptions(display) {
     let options = windowOptions;
-    if (parseInt(display.bounds.width) > 800 && false) {
-      options.width = Math.floor(display.bounds.width * (2 / 3));
-      options.height = Math.floor(display.bounds.height * (2 / 3));
-    } else {
-      // options.width = display.bounds.width;
-      // options.height = display.bounds.height;
-      options.width = 800;
-      options.height = 480;
-      options.frame = false;
+    if (argv.displaysize) {
+      Object.assign(options, displaySizeArgs[argv.displaysize]);
     }
     return options;
   }
@@ -205,17 +218,10 @@
     
     function onIpcDeviceGetStored(event) {
       log.info("onDeviceGetStored...", bulbStore.getStoredDevices());
-      // discoveredDevices = deviceStore.getAll();
-      // let storedDevices = bulbStore.getStoredDevices();
       bulbStore.getStoredDevices().forEach((device, uuid) => {
-        log.info("onDeviceGetStored sending ", device, uuid);
+        // log.info("onDeviceGetStored sending ", device, uuid);
         event.sender.send("device.get.stored.reply", device);
       });
-      // for (var uuid in storedDevices) {
-      //   if (storedDevices.hasOwnProperty(uuid)) {
-      //     event.sender.send("device.get.stored.reply", storedDevices[uuid], uuid);
-      //   }
-      // }
     }
     
     // noble event listeners
@@ -228,24 +234,22 @@
         log.info("onNobleDiscovered: Discovered Playbulb device with UUID", device.uuid);
         
         // on discovery check if device is in stored devices, if not update stored
-        let match = deviceStore.storage.valuesWithKeyMatch(device.uuid);
-        if (match.length === 0) {
+        if (!bulbStore.hasStoredDevice(device.uuid)) {
           // save discovered device to persistent storage
-          log.info("onNobleDiscovered: Adding serialized device to storage", devie.uuid);
-          deviceStore.set(device.uuid, serializeDevice(device));
+          bulbStore.setStoredDevice(device);
         }
         
         // add properties to the device
-        device.stored = true;
         device.discovered = true;
 
         // this is needed to add the noble extra object stuff that can't be stored in the persistent storage
-        discoveredDevices[device.uuid] = device;
-        log.info("onNobleDiscovered: Updating stored devices", device.uuid);
+        bulbStore.setDiscoveredDevice(device);
 
         // send notification to renderer that a device has been discovered
-        log.info("onNobleDiscovered: Sending updated data about discovered device to renderer", device.uuid);
-        webContents.send("discovered", serializeDevice(device));
+        webContents.send("discovered", bulbStore.getStoredDeviceByUUID(device.uuid));
+        
+      } else {
+        log.info("onNobleDiscovered: Ignoring non bulb device");
       }
     }
 
@@ -254,7 +258,7 @@
       webContents.send("scanning.stop");
       log.info("connect: to uuid", uuid);
 
-      let device = discoveredDevices[uuid];
+      let device = bulbStore.getDiscoveredDeviceByUUID(uuid);
       // log.info("connect device:", device);
       if (device.state == 'connected') {
         log.info(`connect: device ${device.uuid} already connected`);
@@ -263,18 +267,15 @@
           if (error) {
             log.error("connect: error", error);
           } else {
-            log.info("connect: success", uuid);
-            log.info("connect: device", serializeDevice(device));
-            // device.state = "connected";
-            log.info("connect: serializedDevice", serializeDevice(device));
             // send message to notify of connection
-            webContents.send("connected", serializeDevice(device));
+            // confirm method is correct one to use and whether we could just get teh value from the store
+            webContents.send("connected", bulbStore.serializeDevice(device));
             
             // store the device as discovered
-            discoveredDevices[uuid] = device;
+            bulbStore.setDiscoveredDevice(device);
             
             // update the local storage copy
-            deviceStore.set(device.uuid, serializeDevice(device));
+            bulbStore.setStoredDevice(device);
             
              
             // @TODO fix up to use generic arrays for candle and color

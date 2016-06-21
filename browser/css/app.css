@@ -45,6 +45,10 @@ html > body {
   border-bottom: 1px solid #efefef;
 }
 
+#list .device-uuid {
+  color: rgba(0,0,0,0.26);
+}
+
 
 
 

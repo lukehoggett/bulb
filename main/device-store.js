@@ -64,24 +64,32 @@
     }
     
     getStoredDeviceByUUID(uuid) {
-      if (!serializedDevice.has(uuid)) {
+      if (!serializedDevices.has(uuid)) {
         log.error(`Device ${uuid} is not in storage.`);
         // @TODO handle error
       }
       return serializedDevices.get(uuid);
     }
     
-    setStoredDevices() {
-      
+    setStoredDevices(devices) {
+      devices.forEach((device) => {
+        this.setStoredDevice(device);
+      });
     }
     
-    setStoredDeviceByUUID(device) {
+    setStoredDevice(device) {
+      device.stored = true;
       let serializedDevice = this.serializeDevice(device);
-      storage.setItem(serializeDevice.uuid, serializedDevice, error => {
+      storage.setItem(serializedDevice.uuid, serializedDevice, error => {
         if (error) {
           log.error("Storage error: on set", error);
         }
       });
+      this.getDevicesFromStorage();
+    }
+    
+    hasStoredDevice(uuid) {
+      return serializedDevices.has(uuid);
     }
     
     getDiscoveredDevices() {
@@ -97,19 +105,59 @@
     }
     
     setDiscoveredDevices(devices) {
-      
+      devices.forEach((device) => {
+        tis.setDiscoveredDevice(device);
+      });
     }
     
-    setDiscoveredDeviceByUUID(device) {
+    setDiscoveredDevice(device) {
       discoveredDevices[device.uuid] = device;
     }
     
-    serializeDevice() {
+    /**
+     * Prepare a Noble device for serialization to send to a renderer process.
+     Copies out all the attributes the renderer might need.  Seems to be
+     necessary as Noble"s objects don"t serialize well and lose attributes when
+     pass around with the ipc class.
+     log.info("Serializing device", device);
+     * @return {[type]} [description]
+     */
+    serializeDevice(device) {
       
+      
+      
+      return {
+        id: device.id,
+        name: device.advertisement.localName,
+        address: device.address,
+        state: device.state, // should we store whether it is connected
+        advertisement: device.advertisement,
+        // rssi: device.rssi,
+        uuid: device.uuid,
+        addressType: device.addressType,
+        connectable: device.connectable,
+        discovered: device.discovered || false,
+        stored: device.stored || false,
+        lastSeen: Date.now()
+      };
     }
     
-    serializeCharacteristics() {
-      
+    serializeCharacteristics(deviceUUID, characteristicValues) {
+      // log.info("serializeCharacteristics", deviceUUID, characteristicValues);
+      let device = serializeDevice(discoveredDevices[deviceUUID]);
+      let charList = {};
+      characteristicValues.forEach(c => {
+        log.info(c.characteristic.uuid, c.type);
+        charList[c.type] = {
+          uuid: c.characteristic.uuid,
+          name: c.characteristic.name,
+          type: c.characteristic.type,
+          value: c.data
+        };
+      });
+      device.characteristics = charList;
+      // log.info("device", device);
+      return device;
     }
   }
   
