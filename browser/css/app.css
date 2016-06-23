@@ -47,6 +47,7 @@ html > body {
 
 #list .device-uuid {
   color: rgba(0,0,0,0.26);
+  font-size: 12px;
 }
 
 

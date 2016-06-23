@@ -1,8 +1,6 @@
 <div ng-controller="listCtrl as list" id="list" ng-cloak>
     <md-list>
-        <md-list-item ng-repeat="device in list.bulb.devices | orderObjectBy: 'discovered' : true" class="noright">
-          Debug: 
-          {{device.getDevices()}}
+        <md-list-item ng-repeat="device in list.bulb.devices | orderObjectBy: 'discovered' : true" class="noright" layout-align="start center">
             <p>
                 <md-input-container>
                     <input ng-model="device.name" ng-model-options="{ updateOn: 'mousedown blur' }" ng-change="list.updateDeviceName(device.uuid)" aria-label="device name"/>
@@ -10,6 +8,7 @@
             </p>
             <p class="device-uuid">{{device.uuid}}</p>
             <div class="status" layout="row" layout-align="start center">
+              {{device.state}}
                 <md-icon aria-label="Discovered" class="md-avatar-icon" ng-class="device.discovered ? 'green' : 'red'">{{device.discovered ? 'cast_connected' : 'cast'}}
                     <md-tooltip md-direction="top">
                         {{device.discovered ? 'Discovered' : 'Not Discovered'}}

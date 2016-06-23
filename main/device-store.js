@@ -51,6 +51,7 @@
 
           device.stored = true;
           device.power = false;
+          device.state = 'disconnected';
           log.info("getDevicesFromStorage device", device, uuid);
           serializedDevices.set(uuid, device);
         });
@@ -79,7 +80,9 @@
     
     setStoredDevice(device) {
       device.stored = true;
+      device.state = 'disconnected';
       let serializedDevice = this.serializeDevice(device);
+      // remove properties not needed to be stored
       storage.setItem(serializedDevice.uuid, serializedDevice, error => {
         if (error) {
           log.error("Storage error: on set", error);
@@ -143,8 +146,9 @@
     }
     
     serializeCharacteristics(deviceUUID, characteristicValues) {
-      // log.info("serializeCharacteristics", deviceUUID, characteristicValues);
-      let device = serializeDevice(discoveredDevices[deviceUUID]);
+      log.info("bulbStore.serializeCharacteristics... full", this.getDiscoveredDeviceByUUID(deviceUUID));
+      let device = this.serializeDevice(this.getDiscoveredDeviceByUUID(deviceUUID));
+      log.info("bulbStore.serializeCharacteristics input", device);
       let charList = {};
       characteristicValues.forEach(c => {
         log.info(c.characteristic.uuid, c.type);
@@ -157,6 +161,7 @@
       });
       device.characteristics = charList;
       // log.info("device", device);
+      log.info("bulbStore.serializeCharacteristics output", device);
       return device;
     }
   }

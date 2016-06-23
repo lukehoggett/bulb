@@ -123,7 +123,7 @@ class BulbService {
     }
     
     onConnected(event, device) {
-      console.log("BulbService: connected", device, device.uuid, this.devices, this);
+      console.log("BulbService: connected", device, device.uuid);
       this.devices[device.uuid] = device;
       this.$timeout(() => {}, 0);
     }
