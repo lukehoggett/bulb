@@ -245,7 +245,7 @@
         bulbStore.setDiscoveredDevice(device);
 
         // send notification to renderer that a device has been discovered
-        log.info("dicovered message to renderer", bulbStore.serializeDevice(device));
+        log.info("onNobleDiscovered: sending discovered message to renderer", bulbStore.serializeDevice(device));
         webContents.send("discovered", bulbStore.serializeDevice(device));
         
       } else {
@@ -275,12 +275,12 @@
             // store the device as discovered
             bulbStore.setDiscoveredDevice(device);
             
-            // update the local storage copy
-            bulbStore.setStoredDevice(device);
+            // update the local storage copy ??? is this needed?
+            // bulbStore.setStoredDevice(device);
             
              
             // @TODO fix up to use generic arrays for candle and color
-            log.info("service and characteristic discovery from connect");
+            log.info("connect: service and characteristic discovery", device);
             setTimeout(() => {
               log.info("Timeout before discoverServicesAndCharacteristics");
               discoverServicesAndCharacteristics(device);
@@ -380,20 +380,28 @@
 
       if (device.characteristics.color && device.characteristics.effect && device.characteristics.name) {
         let all = [readCharacteristic("color", device.characteristics.color), readCharacteristic("effect", device.characteristics.effect), readCharacteristic("name", device.characteristics.name)];
-
+log.info("BEFORE Promise All", device);
         Promise.all(all).then(values => {
-          log.info("mapDiscoveredCharacteristics: have required characteristics");
+          let device = bulbStore.getDiscoveredDeviceByUUID(deviceUUID);
+          log.info("mapDiscoveredCharacteristics: have required characteristics", deviceUUID);
           // send notification of values to ui
           bulbStore.setDiscoveredDevice(device);
-          let device = bulbStore.serializeCharacteristics(deviceUUID, values);
-          log.info("mapDiscoveredCharacteristics: sending updated data about discovered device to renderer uuid", device.uuid, "device serialized", device);
+          
+          log.info("3", device);
+          device = bulbStore.serializeCharacteristics(deviceUUID, values);
+          log.info("4", device);
+          log.info("+_+_+_+_+_+_+_+_+_+ mapDiscoveredCharacteristics: sending updated data about discovered device to renderer uuid", device.uuid, "device serialized", device);
           webContents.send("discovered", device);
         }, error => {
           log.error("Promise.all failed ", error);
         }).catch(error => {
-          log.error("Promise.all catch ", error.message, error.name);
+          log.error("Promise.all catch ", error);
         });
       }
+    }
+    
+    function sendCharacteristicsToRenderer(values) {
+      
     }
 
     function readCharacteristic(type, characteristic) {

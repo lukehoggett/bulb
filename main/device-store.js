@@ -52,11 +52,11 @@
           device.stored = true;
           device.power = false;
           device.state = 'disconnected';
-          log.info("getDevicesFromStorage device", device, uuid);
+          // log.info("getDevicesFromStorage device", device, uuid);
           serializedDevices.set(uuid, device);
         });
       }
-      log.info("getDevicesFromStorage serializedDevices", serializedDevices);
+      // log.info("getDevicesFromStorage serializedDevices", serializedDevices);
       return serializedDevices;
     }
     
@@ -114,6 +114,7 @@
     }
     
     setDiscoveredDevice(device) {
+      log.info("\n\n<><><><><><><> bulbStore setDiscoveredDevice", device.state, "\n\n");
       discoveredDevices[device.uuid] = device;
     }
     
