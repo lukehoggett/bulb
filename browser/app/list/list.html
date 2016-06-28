@@ -8,7 +8,6 @@
             </p>
             <p class="device-uuid">{{device.uuid}}</p>
             <div class="status" layout="row" layout-align="start center">
-              {{device.state}}
                 <md-icon aria-label="Discovered" class="md-avatar-icon" ng-class="device.discovered ? 'green' : 'red'">{{device.discovered ? 'cast_connected' : 'cast'}}
                     <md-tooltip md-direction="top">
                         {{device.discovered ? 'Discovered' : 'Not Discovered'}}
@@ -33,18 +32,41 @@
                         {{device.state == 'connected' ? 'Disconnect' : 'Connect'}}
                     </md-tooltip>
                 </md-button>
-                <md-button ng-click="list.getCharacterisics(device)" class="md-primary md-icon-button" aria-label="Get Characteristics" ng-disabled="device.state == 'connected' ? false : true">
+                <!-- <md-button ng-click="list.getCharacterisics(device)" class="md-primary md-icon-button" aria-label="Get Characteristics" ng-disabled="device.state == 'connected' ? false : true">
                     <md-icon aria-label="Get Characteristics">system_update_alt</md-icon>
                     <md-tooltip md-direction="top">
                         Get Characteristics
                     </md-tooltip>
-                </md-button>
+                </md-button> -->
                 <md-button ng-click="list.selectDevice(device)" class="md-primary md-icon-button" aria-label="Edit Characteristics" ng-disabled="device.state == 'connected' ? false : true">
                     <md-icon aria-label="Edit Characteristics">edit</md-icon>
-                    <md-tooltip md-direction="top">
-                        Edit Characteristics
-                    </md-tooltip>
+                    <md-tooltip md-direction="top">Edit Characteristics</md-tooltip>
                 </md-button>
+                <md-menu>
+                    <md-button md-menu-origin class="md-primary md-icon-button" aria-label="More Actions" ng-click="list.openMoreMenu($mdOpenMenu, $event)">
+                        <md-icon aria-label="More Actions">more_vert</md-icon>
+                        <!-- <md-tooltip md-direction="top">More Actions</md-tooltip> -->
+                    </md-button>
+                    <md-menu-content width="4">
+                        <md-menu-item>
+                            <md-button ng-click="list.addToGroup(device)" class="md-primary" aria-label="Add to Group" ng-disabled="false">
+                                <md-icon md-menu-align-target aria-label="Add To Group">group_add</md-icon>Add to Group
+                                <!-- <md-tooltip md-direction="top">
+                                    Get Characteristics
+                                </md-tooltip> -->
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button ng-click="list.getCharacterisics(device)" class="md-primary" aria-label="Get Characteristics" ng-disabled="device.state == 'connected' ? false : true">
+                                <md-icon aria-label="Get Characteristics">system_update_alt</md-icon>Get Characteristics
+                                <!-- <md-tooltip md-direction="top">
+                                    Get Characteristics
+                                </md-tooltip> -->
+                            </md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
+
             </div>
         </md-list-item>
     </md-list>

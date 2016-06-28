@@ -11,6 +11,8 @@ class ListCtrl {
     this.$rootScope = $rootScope;
     this.$mdSidenav = $mdSidenav;
     this.bulb = bulbService;
+    
+    this.originatorEvent;
   }
 
   selectDevice(device) {
@@ -33,6 +35,16 @@ class ListCtrl {
     console.log("updateDeviceName", uuid, this.bulb.devices[uuid]);
     // send update command to main process
     this.bulb.setCharacteristic(uuid, this.bulb.devices[uuid].name, 'name');
+  }
+  
+  openMoreMenu($mdOpenMenu, event) {
+    console.info("list: openMoreMenu", $mdOpenMenu, event);
+    this.originatorEvent = event;
+    $mdOpenMenu(event);
+  }
+  
+  addToGroup(device) {
+    console.info("list: addToGroup", device);
   }
 }
 
