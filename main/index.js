@@ -260,37 +260,43 @@
 
       let device = bulbStore.getDiscoveredDeviceByUUID(uuid);
       // log.info("connect device:", device);
-      if (device.state == 'connected') {
-        log.info(`connect: device ${device.uuid} already connected`);
-      } else if (typeof device.connect === "function") {
-        device.connect(error => {
-          if (error) {
-            log.error("connect: error", error);
-          } else {
-            // send message to notify of connection
-            // confirm method is correct one to use and whether we could just get teh value from the store
-            log.info("connect: sending serialized device to renderer", bulbStore.serializeDevice(device), "\n\ndevice\n\n", device);
-            webContents.send("connected", bulbStore.serializeDevice(device));
-            
-            // store the device as discovered
-            bulbStore.setDiscoveredDevice(device);
-            
-            // update the local storage copy ??? is this needed?
-            // bulbStore.setStoredDevice(device);
-            
-             
-            // @TODO fix up to use generic arrays for candle and color
-            log.info("connect: service and characteristic discovery", device);
-            setTimeout(() => {
-              log.info("Timeout before discoverServicesAndCharacteristics");
-              discoverServicesAndCharacteristics(device);
-            }, 50);
-          }
-        });
+      if (device) {
+        if (device.state == 'connected') {
+          log.info(`connect: device ${device.uuid} already connected`);
+        } else if (typeof device.connect === "function") {
+          device.connect(error => {
+            if (error) {
+              log.error("connect: error", error);
+            } else {
+              // send message to notify of connection
+              // confirm method is correct one to use and whether we could just get teh value from the store
+              log.info("connect: sending serialized device to renderer", bulbStore.serializeDevice(device), "\n\ndevice\n\n", device);
+              webContents.send("connected", bulbStore.serializeDevice(device));
+              
+              // store the device as discovered
+              bulbStore.setDiscoveredDevice(device);
+              
+              // update the local storage copy ??? is this needed?
+              // bulbStore.setStoredDevice(device);
+              
+               
+              // @TODO fix up to use generic arrays for candle and color
+              log.info("connect: service and characteristic discovery", device);
+              setTimeout(() => {
+                log.info("Timeout before discoverServicesAndCharacteristics");
+                discoverServicesAndCharacteristics(device);
+              }, 50);
+            }
+          });
+        } else {
+          webContents.send("error", `Device ${ device.name } [${ uuid }] not connectable.`);
+          log.error("Device not connectable");
+        }
       } else {
-        webContents.send("error", `Device ${ device.name } [${ uuid }] not connectable.`);
-        log.error("Device not found");
+        webContents.send("error", `Device unknown not connectable.`);
+        log.error("Device unknown not connectable");
       }
+      
     }
 
     function discoverServicesAndCharacteristics(device) {
