@@ -18,10 +18,16 @@ import {
   ListCtrl
 } from './list/list.controller';
 import {
+  GroupCtrl
+} from './group/group.controller';
+import {
   CharacteristicCtrl
 } from './characteristic/characteristic.controller';
 console.log("Imported Controllers");
 
+import {
+  MenuService
+} from './services/menu.service';
 import {
   BulbService
 } from './services/bulb.service';
@@ -36,9 +42,11 @@ angular.module('bulb', [
     'ngOrderObjectBy'
   ])
   .service('bulbService', BulbService)
+  .service('menuService', MenuService)
   .controller('appCtrl', AppCtrl)
   .controller('menuCtrl', MenuCtrl)
   .controller('listCtrl', ListCtrl)
+  .controller('groupCtrl', GroupCtrl)
   .controller('characteristicCtrl', CharacteristicCtrl)
   .config(['$routeProvider', routes])
   .config(config);

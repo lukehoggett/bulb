@@ -5,15 +5,18 @@
 
 class MenuCtrl {
 
-  constructor() {
+  constructor(menuService) {
+    
+    this.menuService = menuService;
+    
     this.menuItems = [{
       id: 1,
-      name: "devices",
+      name: "device",
       title: "Devices",
       icon: "lightbulb_outline"
     }, {
       id: 2,
-      name: "groups",
+      name: "group",
       title: "Groups",
       icon: "group_work"
     }];
@@ -21,10 +24,12 @@ class MenuCtrl {
   
   navSelect(item) {
     console.info("menu: navSelect", item);
+    this.menuService.setState(item.name);
+    
   }
 
 }
-// MenuCtrl.$inject = [''];
+MenuCtrl.$inject = ['menuService'];
 export {
   MenuCtrl
 };
