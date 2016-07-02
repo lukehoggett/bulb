@@ -1,0 +1,20 @@
+<div ng-controller="groupCtrl as groups" id="group" ng-cloak>
+    <md-toolbar class="md-hue-3" md-scroll-shrink>
+        <div class="md-toolbar-tools">
+            <span flex=""></span>
+            <md-button class="md-icon-button" aria-label="add group" ng-click="groups.createGroup()">
+                <md-icon>add</md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-list>
+        <md-list-item ng-repeat="group in groups" class="noright" layout-align="start center">
+            Group:
+            <p>
+                <md-input-container>
+                    <input ng-model="group.group.name" ng-model-options="{ updateOn: 'mousedown blur' }" aria-label="group name"/>
+                </md-input-container>
+            </p>
+        </md-list-item>
+    </md-list>
+</div>
