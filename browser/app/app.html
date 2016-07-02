@@ -13,8 +13,8 @@
   <div id="content" layout="row">
     <!-- <menu> -->
     <ng-include src="'app/menu/menu.html'"></ng-include>
-    <!-- <list> -->
-    <ng-include ng-show="app.menuService.getState() == 'device'" layout-fill src="'app/list/list.html'"></ng-include>
+    <!-- <device-list> -->
+    <ng-include ng-show="app.menuService.getState() == 'device'" layout-fill src="'app/device-list/device-list.html'"></ng-include>
     <!-- <group> -->
     <ng-include ng-show="app.menuService.getState() == 'group'" layout-fill src="'app/group/group.html'"></ng-include>
   </div>

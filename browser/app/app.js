@@ -15,8 +15,8 @@ import {
   MenuCtrl
 } from './menu/menu.controller';
 import {
-  ListCtrl
-} from './list/list.controller';
+  DeviceListCtrl
+} from './device-list/device-list.controller';
 import {
   GroupCtrl
 } from './group/group.controller';
@@ -45,7 +45,7 @@ angular.module('bulb', [
   .service('menuService', MenuService)
   .controller('appCtrl', AppCtrl)
   .controller('menuCtrl', MenuCtrl)
-  .controller('listCtrl', ListCtrl)
+  .controller('device-listCtrl', DeviceListCtrl)
   .controller('groupCtrl', GroupCtrl)
   .controller('characteristicCtrl', CharacteristicCtrl)
   .config(['$routeProvider', routes])
