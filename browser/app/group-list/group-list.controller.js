@@ -2,16 +2,15 @@
 /* jshint node: true */
 'use strict';
 
-class GroupCtrl {
+class GroupListCtrl {
 
-  constructor($rootScope, $mdSidenav, $mdDialog, bulbService) {
+  constructor($rootScope, $mdSidenav, $mdDialog, bulbService, groupService) {
 
     // this.$rootScope = $rootScope;
     // this.$mdSidenav = $mdSidenav;
     // this.$mdDialog = $mdDialog;
     // this.bulb = bulbService;
-    
-    this.group = [];
+    this.groupService = groupService;
     
     // this.originatorEvent;
   }
@@ -19,15 +18,23 @@ class GroupCtrl {
   
   
   createGroup() {
-    console.info("GroupCtrl() createGroup");
-    let newGroup = {};
-    newGroup.name = "New Group";
-    this.group.push(newGroup);
-    console.info("GroupCtrl() createGroup", this.group);
+    console.info("GroupListCtrl() createGroup");
+    
+    this.groupService.add();
+    console.info("GroupListCtrl() createGroup", this.groupService.getAll());
+  }
+  
+  updateGroupName(group) {
+    this.groupService.update(group);
+    console.info("GroupListCtrl updateGroupName", group.name);
+  }
+  
+  deleteGroup(group) {
+    this.groupSevice.delete(group);
   }
   
   // selectDevice(device) {
-  //   console.log("GroupCtrl: selectDevice", device);
+  //   console.log("GroupListCtrl: selectDevice", device);
   //   this.$rootScope.$broadcast('device_selected', device.uuid);
   //   this.showCharacteristicsPanel();
   // }
@@ -122,16 +129,16 @@ class GroupCtrl {
   //        locals: {
   //          items: []
   //        },
-  //        controller: GroupCtrl
+  //        controller: GroupListCtrl
   //     });
   //   
   //   this.originatorEvent = null;
   // }
 }
 
-GroupCtrl.$inject = ['$rootScope', '$mdSidenav', '$mdDialog', 'bulbService'];
+GroupListCtrl.$inject = ['$rootScope', '$mdSidenav', '$mdDialog', 'bulbService', 'groupService'];
 
 
 export {
-  GroupCtrl
+  GroupListCtrl
 };

@@ -25,6 +25,7 @@ System.config({
     "babel": "npm:babel-core@5.8.38",
     "babel-runtime": "npm:babel-runtime@5.8.38",
     "core-js": "npm:core-js@1.2.6",
+    "defunctzombie/node-uuid": "github:defunctzombie/node-uuid@2.0.2",
     "mozilla/localForage": "github:mozilla/localForage@1.4.2",
     "ocombe/angular-localForage": "github:ocombe/angular-localForage@1.2.5",
     "bower:angular-order-object-by@1.3.0": {

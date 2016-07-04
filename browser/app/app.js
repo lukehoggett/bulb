@@ -18,8 +18,8 @@ import {
   DeviceListCtrl
 } from './device-list/device-list.controller';
 import {
-  GroupCtrl
-} from './group/group.controller';
+  GroupListCtrl
+} from './group-list/group-list.controller';
 import {
   CharacteristicCtrl
 } from './characteristic/characteristic.controller';
@@ -31,6 +31,9 @@ import {
 import {
   BulbService
 } from './services/bulb.service';
+import {
+  GroupService
+} from './services/group.service';
 
 const _templateBase = './app/';
 
@@ -42,11 +45,12 @@ angular.module('bulb', [
     'ngOrderObjectBy'
   ])
   .service('bulbService', BulbService)
+  .service('groupService', GroupService)
   .service('menuService', MenuService)
   .controller('appCtrl', AppCtrl)
   .controller('menuCtrl', MenuCtrl)
   .controller('device-listCtrl', DeviceListCtrl)
-  .controller('groupCtrl', GroupCtrl)
+  .controller('group-listCtrl', GroupListCtrl)
   .controller('characteristicCtrl', CharacteristicCtrl)
   .config(['$routeProvider', routes])
   .config(config);
