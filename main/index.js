@@ -163,6 +163,11 @@
     ipcMain.on("dev.tools.open", onIpcDevToolsOpen);
     ipcMain.on("device.get.stored", onIpcDeviceGetStored);
     
+    ipcMain.on("group.set.stored", onIpcGroupSetStored);
+    ipcMain.on("group.delete.stored", onIpcGroupDeleteStored);
+    ipcMain.on("group.get.stored", onIpcGroupGetStored);
+    // ipcMain.on("group.get.stored.reply", onIpc);
+    
     // ipcMain listener functions
     function onIpcScanStart() {
       // Start scanning only if already powered up.
@@ -216,12 +221,31 @@
     }
     
     function onIpcDeviceGetStored(event) {
-      log.info("onDeviceGetStored...", bulbStore.getStoredDevices());
+      log.info("onDeviceGetStored...");
       bulbStore.getStoredDevices().forEach((device, uuid) => {
-        log.info("onDeviceGetStored sending ", device, uuid);
+        // log.info("onDeviceGetStored sending ", device, uuid);
         event.sender.send("device.get.stored.reply", device);
       });
     }
+    
+    function onIpcGroupSetStored(event, group) {
+      log.info("onIpcGroupSetStored...");
+      bulbStore.setStoredGroup(group);
+    }
+    
+    function onIpcGroupDeleteStored(event, group) {
+      bulbStore.deleteStoredGroup(group);
+    }
+    
+    function onIpcGroupGetStored(event) {
+      log.info("onIpcGroupGetStored...", bulbStore.getStoredGroups());
+      bulbStore.getStoredGroups().forEach((group, uuid) => {
+        log.info("onIpcGroupGetStored sending", group);
+        event.sender.send("group.get.stored.reply", group);
+      });
+      
+    }
+    
     
     // noble event listeners
     noble.on("discover", onNobleDiscovered);

@@ -1,20 +1,39 @@
-<div ng-controller="group-listCtrl as groupList" id="group" ng-cloak>
+<div ng-controller="group-listCtrl as groupList" id="group-list" ng-cloak>
     <md-toolbar class="md-hue-3" md-scroll-shrink>
         <div class="md-toolbar-tools">
             <span flex=""></span>
-            <md-button class="md-icon-button" aria-label="add group" ng-click="groupList.createGroup()">
+            <md-button class="md-icon-button" aria-label="add group" ng-click="groupList.groupService.add()">
                 <md-icon>add</md-icon>
             </md-button>
         </div>
     </md-toolbar>
     <md-list>
-        <md-list-item ng-repeat="group in groupList.groupSevice.groups" class="noright" layout-align="start center">
-            Group:
+        <md-list-item ng-repeat="group in groupList.groupService.groups" class="list noright" layout-align="start center" arai-label="Group">
             <p>
                 <md-input-container>
                     <input ng-model="group.name" ng-model-options="{ updateOn: 'mousedown blur' }" aria-label="group name" ng-change="groupList.updateGroupName(group)"/>
                 </md-input-container>
             </p>
+            {{group.uuid}}
+            {{group.devices}}
+            <div class="controls" layout="row" layout-align="start center">
+                <md-menu>
+                    <md-button md-menu-origin class="md-primary md-icon-button" aria-label="Add Devices" ng-click="groupList.openAddDeviceMenu($mdOpenMenu, $event, group)">
+                        <md-icon aria-label="Add Devices">add</md-icon>
+                    </md-button>
+                    <md-menu-content width="4">
+                        <md-menu-item>
+                            Select Device to Add
+                        </md-menu-item>
+                        <md-menu-divider></md-menu-divider>
+                        <md-menu-item ng-repeat="(uuid, device) in groupList.bulb.devices | groupedDevice:group.uuid">
+                            <md-checkbox aria-label="{{device.name}}" ng-click="groupList.toggleDeviceToGroup(device, group)">
+                                {{device.name}}
+                            </md-checkbox>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
+            </div>
         </md-list-item>
     </md-list>
 </div>

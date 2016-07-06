@@ -4,15 +4,15 @@
 
 class GroupListCtrl {
 
-  constructor($rootScope, $mdSidenav, $mdDialog, bulbService, groupService) {
+  constructor(groupService, bulbService) {
 
     // this.$rootScope = $rootScope;
     // this.$mdSidenav = $mdSidenav;
     // this.$mdDialog = $mdDialog;
-    // this.bulb = bulbService;
+    this.bulb = bulbService;
     this.groupService = groupService;
     
-    // this.originatorEvent;
+    this.originatorEvent;
   }
 
   
@@ -33,110 +33,32 @@ class GroupListCtrl {
     this.groupSevice.delete(group);
   }
   
-  // selectDevice(device) {
-  //   console.log("GroupListCtrl: selectDevice", device);
-  //   this.$rootScope.$broadcast('device_selected', device.uuid);
-  //   this.showCharacteristicsPanel();
-  // }
-  // 
-  // getCharacterisics(device) {
-  //   console.log("group get characteristics", device);
-  //   this.bulb.getCharacteristics(device.uuid);
-  // }
-  // 
-  // showCharacteristicsPanel() {
-  //   console.log("show characteristic");
-  //   this.$mdSidenav('characteristic').toggle();
-  // }
-  // 
-  // updateDeviceName(uuid) {
-  //   console.log("updateDeviceName", uuid, this.bulb.devices[uuid]);
-  //   // send update command to main process
-  //   this.bulb.setCharacteristic(uuid, this.bulb.devices[uuid].name, 'name');
-  // }
-  // 
-  // openMoreMenu($mdOpenMenu, event) {
-  //   console.info("group: openMoreMenu", $mdOpenMenu, event);
-  //   this.originatorEvent = event;
-  //   $mdOpenMenu(event);
-  // }
-  // 
-  // addToGroupClick(device) {
-  //   console.info("group: addToGroup", device);
-  // }
-  // 
-  // addToGroup(device) {
-  //   console.info("group: addToGroup", device);
-  //   // this.$mdDialog.show(
-  //   //   this.$mdDialog.alert()
-  //   //     .targetEvent(this.originatorEvent)
-  //   //     .clickOutsideToClose(true)
-  //   //     .parent('body')
-  //   //     .title('Add to Group')
-  //   //     .textContent('Add to an existing group or create one')
-  //   //     .ok('Add')
-  //   //     .cancel('Cancel')
-  //   // );
-  //   // this.$mdDialog.show(
-  //   //   this.$mdDialog.prompt()
-  //   //     .targetEvent(this.originatorEvent)
-  //   //     .clickOutsideToClose(true)
-  //   //     .template(
-  //   //       `<md-input-container>
-  //   //     <label>State</label>
-  //   //     <md-select>
-  //   //       <md-option value="Group 1" ng-disabled="$index === 1">
-  //   //         group 1
-  //   //       </md-option>
-  //   //       <md-option value="Group 2" ng-disabled="$index === 1">
-  //   //         group 2
-  //   //       </md-option>
-  //   //     </md-select>
-  //   //   </md-input-container>`
-  //   //     )
-  //   //     .parent('body')
-  //   //     .title('Add to Group')
-  //   //     .textContent('Add to an existing group or create one')
-  //   //     .ok('Add')
-  //   //     .cancel('Cancel')
-  //   // );
-  //   
-  //   var parentEl = angular.element(document.body);
-  //      this.$mdDialog.show({
-  //        parent: parentEl,
-  //        targetEvent: this.originatorEvent,
-  //        template:
-  //          `<md-dialog aria-label="Group dialog">
-  //            <md-dialog-content>
-  //              <md-input-container>
-  //              <label>State</label>
-  //              <md-select>
-  //                <md-option value="Group 1">
-  //                  group 1
-  //                </md-option>
-  //                <md-option value="Group 2">
-  //                  group 2
-  //                </md-option>
-  //              </md-select>
-  //            </md-input-container>
-  //            </md-dialog-content>
-  //            <md-dialog-actions>
-  //              <md-button ng-click="closeDialog()" class="md-primary">
-  //                Close Dialog
-  //              </md-button>
-  //            </md-dialog-actions>
-  //          </md-dialog>`,
-  //        locals: {
-  //          items: []
-  //        },
-  //        controller: GroupListCtrl
-  //     });
-  //   
-  //   this.originatorEvent = null;
-  // }
+  openAddDeviceMenu($mdOpenMenu, $event, group) {
+    console.info("group: openAddDeviceMenu", group);
+    this.originatorEvent = $event;
+    $mdOpenMenu($event);
+  }
+  
+  toggleDeviceToGroup(device, group) {
+    console.info("toggleDeviceToGroup", device, group, this.groupService.groups);
+    if (device.group == group.uuid) {
+      device.group = null;
+      this.bulb.devices[device.uuid].group = null;
+      
+      this.groupService.groups[group.uuid].devices.splice(this.groupService.groups.devices, 1);
+    } else {
+      device.group = group.uuid;
+      this.bulb.devices[device.uuid].group = group.uuid;
+      this.groupService.groups[group.uuid].devices.push(group.uuid);
+    }
+    console.info("toggleDeviceToGroup device", device.group, "this.bulb.devices", this.bulb.devices[device.uuid].group, "this.groupService.groups.devices", this.groupService.groups[group.uuid].devices);
+    
+    // update main proces storage
+  }
+  
 }
 
-GroupListCtrl.$inject = ['$rootScope', '$mdSidenav', '$mdDialog', 'bulbService', 'groupService'];
+GroupListCtrl.$inject = ['groupService', 'bulbService'];
 
 
 export {

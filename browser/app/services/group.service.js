@@ -5,11 +5,10 @@ const ipc = require("electron").ipcRenderer;
 const uuid = require("uuid");
 
 class GroupService {
-    constructor($rootScope, $timeout) {
-      this.$rootScope = $rootScope;
+    constructor($timeout) {
       this.$timeout = $timeout;
       
-      this.groups = [];
+      this.groups = {};
       
       // request any stored groups from the main process
       this.getStoredGroups();
@@ -28,10 +27,12 @@ class GroupService {
     }
     
     add() {
-      
+      console.info("GroupService: add:");
       let group = {};
-      group.id = uuid.v4();
+      group.uuid = uuid.v4();
       group.name = "New Group";
+      group.devices = [];
+      console.info("GroupService: add: new group", group);
       // add to local variable
       this.groups.push(group);
       // update persistent storage
@@ -40,17 +41,20 @@ class GroupService {
     
     update(group) {
       // update local variable
-      this.groups[group.id] = group;
+      this.groups[group.uuid] = group;
+      console.info("update", this.groups);
+      ipc.send('group.set.stored', group);
     }
     
     delete(group) {
       // remove from local variable
-      delete this.groups[group.id];
+      delete this.groups[group.uuid];
       // update persistent storage
       ipc.send('group.delete.stored', group);
     }
     
     getStoredGroups() {
+      console.info("Requesting stored groups");
       ipc.send("group.get.stored", (event) => {
         console.log("GroupService: get stored groups", event);
       });

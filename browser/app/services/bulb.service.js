@@ -99,6 +99,7 @@ class BulbService {
     // IPC listeners
     onDeviceGetStoredReply(event, device) {
       console.log("BulbService: device.get.stored.reply", device);
+      device.group = null;
       this.devices[device.uuid] = device;
     }
     

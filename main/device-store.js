@@ -13,8 +13,9 @@
   });
 
   // initialise storage
-  storage.initSync({
-    dir: __dirname + "/../data/device-storage",
+  
+  
+  let storageConfig = {
     stringify: JSON.stringify,
     parse: JSON.parse,
     encoding: "utf8",
@@ -22,16 +23,29 @@
     continuous: true,
     interval: false,
     ttl: false
-  });
+  };
+  
+  let deviceStorageConfig = Object.assign({dir: __dirname + "/../data/device-storage"}, storageConfig);
+  console.info("deviceStorageConfig", deviceStorageConfig);
+  let deviceStorage = storage.create(deviceStorageConfig);
+  deviceStorage.initSync();
+  
+  let groupStorageConfig = Object.assign({dir: __dirname + "/../data/group-storage"}, storageConfig);
+  console.info("groupStorageConfig", groupStorageConfig);
+  let groupStorage = storage.create(groupStorageConfig);
+  groupStorage.initSync();
 
   let devices = {};
   const serializedDevices = new Map();
   const discoveredDevices = {};
+
+  const serializedGroups = new Map();
   
   class BulbStore {
     constructor() {
       // read from persistent storage
       this.getDevicesFromStorage();
+      this.getGroupsFromStorage();
     }
     
     getDevicesFromStorage() {
@@ -40,10 +54,10 @@
       let haveCached = Object.keys(devices).length !== 0 && devices.constructor === Object;
       if (!haveCached) {
         
-        let deviceKeys = storage.keys();
+        let deviceKeys = deviceStorage.keys();
         deviceKeys.forEach((uuid, index) => {
           
-          let device = storage.getItem(uuid, (error, device) => {
+          let device = deviceStorage.getItem(uuid, (error, device) => {
             if (error) {
               log.error(error);
             }
@@ -60,16 +74,45 @@
       return serializedDevices;
     }
     
+    getGroupsFromStorage() {
+      let groupKeys = groupStorage.keys();
+      groupKeys.forEach((uuid, index) => {
+        
+        let group = groupStorage.getItem(uuid, (error, group) => {
+          if (error) {
+            log.error(error);
+          }
+        });
+
+        // log.info("getGroupsFromStorage group", group, uuid);
+        serializedGroups.set(uuid, group);
+      });
+      
+      return serializedGroups;
+    }
+    
     getStoredDevices() {
       return serializedDevices;
     }
     
+    getStoredGroups() {
+      return serializedGroups;
+    }
+    
     getStoredDeviceByUUID(uuid) {
       if (!serializedDevices.has(uuid)) {
-        log.error(`Device ${uuid} is not in storage.`);
+        log.error(`Device ${uuid} is not in deviceStorage.`);
         // @TODO handle error
       }
       return serializedDevices.get(uuid);
+    }
+    
+    getStoredGroupByUUID(uuid) {
+      if (!serializedGroups.has(uuid)) {
+        log.error(`Group ${uuid} is not in groupStorage.`);
+        // @TODO handle error
+      }
+      return serializedGroups.get(uuid);
     }
     
     setStoredDevices(devices) {
@@ -83,12 +126,29 @@
       device.state = 'disconnected';
       let serializedDevice = this.serializeDevice(device);
       // remove properties not needed to be stored
-      storage.setItem(serializedDevice.uuid, serializedDevice, error => {
+      deviceStorage.setItem(serializedDevice.uuid, serializedDevice, error => {
         if (error) {
           log.error("Storage error: on set", error);
         }
       });
       this.getDevicesFromStorage();
+    }
+    
+    setStoredGroups(groups) {
+      groups.forEach((group) => {
+        this.setStoredGroup(group);
+      });
+    }
+    
+    setStoredGroup(group) {
+      log.info("bulbStore setStoredGroup", group);
+      // remove properties not needed to be stored
+      groupStorage.setItem(group.uuid, group, error => {
+        if (error) {
+          log.error("Storage error: on set", error);
+        }
+      });
+      this.getGroupsFromStorage();
     }
     
     hasStoredDevice(uuid) {
@@ -118,6 +178,10 @@
       discoveredDevices[device.uuid] = device;
     }
     
+    deleteStoredGroup(group) {
+      log.info("bulbStore deleteStoredGroup group", group);
+    }
+    
     /**
      * Prepare a Noble device for serialization to send to a renderer process.
      Copies out all the attributes the renderer might need.  Seems to be
@@ -127,9 +191,6 @@
      * @return {[type]} [description]
      */
     serializeDevice(device) {
-      
-      
-      
       return {
         id: device.id,
         name: device.advertisement.localName,
@@ -174,19 +235,19 @@
   // load all currently stored devices
   let getAll = function () {
     // @TODO implement caching in local variable, or not as needed
-    log.info("device-storage: getAll");
+    log.info("device-deviceStorage: getAll");
     let haveCached = Object.keys(devices).length !== 0 && devices.constructor === Object;
     if (!haveCached) {
       
-      let deviceKeys = storage.keys();
+      let deviceKeys = deviceStorage.keys();
       deviceKeys.forEach((uuid, index) => {
-        let device = storage.getItem(uuid, (error, device) => {
+        let device = deviceStorage.getItem(uuid, (error, device) => {
           if (error) {
             log.error(error);
           }
         });
 
-        log.info("device-storage: loaded UUID", device.uuid);
+        log.info("device-deviceStorage: loaded UUID", device.uuid);
 
         device.stored = true;
         device.power = false;
@@ -199,21 +260,21 @@
   let getByUUID = function(uuid) {
     let devices = getAll();
     if (!Object.keys(devices).includes(uuid)) {
-      log.error(`Device ${uuid} is not in storage.`);
+      log.error(`Device ${uuid} is not in deviceStorage.`);
       // @TODO handle error
     }
     return devices[uuid];
   };
 
   let set = function(uuid, serializedDevice) {
-    storage.setItem(uuid, serializedDevice, error => {
+    deviceStorage.setItem(uuid, serializedDevice, error => {
       if (error) {
         log.error("Storage error: on set", error);
       }
     });
   };
 
-  exports.storage = storage;
+  exports.deviceStorage = deviceStorage;
   exports.getAll = getAll;
   exports.getByUUID = getByUUID;
   exports.set = set;

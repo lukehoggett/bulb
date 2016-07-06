@@ -38,10 +38,10 @@ class DeviceListCtrl {
     this.bulb.setCharacteristic(uuid, this.bulb.devices[uuid].name, 'name');
   }
   
-  openMoreMenu($mdOpenMenu, event) {
-    console.info("list: openMoreMenu", $mdOpenMenu, event);
-    this.originatorEvent = event;
-    $mdOpenMenu(event);
+  openMoreMenu($mdOpenMenu, $event) {
+    console.info("list: openMoreMenu", $mdOpenMenu, $event);
+    this.originatorEvent = $event;
+    $mdOpenMenu($event);
   }
   
   addToGroupClick(device) {
