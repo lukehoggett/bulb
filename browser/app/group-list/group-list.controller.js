@@ -42,18 +42,18 @@ class GroupListCtrl {
   toggleDeviceToGroup(device, group) {
     console.info("toggleDeviceToGroup", device, group, this.groupService.groups);
     if (device.group == group.uuid) {
-      device.group = null;
       this.bulb.devices[device.uuid].group = null;
       
       this.groupService.groups[group.uuid].devices.splice(this.groupService.groups.devices, 1);
     } else {
-      device.group = group.uuid;
       this.bulb.devices[device.uuid].group = group.uuid;
       this.groupService.groups[group.uuid].devices.push(group.uuid);
     }
     console.info("toggleDeviceToGroup device", device.group, "this.bulb.devices", this.bulb.devices[device.uuid].group, "this.groupService.groups.devices", this.groupService.groups[group.uuid].devices);
     
     // update main proces storage
+    this.groupService.update(this.groupService.groups[group.uuid]);
+    this.bulb.setDevice(this.bulb.devices[device.uuid]);
   }
   
 }

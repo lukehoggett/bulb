@@ -78,6 +78,12 @@ class BulbService {
       return this.devices[uuid];
     }
     
+    setDevice(device) {
+      this.devices[device.uuid] = device;
+      console.info("device update", this.devices);
+      ipc.send('device.set.stored', device);
+    }
+    
     getCharacteristics(uuid) {
       console.log("BulbService: getCharacteristics", uuid);
       ipc.send("device.get.characteristics", uuid);
@@ -99,7 +105,7 @@ class BulbService {
     // IPC listeners
     onDeviceGetStoredReply(event, device) {
       console.log("BulbService: device.get.stored.reply", device);
-      device.group = null;
+      // device.group = null;
       this.devices[device.uuid] = device;
     }
     

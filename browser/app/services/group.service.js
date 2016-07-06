@@ -42,7 +42,7 @@ class GroupService {
     update(group) {
       // update local variable
       this.groups[group.uuid] = group;
-      console.info("update", this.groups);
+      console.info("group update", this.groups);
       ipc.send('group.set.stored', group);
     }
     

@@ -162,6 +162,7 @@
     ipcMain.on("device.get", onIpcDeviceGet);
     ipcMain.on("dev.tools.open", onIpcDevToolsOpen);
     ipcMain.on("device.get.stored", onIpcDeviceGetStored);
+    ipcMain.on("device.set.stored", onIpcDeviceSetStored);
     
     ipcMain.on("group.set.stored", onIpcGroupSetStored);
     ipcMain.on("group.delete.stored", onIpcGroupDeleteStored);
@@ -226,6 +227,11 @@
         // log.info("onDeviceGetStored sending ", device, uuid);
         event.sender.send("device.get.stored.reply", device);
       });
+    }
+    
+    function onIpcDeviceSetStored(event, device) {
+      log.info("onIpcDeviceSetStored...", device);
+      bulbStore.setStoredDevice(device);
     }
     
     function onIpcGroupSetStored(event, group) {

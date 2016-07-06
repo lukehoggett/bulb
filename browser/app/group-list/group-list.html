@@ -27,7 +27,7 @@
                         </md-menu-item>
                         <md-menu-divider></md-menu-divider>
                         <md-menu-item ng-repeat="(uuid, device) in groupList.bulb.devices | groupedDevice:group.uuid">
-                            <md-checkbox aria-label="{{device.name}}" ng-click="groupList.toggleDeviceToGroup(device, group)">
+                            <md-checkbox ng-checked="device.group != null" aria-label="{{device.name}}" ng-click="groupList.toggleDeviceToGroup(device, group)">
                                 {{device.name}}
                             </md-checkbox>
                         </md-menu-item>
