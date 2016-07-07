@@ -74,7 +74,7 @@ class BulbService {
     }
     
     getDevice(uuid) {
-      console.log("BulbService: getDevices called: ", this.devices);
+      console.log("BulbService: getDevice called: ", uuid, this.devices[uuid]);
       return this.devices[uuid];
     }
     

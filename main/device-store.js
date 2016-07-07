@@ -66,7 +66,7 @@
           device.stored = true;
           device.power = false;
           device.state = 'disconnected';
-          // log.info("getDevicesFromStorage device", device, uuid);
+          log.info("getDevicesFromStorage device", device, uuid);
           serializedDevices.set(uuid, device);
         });
       }

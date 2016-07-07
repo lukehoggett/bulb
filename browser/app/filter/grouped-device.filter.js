@@ -9,7 +9,7 @@ export function GroupedDevice() {
     let out = [];
     
     angular.forEach(devices, (device) => {
-      if (device.group === null || device.group == groupUUID) {
+      if (device.group === "" || device.group == groupUUID) {
         out.push(device);
       }
     });

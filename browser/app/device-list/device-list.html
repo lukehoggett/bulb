@@ -1,5 +1,4 @@
 <div ng-controller="device-listCtrl as list" id="device-list" ng-cloak>
-  list
     <md-list>
         <md-list-item ng-repeat="device in list.bulb.devices | orderObjectBy: 'discovered' : true" class="list noright" layout-align="start center">
             <p>
