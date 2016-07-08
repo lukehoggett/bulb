@@ -71,6 +71,6 @@ function routes($routeProvider) {
 
 function config($mdThemingProvider) {
   $mdThemingProvider.theme('default')
-    .primaryPalette('light-blue')
-    .accentPalette('blue');
+    .primaryPalette('blue-grey')
+    .accentPalette('deep-orange');
 }

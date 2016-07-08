@@ -6,12 +6,13 @@ const ipc = require('electron').ipcRenderer;
 
 class DeviceListCtrl {
 
-  constructor($rootScope, $mdSidenav, $mdDialog, bulbService) {
+  constructor($rootScope, $mdSidenav, $mdDialog, bulbService, groupService) {
 
     this.$rootScope = $rootScope;
     this.$mdSidenav = $mdSidenav;
     this.$mdDialog = $mdDialog;
     this.bulb = bulbService;
+    this.groupService = groupService;
     
     this.originatorEvent;
   }
@@ -119,7 +120,7 @@ class DeviceListCtrl {
   }
 }
 
-DeviceListCtrl.$inject = ['$rootScope', '$mdSidenav', '$mdDialog', 'bulbService'];
+DeviceListCtrl.$inject = ['$rootScope', '$mdSidenav', '$mdDialog', 'bulbService', 'groupService'];
 
 
 export {

@@ -22,8 +22,9 @@ class GroupService {
       return this.groups;
     }
     
-    get(groupId) {
-      return this.groups[groupId];
+    get(groupUUID) {
+      console.info("GroupService() get", groupUUID, this.groups[groupUUID]);
+      return this.groups[groupUUID];
     }
     
     add() {

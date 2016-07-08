@@ -8,7 +8,7 @@ const GROUP_STATE = 'group';
 class MenuService {
   
     constructor() {
-      this.setState(GROUP_STATE);
+      this.setState(DEVICE_STATE);
       
       console.info("menuService state", this.getState());
     }
