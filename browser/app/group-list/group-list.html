@@ -14,7 +14,6 @@
                     <input ng-model="group.name" ng-model-options="{ updateOn: 'mousedown blur' }" aria-label="group name" ng-change="groupList.updateGroupName(group)"/>
                 </md-input-container>
             </p>
-            
             <span ng-repeat="deviceUUID in group.devices">
               <span ng-if="$first">Devices:</span>
               <span ng-if="!$first">, </span> {{groupList.bulb.getDevice(deviceUUID).name}}
@@ -29,9 +28,8 @@
                             Select Device to Add
                         </md-menu-item>
                         <md-menu-divider></md-menu-divider>
-                        {{groupList.bulb.devices}}
                         <md-menu-item ng-repeat="(uuid, device) in groupList.bulb.devices | groupedDevice:group.uuid">
-                            <md-checkbox ng-checked="device.group != ''" aria-label="{{device.name}}" ng-click="groupList.toggleDeviceToGroup(device, group)">
+                            <md-checkbox ng-checked="device.group !== null" aria-label="{{device.name}}" ng-click="groupList.toggleDeviceToGroup(device, group)">
                                 {{device.name}}
                             </md-checkbox>
                         </md-menu-item>

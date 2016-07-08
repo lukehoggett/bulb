@@ -26,6 +26,7 @@ class BulbService {
     }
     
     getStoredDevices() {
+      console.info("Requesting stored devices");
       ipc.send("device.get.stored", (event) => {
         console.log("BulbService: get stored devices", event);
       });
@@ -74,7 +75,7 @@ class BulbService {
     }
     
     getDevice(uuid) {
-      console.log("BulbService: getDevice called: ", uuid, this.devices[uuid]);
+      console.log("BulbService: getDevice called: ", uuid);
       return this.devices[uuid];
     }
     
@@ -105,7 +106,6 @@ class BulbService {
     // IPC listeners
     onDeviceGetStoredReply(event, device) {
       console.log("BulbService: device.get.stored.reply", device);
-      // device.group = null;
       this.devices[device.uuid] = device;
     }
     

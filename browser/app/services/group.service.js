@@ -34,7 +34,7 @@ class GroupService {
       group.devices = [];
       console.info("GroupService: add: new group", group);
       // add to local variable
-      this.groups.push(group);
+      this.groups[group.uuid] = group;
       // update persistent storage
       ipc.send('group.set.stored', group); 
     }
