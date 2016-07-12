@@ -2,7 +2,8 @@
     <md-list>
         <md-list-item ng-repeat="device in list.bulb.devices | orderObjectBy: 'discovered' : true" class="list noright" layout-align="start center">
             <p>
-                <md-input-container>
+                <span ng-if="device.state == 'disconnected'">{{device.name}}</span>
+                <md-input-container ng-if="device.state == 'connected'">
                     <input ng-model="device.name" ng-model-options="{ updateOn: 'mousedown blur' }" ng-change="list.updateDeviceName(device.uuid)" aria-label="device name"/>
                 </md-input-container>
             </p>

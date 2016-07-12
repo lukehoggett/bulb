@@ -279,7 +279,7 @@
       // check for Mipow devices
       if (typeof device.advertisement.manufacturerData !== "undefined" && device.advertisement.manufacturerData.toString("hex") === MIPOW_MANUFACTURER_DATA) {
         log.info("onNobleDiscovered: Discovered Playbulb device with UUID", device.uuid);
-        
+        log.info("onNobleDiscovered: device.advertisement.serviceUuids", device.advertisement.serviceUuids);
         // on discovery check if device is in stored devices, if not update stored
         if (!bulbStore.hasStoredDevice(device.uuid)) {
           // save discovered device to persistent storage
@@ -295,7 +295,7 @@
         bulbStore.setDiscoveredDevice(device);
 
         // send notification to renderer that a device has been discovered
-        log.info("onNobleDiscovered: sending discovered message to renderer", bulbStore.serializeDevice(device));
+        log.info("onNobleDiscovered: sending discovered device to renderer", device.uuid);
         webContents.send("device.discovered", bulbStore.serializeDevice(device));
         
       } else {
@@ -431,7 +431,7 @@
           bulbStore.setDiscoveredDevice(device);
           
           device = bulbStore.serializeCharacteristics(deviceUUID, values);
-          log.info("+_+_+_+_+_+_+_+_+_+ mapDiscoveredCharacteristics: sending updated data about discovered device to renderer uuid", device.uuid, "device serialized", device);
+          log.info("+_+_+_+_+_+_+_+_+_+ mapDiscoveredCharacteristics: ", device.uuid, "device serialized", device);
           webContents.send("device.discovered", device);
         }, error => {
           log.error("Promise.all failed ", error);
