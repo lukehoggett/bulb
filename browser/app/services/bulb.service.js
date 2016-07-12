@@ -99,7 +99,7 @@ class BulbService {
     }
     
     setCharacteristic(uuid, value, type) {
-      // console.log("BulbService: setCharacteristic", uuid, value, type);
+      console.log("BulbService: setCharacteristic", uuid, value, type);
       ipc.send("device.characteristic.set", uuid, value, type);
     }
     

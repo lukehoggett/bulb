@@ -97,8 +97,10 @@
         characteristicUUID: "fffb"
       },
       name: {
-        serviceUUID: "1800",
-        characteristicUUID: "2a00"
+        // serviceUUID: "1800",
+        // characteristicUUID: "2a00"
+        serviceUUID: "ff02",
+        characteristicUUID: "ffff"
       },
       battery: {
         serviceUUID: "180f",
@@ -474,7 +476,8 @@
 
     function writeCharacteristic(value, type, uuid) {
       log.debug("writeCharacteristic: ...");
-      let wChar = bulbStore.getDiscoveredDeviceByUUID(uuid).characteristics[type];
+      let device = bulbStore.getDiscoveredDeviceByUUID(uuid);
+      let wChar = device.characteristics[type];
       log.info(`writeCharacteristic: Writing ${ type } Characteristic with value`, value);
       
       return new Promise((resolve, reject) => {

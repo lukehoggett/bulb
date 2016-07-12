@@ -123,7 +123,6 @@
       device.stored = true;
       device.state = 'disconnected';
       let serializedDevice = this.serializeDevice(device);
-      // remove properties not needed to be stored
       deviceStorage.setItem(serializedDevice.uuid, serializedDevice, error => {
         if (error) {
           log.error("Storage error: on set", error);

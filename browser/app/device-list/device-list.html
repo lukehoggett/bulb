@@ -4,7 +4,7 @@
             <p>
                 <span ng-if="device.state == 'disconnected'">{{device.name}}</span>
                 <md-input-container ng-if="device.state == 'connected'">
-                    <input ng-model="device.name" ng-model-options="{ updateOn: 'mousedown blur' }" ng-change="list.updateDeviceName(device.uuid)" aria-label="device name"/>
+                    <input ng-model="device.name" ng-model-options="{ updateOn: 'mousedown blur' }" ng-change="list.bulb.setCharacteristic(device.uuid, device.name, 'name')" aria-label="device name"/>
                 </md-input-container>
             </p>
             <p class="device-uuid">{{device.uuid}}</p>

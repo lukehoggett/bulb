@@ -28,6 +28,29 @@ class CharacteristicCtrl {
       speed: 0
     };
     
+    this.effectModes = [
+      {
+        name: "Flashing",
+        value: 0
+      },
+      {
+        name: "Pulse",
+        value: 1
+      },
+      {
+        name: "Rainbow",
+        value: 2
+      },
+      {
+        name: "Rainbow Fade",
+        value: 3
+      },
+      {
+        name: "Candle",
+        value: 4
+      }
+    ];
+    
     this.color = {
       saturation: 0,
       red: 0,
