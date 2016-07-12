@@ -26,12 +26,10 @@
   };
   
   let deviceStorageConfig = Object.assign({dir: __dirname + "/../data/device-storage"}, storageConfig);
-  console.info("deviceStorageConfig", deviceStorageConfig);
   let deviceStorage = storage.create(deviceStorageConfig);
   deviceStorage.initSync();
   
   let groupStorageConfig = Object.assign({dir: __dirname + "/../data/group-storage"}, storageConfig);
-  console.info("groupStorageConfig", groupStorageConfig);
   let groupStorage = storage.create(groupStorageConfig);
   groupStorage.initSync();
 
@@ -66,7 +64,7 @@
           device.stored = true;
           device.power = false;
           device.state = 'disconnected';
-          log.info("getDevicesFromStorage device", device, uuid);
+          // log.info("getDevicesFromStorage device", device, uuid);
           serializedDevices.set(uuid, device);
         });
       }
@@ -174,7 +172,6 @@
     }
     
     setDiscoveredDevice(device) {
-      log.info("\n\n<><><><><><><> bulbStore setDiscoveredDevice", device.state, "\n\n");
       discoveredDevices[device.uuid] = device;
     }
     
@@ -204,17 +201,14 @@
         discovered: device.discovered || false,
         stored: device.stored || false,
         lastSeen: Date.now(),
-        group: device.group
+        group: device.group || null
       };
     }
     
     serializeCharacteristics(deviceUUID, characteristicValues) {
-      log.info("bulbStore.serializeCharacteristics... full", this.getDiscoveredDeviceByUUID(deviceUUID));
       let device = this.serializeDevice(this.getDiscoveredDeviceByUUID(deviceUUID));
-      log.info("bulbStore.serializeCharacteristics input", device);
       let charList = {};
       characteristicValues.forEach(c => {
-        log.info(c.characteristic.uuid, c.type);
         charList[c.type] = {
           uuid: c.characteristic.uuid,
           name: c.characteristic.name,
@@ -223,8 +217,6 @@
         };
       });
       device.characteristics = charList;
-      // log.info("device", device);
-      log.info("bulbStore.serializeCharacteristics output", device);
       return device;
     }
   }

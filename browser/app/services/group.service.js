@@ -23,17 +23,17 @@ class GroupService {
     }
     
     get(groupUUID) {
-      console.info("GroupService() get", groupUUID, this.groups[groupUUID]);
+      // console.info("GroupService() get", groupUUID, this.groups[groupUUID]);
       return this.groups[groupUUID];
     }
     
     add() {
-      console.info("GroupService: add:");
+      // console.info("GroupService: add:");
       let group = {};
       group.uuid = uuid.v4();
       group.name = "New Group";
       group.devices = [];
-      console.info("GroupService: add: new group", group);
+      
       // add to local variable
       this.groups[group.uuid] = group;
       // update persistent storage
@@ -43,7 +43,7 @@ class GroupService {
     update(group) {
       // update local variable
       this.groups[group.uuid] = group;
-      console.info("group update", this.groups);
+      // console.info("group update", this.groups);
       ipc.send('group.set.stored', group);
     }
     
@@ -55,15 +55,15 @@ class GroupService {
     }
     
     getStoredGroups() {
-      console.info("Requesting stored groups");
+      // console.info("Requesting stored groups");
       ipc.send("group.get.stored", (event) => {
-        console.log("GroupService: get stored groups", event);
+        // console.log("GroupService: get stored groups", event);
       });
     }
     
     // IPC listeners
     onGroupGetStoredReply(event, group) {
-      console.log("GroupService: group.get.stored.reply", group);
+      // console.log("GroupService: group.get.stored.reply", group);
       this.groups[group.uuid] = group;
     }
   

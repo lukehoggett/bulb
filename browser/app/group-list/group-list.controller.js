@@ -18,15 +18,11 @@ class GroupListCtrl {
   
   
   createGroup() {
-    console.info("GroupListCtrl() createGroup");
-    
     this.groupService.add();
-    console.info("GroupListCtrl() createGroup", this.groupService.getAll());
   }
   
   updateGroupName(group) {
     this.groupService.update(group);
-    console.info("GroupListCtrl updateGroupName", group.name);
   }
   
   deleteGroup(group) {
@@ -34,13 +30,11 @@ class GroupListCtrl {
   }
   
   openAddDeviceMenu($mdOpenMenu, $event, group) {
-    console.info("group: openAddDeviceMenu", group);
     this.originatorEvent = $event;
     $mdOpenMenu($event);
   }
   
   toggleDeviceToGroup(device, group) {
-    console.info("toggleDeviceToGroup", device, group, this.groupService.groups);
     if (device.group == group.uuid) {
       this.bulb.devices[device.uuid].group = null;
       this.groupService.groups[group.uuid].devices.splice(this.groupService.groups.devices, 1);
