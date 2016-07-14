@@ -5,6 +5,9 @@ import ngMaterial from 'angular-material';
 import ngAnimate from 'angular-animate';
 import ngMdIcons from 'angular-material-icons';
 import ngOrderObjectBy from 'angular-order-object-by';
+import mdColorPicker from 'md-color-picker';
+
+
 
 console.log("Imported vendor libraries");
 
@@ -46,7 +49,8 @@ angular.module('bulb', [
     'ngMdIcons',
     'ngMaterial',
     'ngAnimate',
-    'ngOrderObjectBy'
+    'ngOrderObjectBy',
+    'mdColorPicker'
   ])
   .service('bulbService', BulbService)
   .service('groupService', GroupService)

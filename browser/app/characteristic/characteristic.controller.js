@@ -58,6 +58,17 @@ class CharacteristicCtrl {
       blue: 0
     };
     
+    this.colorPicker = {};
+    this.colorPicker.options = {
+      label: "Choose a color",
+      icon: "brush",
+      default: "#f00",
+      alphaChannel: true,
+      genericPalette: false,
+      history: false
+    };
+    // this.colorPicker
+    
     this.$scope.$on("device_selected", this.deviceSelected.bind(this));
     
   }
@@ -106,7 +117,7 @@ class CharacteristicCtrl {
   }
   
   save(characteristic) {
-    console.log(this);
+    console.log(this, this.colorPicker);
     let value = null;
     if (this.type === this.TYPE_EFFECT) {
       console.log("value is ", this.TYPE_EFFECT);
