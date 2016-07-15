@@ -16,7 +16,7 @@ class BulbService {
       
       // listening to messages from the main
       ipc.on("device.get.stored.reply", (event, device, uuid) => this.onDeviceGetStoredReply(event, device, uuid));
-      ipc.on("discovered", (event, devices) => this.onDiscovered(event, devices));
+      ipc.on("device.discovered", (event, device) => this.onDiscovered(event, device));
       ipc.on("scanning", (event) => this.onScanning(event));
       ipc.on("services", (event, services) => this.onServices(event, services));
       ipc.on("connected", (event, device) => this.onConnected(event, device));
@@ -26,9 +26,9 @@ class BulbService {
     }
     
     getStoredDevices() {
-      console.info("Requesting stored devices");
+      // console.info("Requesting stored devices");
       ipc.send("device.get.stored", (event) => {
-        console.log("BulbService: get stored devices", event);
+        // console.log("BulbService: get stored devices", event);
       });
     }
     
@@ -70,12 +70,12 @@ class BulbService {
     }
     
     getDevices() {
-      console.log("BulbService: getDevices called: ", this.devices);
+      // console.log("BulbService: getDevices called: ", this.devices);
       return this.devices;
     }
     
     getDevice(uuid) {
-      console.log("BulbService: getDevice called: ", uuid);
+      // console.log("BulbService: getDevice called: ", uuid);
       return this.devices[uuid];
     }
     
@@ -86,12 +86,12 @@ class BulbService {
     }
     
     getCharacteristics(uuid) {
-      console.log("BulbService: getCharacteristics", uuid);
+      // console.log("BulbService: getCharacteristics", uuid);
       ipc.send("device.get.characteristics", uuid);
     }
     
     getCharacteristic(uuid, characteristic) {
-      console.log("BulbService: getCharacteristic", uuid, characteristic);
+      // console.log("BulbService: getCharacteristic", uuid, characteristic);
     }
     
     setCharacteristics(uuid, values) {
@@ -110,7 +110,7 @@ class BulbService {
     }
     
     onDiscovered(event, device) {
-      console.log("BulbService: onDiscovered", device);
+      console.log("BulbService: onDiscovered ^^^^^ ", device);
       if (device.uuid in this.devices) {
         console.log("Existing device");
       }

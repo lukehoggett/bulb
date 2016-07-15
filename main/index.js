@@ -73,10 +73,9 @@
       frame: false
     }
   };
-
-
+  
   const MIPOW_MANUFACTURER_DATA = "4d49504f57";
-  let types = {
+  const types = {
     COLOR: {
       colorUuid: "0018",
       effectsUuid: "0016",
@@ -89,15 +88,24 @@
       nameUuid: "001c"
     },
     CANDLE: {
-      colorUuid: "fffc",
-      effectsUuid: "fffb",
-      modes: {
-        FADE: 0,
-        JUMPRGB: 1,
-        FADERGB: 2,
-        FLICKER: 3
+      color: {
+        serviceUUID: "ff02",
+        characteristicUUID: "fffc"
       },
-      nameUuid: "2a00"
+      effects: {
+        serviceUUID: "ff02",
+        characteristicUUID: "fffb"
+      },
+      name: {
+        // serviceUUID: "1800",
+        // characteristicUUID: "2a00"
+        serviceUUID: "ff02",
+        characteristicUUID: "ffff"
+      },
+      battery: {
+        serviceUUID: "180f",
+        characteristicUUID: "2a19"
+      }
     }
   };
 
@@ -139,15 +147,14 @@
     webContents.on("did-finish-load", onWebContentsDidFinishLoad);
     
     function onWebContentsDidFinishLoad() {
-      log.info("Web contents finished loading");
+      log.info("onWebContentsDidFinishLoad...");
       // noble.on("stateChange", (state) => {
-      if (noble.state === "poweredOn") {
-        setTimeout(() => {
-          noble.startScanning();
-          log.info("Noble State = poweredOn - Sending scanning");
-          webContents.send("scanning.start");
-        }, 1500);
-      }
+        if (noble.state === "poweredOn") {
+          setTimeout(() => {
+            noble.startScanning();
+            webContents.send("scanning.start");
+          }, 1500);
+        }
       // });
     }
 
@@ -171,9 +178,10 @@
     
     // ipcMain listener functions
     function onIpcScanStart() {
+      log.info("onIpcScanStart...");
       // Start scanning only if already powered up.
       if (noble.state === "poweredOn") {
-        log.info("onScanStart... ");
+        log.info("onScanStart... poweredOn ");
         noble.startScanning();
       }
     }
@@ -244,9 +252,9 @@
     }
     
     function onIpcGroupGetStored(event) {
-      log.info("onIpcGroupGetStored...", bulbStore.getStoredGroups());
+      // log.info("onIpcGroupGetStored...", bulbStore.getStoredGroups());
       bulbStore.getStoredGroups().forEach((group, uuid) => {
-        log.info("onIpcGroupGetStored sending", group);
+        // log.info("onIpcGroupGetStored sending", group);
         event.sender.send("group.get.stored.reply", group);
       });
       
@@ -256,27 +264,41 @@
     // noble event listeners
     noble.on("discover", onNobleDiscovered);
     
+    noble.on('scanStart', () => {
+      log.info("noble scan start");
+    });
+    
+    noble.on('scanStop', () => {
+      log.info("noble scan stop");
+    });
+    
+    noble.on('warning', (message) => {
+      log.warn("noble warning", message);
+    });
+    
     function onNobleDiscovered(device) {
       log.info("onNobleDiscovered...");
       // check for Mipow devices
       if (typeof device.advertisement.manufacturerData !== "undefined" && device.advertisement.manufacturerData.toString("hex") === MIPOW_MANUFACTURER_DATA) {
         log.info("onNobleDiscovered: Discovered Playbulb device with UUID", device.uuid);
-        
+        log.info("onNobleDiscovered: device.advertisement.serviceUuids", device.advertisement.serviceUuids);
         // on discovery check if device is in stored devices, if not update stored
         if (!bulbStore.hasStoredDevice(device.uuid)) {
           // save discovered device to persistent storage
           bulbStore.setStoredDevice(device);
+          
         }
         
         // add properties to the device
-        device.discovered = true;
-
+        device.discovered = true; // we don't save discovered so need to add it here
+        device.stored = true; // doesn't feel like we should have to add stored her, but ok till I find a better way
+        
         // this is needed to add the noble extra object stuff that can't be stored in the persistent storage
         bulbStore.setDiscoveredDevice(device);
 
         // send notification to renderer that a device has been discovered
-        log.info("onNobleDiscovered: sending discovered message to renderer", bulbStore.serializeDevice(device));
-        webContents.send("discovered", bulbStore.serializeDevice(device));
+        log.info("onNobleDiscovered: sending discovered device to renderer", device.uuid);
+        webContents.send("device.discovered", bulbStore.serializeDevice(device));
         
       } else {
         log.info("onNobleDiscovered: Ignoring non bulb device");
@@ -292,6 +314,7 @@
       // log.info("connect device:", device);
       if (device) {
         if (device.state == 'connected') {
+          // @TODO need to send data about device is it is already connected
           log.info(`connect: device ${device.uuid} already connected`);
         } else if (typeof device.connect === "function") {
           device.connect(error => {
@@ -300,7 +323,7 @@
             } else {
               // send message to notify of connection
               // confirm method is correct one to use and whether we could just get teh value from the store
-              log.info("connect: sending serialized device to renderer", bulbStore.serializeDevice(device), "\n\ndevice\n\n", device);
+              log.info("connect: sending serialized device to renderer", bulbStore.serializeDevice(device));
               webContents.send("connected", bulbStore.serializeDevice(device));
               
               // store the device as discovered
@@ -311,7 +334,7 @@
               
                
               // @TODO fix up to use generic arrays for candle and color
-              log.info("connect: service and characteristic discovery", device);
+              // log.info("connect: service and characteristic discovery", device);
               setTimeout(() => {
                 log.info("Timeout before discoverServicesAndCharacteristics");
                 discoverServicesAndCharacteristics(device);
@@ -326,45 +349,40 @@
         webContents.send("error", `Device unknown not connectable.`);
         log.error("Device unknown not connectable");
       }
-      
     }
 
     function discoverServicesAndCharacteristics(device) {
-
       discoverSomeServicesAndCharacteristics(device);
-
       // discoverAllServicesAndCharacteristics(device);
     }
     
     function discoverSomeServicesAndCharacteristics(device) {
-      // just discover known name, color and effects
-      let serviceUUIDs = ["1800", "ff02"];
-      let characteristicUUIDs = ["2a00", "fffb", "fffc"];
-      log.info("discoverSomeServicesAndCharacteristics: ", serviceUUIDs, characteristicUUIDs);
-      device.discoverSomeServicesAndCharacteristics(serviceUUIDs, characteristicUUIDs, (error, services, characteristics) => {
-        log.info("discoverSomeServicesAndCharacteristics: some");
+      log.info("discoverSomeServicesAndCharacteristics...");
+      // just discover defined services and characteristics
+      let serviceUUIDs = getConfigServiceUUIDs("CANDLE");
+      let characteristicUUIDs = getConfigCharacteristicUUIDs("CANDLE");
 
+      device.discoverSomeServicesAndCharacteristics(serviceUUIDs, characteristicUUIDs, (error, services, characteristics) => {
         if (error) {
           log.error("discoverSomeServicesAndCharacteristics", error);
         }
-        // log.info("Services", services);
-        // log.info("Characteristics", characteristics);
         mapDiscoveredCharacteristics(device.uuid, characteristics);
       });
     }
     
     function discoverAllServicesAndCharacteristics(device) {
+      log.debug("discoverAllServicesAndCharacteristics...");
       // discover all - useful for dev and sniffing
       device.discoverAllServicesAndCharacteristics((error, services, characteristics) => {
-        log.info("discoverServicesAndCharacteristics: all");
-       
         if (error) {
           log.error("discoverAllServicesAndCharacteristics", error);
         }
-        log.info("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        // log.info("%%%%% ALL Services", services);
-        // log.info("%%%%% ALL Characteristics", characteristics);
-        log.info("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+        
+        mapDiscoveredCharacteristics(device.uuid, characteristics);
+        
+        log.info("%%%%% ALL Services", services);
+        log.info("%%%%% ALL Characteristics", characteristics);
+        
         characteristics.map(c => {
           c.read((error, data) => {
             if (error) {
@@ -399,35 +417,24 @@
 
     function mapDiscoveredCharacteristics(deviceUUID, characteristics) {
       let device = bulbStore.getDiscoveredDeviceByUUID(deviceUUID);
-      log.info("mapDiscoveredCharacteristics: START \n\n", "deviceUUID\n\n", deviceUUID, "device\n\n", device);
+
       device.characteristics = {};
       characteristics.map(characteristic => {
-        
-        if (characteristic.uuid === types.CANDLE.colorUuid) {
-          device.characteristics.color = characteristic;
-        } else if (characteristic.uuid === types.CANDLE.effectsUuid) {
-          device.characteristics.effect = characteristic;
-        } else if (characteristic.uuid === types.CANDLE.nameUuid) {
-          device.characteristics.name = characteristic;
-        }
+        device = addCharacteristicToDevice(device, characteristic);
       });
       
-      log.info("mapDiscoveredCharacteristics: END \n\n", "deviceUUID\n\n", deviceUUID, "device\n\n", device);
-
-      if (device.characteristics.color && device.characteristics.effect && device.characteristics.name) {
-        let all = [readCharacteristic("color", device.characteristics.color), readCharacteristic("effect", device.characteristics.effect), readCharacteristic("name", device.characteristics.name)];
-log.info("BEFORE Promise All", device);
+      if (device.characteristics.color && device.characteristics.effect && device.characteristics.name && device.characteristics.battery) {
+        let all = [readCharacteristic("color", device.characteristics.color), readCharacteristic("effect", device.characteristics.effect), readCharacteristic("name", device.characteristics.name), readCharacteristic("battery", device.characteristics.battery)];
+        
         Promise.all(all).then(values => {
           let device = bulbStore.getDiscoveredDeviceByUUID(deviceUUID);
           log.info("mapDiscoveredCharacteristics: have required characteristics", deviceUUID);
           // send notification of values to ui
           bulbStore.setDiscoveredDevice(device);
           
-          log.info("3", device);
           device = bulbStore.serializeCharacteristics(deviceUUID, values);
-          log.info("4", device);
-          log.info("+_+_+_+_+_+_+_+_+_+ mapDiscoveredCharacteristics: sending updated data about discovered device to renderer uuid", device.uuid, "device serialized", device);
-          webContents.send("discovered", device);
+          log.info("+_+_+_+_+_+_+_+_+_+ mapDiscoveredCharacteristics: ", device.uuid, "device serialized", device);
+          webContents.send("device.discovered", device);
         }, error => {
           log.error("Promise.all failed ", error);
         }).catch(error => {
@@ -436,12 +443,26 @@ log.info("BEFORE Promise All", device);
       }
     }
     
-    function sendCharacteristicsToRenderer(values) {
-      
+    function addCharacteristicToDevice(device, characteristic) {
+      switch (characteristic.uuid) {
+        case types.CANDLE.color.characteristicUUID:
+          device.characteristics.color = characteristic;
+          break;
+        case types.CANDLE.effects.characteristicUUID:
+          device.characteristics.effect = characteristic;
+          break;
+        case types.CANDLE.name.characteristicUUID:
+          device.characteristics.name = characteristic;
+          break;
+        case types.CANDLE.battery.characteristicUUID:
+          device.characteristics.battery = characteristic;
+          break;
+      }
+      return device;
     }
 
     function readCharacteristic(type, characteristic) {
-      log.info("readCharacteristic...");
+      log.debug("readCharacteristic...");
       return new Promise((resolve, reject) => {
         characteristic.read((error, data) => {
           if (error) {
@@ -454,8 +475,9 @@ log.info("BEFORE Promise All", device);
     }
 
     function writeCharacteristic(value, type, uuid) {
-      log.info("writeCharacteristic: ...");
-      let wChar = bulbStore.getDiscoveredDeviceByUUID(uuid).characteristics[type];
+      log.debug("writeCharacteristic: ...");
+      let device = bulbStore.getDiscoveredDeviceByUUID(uuid);
+      let wChar = device.characteristics[type];
       log.info(`writeCharacteristic: Writing ${ type } Characteristic with value`, value);
       
       return new Promise((resolve, reject) => {
@@ -539,4 +561,25 @@ log.info("BEFORE Promise All", device);
     // Make sure device is disconnected before exiting.
     disconnectAll();
   });
+  
+  // utility functions
+  function getConfigCharacteristicUUIDs(type) {
+    return getUUIDfromConfig(type, "characteristic");
+  }
+  
+  function getConfigServiceUUIDs(type) {
+    return getUUIDfromConfig(type, "service");
+  }
+  
+  function getUUIDfromConfig(type, property) {
+    let uuids = [];
+    for (let name in types[type]) {
+      if (uuids.indexOf(types[type][name][`${property}UUID`]) === -1) {
+        uuids.push(types[type][name][`${property}UUID`]);
+      }
+    }
+    
+    uuids.sort();
+    return uuids;
+  }
 })();

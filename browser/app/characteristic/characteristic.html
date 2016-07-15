@@ -9,10 +9,13 @@
         <md-radio-button value="{{char.TYPE_COLOR}}" class="md-primary">Colour</md-radio-button>
         <md-radio-button value="{{char.TYPE_EFFECT}}" class="md-primary">Effect</md-radio-button>
       </md-radio-group>
+      
+      
       <div ng-if="char.type == char.TYPE_COLOR">
-          <div ng-attr-style="width: 60px; height: 60px; border: 1px solid #efefef; background: rgba({{char.color.red}},{{char.color.green}},{{char.color.blue}},{{(char.color.saturation / 255).toFixed(2)}})">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-          <!-- <div>RGBA {{char.color.red}},{{char.color.green}},{{char.color.blue}},{{(char.color.saturation / 255).toFixed(2)}}</div> -->
-        <div layout>
+        <div md-color-picker="char.colorPicker.options" ng-model="char.colorPicker.color"></div>
+          <!-- <div ng-attr-style="width: 60px; height: 60px; border: 1px solid #efefef; background: rgba({{char.color.red}},{{char.color.green}},{{char.color.blue}},{{(char.color.saturation / 255).toFixed(2)}})">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> -->
+          
+        <!-- <div layout>
           <div flex="10" layout layout-align="center center">
             <span class="md-body-1">Saturation</span>
           </div>
@@ -22,10 +25,12 @@
             <input flex type="number" ng-model="char.color.saturation" aria-label="saturation" aria-controls="saturation-slider">
           </md-input-container>
         </div>
+        
         <div layout>
           <div flex="10" layout layout-align="center center">
             <span class="md-body-1">R</span>
           </div>
+          
           <md-slider flex min="0" max="255" ng-model="char.color.red" aria-label="red" id="red-slider" class>
           </md-slider>
           <md-input-container flex="20" layout layout-align="center center">
@@ -51,21 +56,20 @@
           <md-input-container flex="20" layout layout-align="center center">
             <input flex type="number" ng-model="char.color.blue" aria-label="blue" aria-controls="blue-slider">
           </md-input-container>
-        </div>
+        </div> -->
       </div>
       
+      
+      
       <div ng-if="char.type == char.TYPE_EFFECT">
-        <md-radio-group ng-model="char.effect.mode">
-          <h3>Effect</h3>
-          <md-radio-button value="01" class="md-primary" >Fade</md-radio-button>
-          <md-radio-button value="02">Jump RGB (rainbow)</md-radio-button>
-          <md-radio-button value="03">Fade RGB (rainbow)</md-radio-button>
-          <md-radio-button value="04">Candle Effect</md-radio-button>
+        <h3>Effect</h3>
+        {{char.effect.mode}}
+        <md-radio-group ng-model="char.effect.mode" class="md-primary">
+          <md-radio-button ng-repeat="effectMode in char.effectModes" ng-value="effectMode.value" arial-label="Select Effect {{effectMode.name}}"  >{{effectMode.name}}</md-radio-button>
         </md-radio-group>
         
-          <div ng-attr-style="width: 60px; height: 60px; border: 1px solid #efefef; background: rgba({{char.effect.red}},{{char.effect.green}},{{char.effect.blue}},{{(char.effect.saturation / 255).toFixed(2)}})">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-          <!-- <div>RGBA {{char.effect.red}},{{char.effect.green}},{{char.effect.blue}},{{(char.effect.saturation / 255).toFixed(2)}}</div> -->
-        <div layout>
+          <!-- <div ng-attr-style="width: 60px; height: 60px; border: 1px solid #efefef; background: rgba({{char.effect.red}},{{char.effect.green}},{{char.effect.blue}},{{(char.effect.saturation / 255).toFixed(2)}})">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> -->
+        <!-- <div layout>
           <div flex="10" layout layout-align="center center">
             <span class="md-body-1">Saturation</span>
           </div>
@@ -74,8 +78,10 @@
           <md-input-container flex="20" layout layout-align="center center">
             <input flex type="number" ng-model="char.effect.saturation" aria-label="saturation" aria-controls="saturation-slider">
           </md-input-container>
-        </div>
-        <div layout>
+        </div> -->
+        <div ng-if="char.effect.mode != 2 && char.effect.mode != 3">
+          <div md-color-picker="char.colorPicker.options" ng-model="char.colorPicker.color"></div>
+        <!-- <div layout>
           <div flex="10" layout layout-align="center center">
             <span class="md-body-1">R</span>
           </div>
@@ -104,7 +110,8 @@
           <md-input-container flex="20" layout layout-align="center center">
             <input flex type="number" ng-model="char.effect.blue" aria-label="blue" aria-controls="blue-slider">
           </md-input-container>
-        </div>
+        </div> -->
+      </div>
         <h4>Speed</h4>
         <div layout>
           <div flex="20" layout layout-align="center center">

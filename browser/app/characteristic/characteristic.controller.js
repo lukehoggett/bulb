@@ -28,12 +28,46 @@ class CharacteristicCtrl {
       speed: 0
     };
     
+    this.effectModes = [
+      {
+        name: "Flashing",
+        value: 0
+      },
+      {
+        name: "Pulse",
+        value: 1
+      },
+      {
+        name: "Rainbow",
+        value: 2
+      },
+      {
+        name: "Rainbow Fade",
+        value: 3
+      },
+      {
+        name: "Candle",
+        value: 4
+      }
+    ];
+    
     this.color = {
       saturation: 0,
       red: 0,
       green: 0,
       blue: 0
     };
+    
+    this.colorPicker = {};
+    this.colorPicker.options = {
+      label: "Choose a color",
+      icon: "brush",
+      default: "#f00",
+      alphaChannel: true,
+      genericPalette: false,
+      history: false
+    };
+    // this.colorPicker
     
     this.$scope.$on("device_selected", this.deviceSelected.bind(this));
     
@@ -83,7 +117,7 @@ class CharacteristicCtrl {
   }
   
   save(characteristic) {
-    console.log(this);
+    console.log(this, this.colorPicker);
     let value = null;
     if (this.type === this.TYPE_EFFECT) {
       console.log("value is ", this.TYPE_EFFECT);

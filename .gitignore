@@ -1,5 +1,5 @@
 node_modules
-jspm_packages
 *.swp
 .DS_Store
+jspm_packages
 dist
