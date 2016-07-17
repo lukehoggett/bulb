@@ -265,19 +265,19 @@
     noble.on("discover", onNobleDiscovered);
     
     noble.on('scanStart', () => {
-      log.info("noble scan start");
+      log.info("noble on scanStart");
     });
     
     noble.on('scanStop', () => {
-      log.info("noble scan stop");
+      log.info("noble on scanStop");
     });
     
     noble.on('warning', (message) => {
-      log.warn("noble warning", message);
+      log.warn("noble on warning", message);
     });
     
     function onNobleDiscovered(device) {
-      log.info("onNobleDiscovered...");
+      log.info("onNobleDiscovered...", device);
       // check for Mipow devices
       if (typeof device.advertisement.manufacturerData !== "undefined" && device.advertisement.manufacturerData.toString("hex") === MIPOW_MANUFACTURER_DATA) {
         log.info("onNobleDiscovered: Discovered Playbulb device with UUID", device.uuid);

@@ -5,7 +5,7 @@
   "main": "main/index.js",
   "scripts": {
     "start": "sudo ./node_modules/electron-prebuilt/dist/electron main/index.js --displaysize=md | node_modules/bunyan/bin/bunyan",
-    "postinstall": "jspm install"
+    "postinstall": "./postinstall.sh"
   },
   "keywords": [
     "electron-app"

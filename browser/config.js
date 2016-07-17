@@ -24,6 +24,7 @@ System.config({
     "angular-route": "github:angular/bower-angular-route@1.5.7",
     "babel": "npm:babel-core@5.8.38",
     "babel-runtime": "npm:babel-runtime@5.8.38",
+    "brianpkelley/md-color-picker": "github:brianpkelley/md-color-picker@develop",
     "core-js": "npm:core-js@1.2.6",
     "defunctzombie/node-uuid": "github:defunctzombie/node-uuid@2.0.2",
     "md-color-picker": "github:brianpkelley/md-color-picker@develop",
