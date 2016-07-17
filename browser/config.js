@@ -39,9 +39,6 @@ System.config({
     "github:angular/bower-angular-aria@1.5.7": {
       "angular": "github:angular/bower-angular@1.5.7"
     },
-    "github:angular/bower-angular-messages@1.5.7": {
-      "angular": "github:angular/bower-angular@1.5.7"
-    },
     "github:angular/bower-angular-route@1.5.7": {
       "angular": "github:angular/bower-angular@1.5.7"
     },
@@ -49,7 +46,6 @@ System.config({
       "angular": "github:angular/bower-angular@1.5.7",
       "angular-animate": "github:angular/bower-angular-animate@1.5.7",
       "angular-aria": "github:angular/bower-angular-aria@1.5.7",
-      "angular-messages": "github:angular/bower-angular-messages@1.5.7",
       "css": "github:systemjs/plugin-css@0.1.23"
     },
     "github:jspm/nodelibs-assert@0.1.0": {
