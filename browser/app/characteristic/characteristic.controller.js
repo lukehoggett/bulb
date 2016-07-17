@@ -60,12 +60,18 @@ class CharacteristicCtrl {
     
     this.colorPicker = {};
     this.colorPicker.options = {
-      label: "Choose a color",
+      type: 1,
+      label: "Color",
       icon: "brush",
-      default: "#f00",
+      default: "rgb(0,255,0)",
+      openOnInput: true,
+      clearButton: true,
       alphaChannel: true,
-      genericPalette: false,
-      history: false
+      rgb: true,
+      history: false,
+      hex: false,
+      hsl: false,
+      defaultTab: "sliders"
     };
     // this.colorPicker
     
