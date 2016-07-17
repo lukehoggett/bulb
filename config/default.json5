@@ -1,0 +1,84 @@
+{
+  Window: {
+    width: 2000,
+    height: 1200,
+    minwidth: 800,
+    minHeight: 480,
+    backgroundColor: "#000",
+    x: 2560,
+    y: 100
+  },
+  Args: {
+    "DisplaySize": {
+      sm: {
+        width: 800,
+        height: 600
+      },
+      md: {
+        width: 1280,
+        height: 768
+      },
+      lg: {
+        width: 1920,
+        height: 1080
+      },
+      full: {
+        fullscreen: true,
+        frame: false
+      }
+    }
+  },
+  Bulb: {
+    MipowManufacturerData: "4d49504f57",
+    AdvertisedServiceUUIDs: {
+      COLOR: "ff00",
+      "CANDLE": "ff02"
+    },
+    Types: {
+      COLOR: {
+        color: {
+          serviceUUID: "ff00",
+          characteristicUUID: "fffc"
+        },
+        effects: {
+          serviceUUID: "ff00",
+          characteristicUUID: "fffb"
+        },
+        name: {
+          // serviceUUID: "1800",
+          // characteristicUUID: "2a00"
+          serviceUUID: "ff00",
+          characteristicUUID: "ffff"
+        },
+        battery: {
+          serviceUUID: "180f",
+          characteristicUUID: "2a19"
+        }
+      },
+      CANDLE: {
+        color: {
+          serviceUUID: "ff02",
+          characteristicUUID: "fffc"
+        },
+        effects: {
+          serviceUUID: "ff02",
+          characteristicUUID: "fffb"
+        },
+        name: {
+          // serviceUUID: "1800",
+          // characteristicUUID: "2a00"
+          serviceUUID: "ff02",
+          characteristicUUID: "ffff"
+        },
+        battery: {
+          serviceUUID: "180f",
+          characteristicUUID: "2a19"
+        }
+      }
+    }
+  },
+  Logging: {
+    name: "bulb"
+  }
+  
+}

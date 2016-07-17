@@ -17,12 +17,14 @@
   const bulbStore = deviceStore.bulbStore;
   // cli arg parser
   const yargs = require("yargs");
+  
+  const config = require('config');
 
 
 
   // configure bunyan logging
   let log = bunyan.createLogger({
-    name: "bulb"
+    name: config.get('Logging.name')
   });
   
   /* ------------------------------------------- */
@@ -45,83 +47,8 @@
 
 
   let win;
-  let windowOptions = {
-    width: 2000,
-    height: 1200,
-    minwidth: 800,
-    minHeight: 480,
-    backgroundColor: "#000",
-    x: 2560,
-    y: 100
-  };
-  
-  let displaySizeArgs = {
-    sm: {
-      width: 800,
-      height: 600
-    },
-    md: {
-      width: 1280,
-      height: 768
-    },
-    lg: {
-      width: 1920,
-      height: 1080
-    },
-    full: {
-      fullscreen: true,
-      frame: false
-    }
-  };
   
   let playbulbType = "";
-  const MIPOW_MANUFACTURER_DATA = "4d49504f57";
-  const advertisedServiceUUIDs = {
-    COLOR: "ff00",
-    "CANDLE": "ff02"
-  };
-  const types = {
-    COLOR: {
-      color: {
-        serviceUUID: advertisedServiceUUIDs.COLOR,
-        characteristicUUID: "fffc"
-      },
-      effects: {
-        serviceUUID: advertisedServiceUUIDs.COLOR,
-        characteristicUUID: "fffb"
-      },
-      name: {
-        // serviceUUID: "1800",
-        // characteristicUUID: "2a00"
-        serviceUUID: advertisedServiceUUIDs.COLOR,
-        characteristicUUID: "ffff"
-      },
-      battery: {
-        serviceUUID: "180f",
-        characteristicUUID: "2a19"
-      }
-    },
-    CANDLE: {
-      color: {
-        serviceUUID: advertisedServiceUUIDs.CANDLE,
-        characteristicUUID: "fffc"
-      },
-      effects: {
-        serviceUUID: advertisedServiceUUIDs.CANDLE,
-        characteristicUUID: "fffb"
-      },
-      name: {
-        // serviceUUID: "1800",
-        // characteristicUUID: "2a00"
-        serviceUUID: advertisedServiceUUIDs.CANDLE,
-        characteristicUUID: "ffff"
-      },
-      battery: {
-        serviceUUID: "180f",
-        characteristicUUID: "2a19"
-      }
-    }
-  };
 
   let colorChar = null;
   let effectChar = null;
@@ -138,9 +65,9 @@
   }
 
   function getWindowOptions(display) {
-    let options = windowOptions;
+    let options = config.get('Window');
     if (argv.displaysize) {
-      Object.assign(options, displaySizeArgs[argv.displaysize]);
+      Object.assign(options, config.get('Args.DisplaySize'));
     }
     return options;
   }
@@ -293,14 +220,14 @@
     function onNobleDiscovered(device) {
       log.info("onNobleDiscovered...", device);
       // check for Mipow devices
-      if (typeof device.advertisement.manufacturerData !== "undefined" && device.advertisement.manufacturerData.toString("hex") === MIPOW_MANUFACTURER_DATA) {
+      if (typeof device.advertisement.manufacturerData !== "undefined" && device.advertisement.manufacturerData.toString("hex") === config.get('Bulb.MipowManufacturerData')) {
         
         // check which type of device it is
         switch (device.advertisement.serviceUUIDs) {
-          case advertisedServiceUUIDs.CANDLE:
-            playbulbType = type.CANDLE;
+          case config.get('Bulb.AdvertisedServiceUUIDs.CANDLE'):
+            playbulbType = config.get('Bulb.Types.CANDLE');
             break;
-          case advertisedServiceUUIDs.COLOR:
+            playbulbType = config.get('Bulb.Types.COLOR');
             playbulbType = type.COLOR;
             break;
           default:
