@@ -74,32 +74,46 @@
     }
   };
   
+  let playbulbType = "";
   const MIPOW_MANUFACTURER_DATA = "4d49504f57";
+  const advertisedServiceUUIDs = {
+    COLOR: "ff00",
+    "CANDLE": "ff02"
+  };
   const types = {
     COLOR: {
-      colorUuid: "0018",
-      effectsUuid: "0016",
-      modes: {
-        FLASH: 0,
-        PULSE: 1,
-        RAINBOWJUMP: 2,
-        RAINBOWFADE: 3
-      },
-      nameUuid: "001c"
-    },
-    CANDLE: {
       color: {
-        serviceUUID: "ff02",
+        serviceUUID: advertisedServiceUUIDs.COLOR,
         characteristicUUID: "fffc"
       },
       effects: {
-        serviceUUID: "ff02",
+        serviceUUID: advertisedServiceUUIDs.COLOR,
         characteristicUUID: "fffb"
       },
       name: {
         // serviceUUID: "1800",
         // characteristicUUID: "2a00"
-        serviceUUID: "ff02",
+        serviceUUID: advertisedServiceUUIDs.COLOR,
+        characteristicUUID: "ffff"
+      },
+      battery: {
+        serviceUUID: "180f",
+        characteristicUUID: "2a19"
+      }
+    },
+    CANDLE: {
+      color: {
+        serviceUUID: advertisedServiceUUIDs.CANDLE,
+        characteristicUUID: "fffc"
+      },
+      effects: {
+        serviceUUID: advertisedServiceUUIDs.CANDLE,
+        characteristicUUID: "fffb"
+      },
+      name: {
+        // serviceUUID: "1800",
+        // characteristicUUID: "2a00"
+        serviceUUID: advertisedServiceUUIDs.CANDLE,
         characteristicUUID: "ffff"
       },
       battery: {
@@ -280,14 +294,27 @@
       log.info("onNobleDiscovered...", device);
       // check for Mipow devices
       if (typeof device.advertisement.manufacturerData !== "undefined" && device.advertisement.manufacturerData.toString("hex") === MIPOW_MANUFACTURER_DATA) {
+        
+        // check which type of device it is
+        switch (device.advertisement.serviceUUIDs) {
+          case advertisedServiceUUIDs.CANDLE:
+            playbulbType = type.CANDLE;
+            break;
+          case advertisedServiceUUIDs.COLOR:
+            playbulbType = type.COLOR;
+            break;
+          default:
+            
+        }
+        device.type = playbulbType;
         log.info("onNobleDiscovered: Discovered Playbulb device with UUID", device.uuid);
         log.info("onNobleDiscovered: device.advertisement.serviceUuids", device.advertisement.serviceUuids);
         // on discovery check if device is in stored devices, if not update stored
-        if (!bulbStore.hasStoredDevice(device.uuid)) {
+        // if (!bulbStore.hasStoredDevice(device.uuid)) {
           // save discovered device to persistent storage
           bulbStore.setStoredDevice(device);
           
-        }
+        // }
         
         // add properties to the device
         device.discovered = true; // we don't save discovered so need to add it here
@@ -297,7 +324,7 @@
         bulbStore.setDiscoveredDevice(device);
 
         // send notification to renderer that a device has been discovered
-        log.info("onNobleDiscovered: sending discovered device to renderer", device.uuid);
+        log.info("onNobleDiscovered: sending discovered device to renderer", device.uuid, device);
         webContents.send("device.discovered", bulbStore.serializeDevice(device));
         
       } else {
