@@ -44,20 +44,23 @@
 
   let win;
   
-  let playbulbType = "";
-
   let colorChar = null;
   let effectChar = null;
   let nameChar = null;
 
   // handle quitting
   app.on("window-all-closed", onAppWindowAllClosed);
+  app.on("quit", onAppQuit);
   
   function onAppWindowAllClosed() {
     // force app termination on OSX when win has been closed
     if (process.platform == "darwin") {
       app.quit();
     }
+  }
+  
+  function onAppQuit() {
+    disconnectAll();
   }
 
   function getWindowOptions(display) {
@@ -76,12 +79,26 @@
     let primaryDisplay = screen.getPrimaryDisplay();
 
     win = new BrowserWindow(getWindowOptions(primaryDisplay));
-
+    win.loadURL("file://" + __dirname + "/../browser/index.html");
+    
+    // window events
+    win.on("closed", onWindowClosed);
+    
+    
     let webContents = win.webContents;
-
-    webContents.openDevTools({ mode: "undocked" });
-
+    
+    // we content events
+    webContents.openDevTools({mode: "undocked"});
     webContents.on("did-finish-load", onWebContentsDidFinishLoad);
+    
+    
+    function onWindowClosed() {
+      log.info("Window Closed");
+      noble.stopScanning();
+      win = null;
+      app.quit();
+    }
+    
     
     function onWebContentsDidFinishLoad() {
       log.info("onWebContentsDidFinishLoad...");
@@ -90,9 +107,10 @@
           setTimeout(() => {
             noble.startScanning();
             webContents.send("scanning.start");
-          }, 1500);
+          }, 2000);
         }
       // });
+      win.setTitle(app.getName());
     }
 
 
@@ -214,10 +232,12 @@
     });
     
     function onNobleDiscovered(device) {
-      log.info("onNobleDiscovered...", device);
+      log.info("onNobleDiscovered...");
       // check for Mipow devices
       if (typeof device.advertisement.manufacturerData !== "undefined" && device.advertisement.manufacturerData.toString("hex") === config.get('Bulb.MipowManufacturerData')) {
-        Bulb.discovered(device);
+        device = Bulb.discovered(device);
+        // send notification to renderer that a device has been discovered
+        webContents.send("device.discovered", bulbStore.serializeDevice(device));
       } else {
         log.info("onNobleDiscovered: Ignoring non bulb device");
       }
@@ -256,7 +276,7 @@
               setTimeout(() => {
                 log.info("Timeout before discoverServicesAndCharacteristics");
                 discoverServicesAndCharacteristics(device);
-              }, 50);
+              }, 100);
             }
           });
         } else {
@@ -341,8 +361,15 @@
         device = addCharacteristicToDevice(device, characteristic);
       });
       
+      log.info("mapDiscoveredCharacteristics device", device);
+      
       if (device.characteristics.color && device.characteristics.effect && device.characteristics.name && device.characteristics.battery) {
-        let all = [readCharacteristic("color", device.characteristics.color), readCharacteristic("effect", device.characteristics.effect), readCharacteristic("name", device.characteristics.name), readCharacteristic("battery", device.characteristics.battery)];
+        let all = [
+          readCharacteristic("color", device.characteristics.color), 
+          readCharacteristic("effect", device.characteristics.effect), 
+          readCharacteristic("name", device.characteristics.name), 
+          readCharacteristic("battery", device.characteristics.battery)
+        ];
         
         Promise.all(all).then(values => {
           let device = bulbStore.getDiscoveredDeviceByUUID(deviceUUID);
@@ -362,17 +389,20 @@
     }
     
     function addCharacteristicToDevice(device, characteristic) {
+      // @TODO handle color
+      let typeConfig = config.get('Bulb.Types.CANDLE');
+
       switch (characteristic.uuid) {
-        case types.CANDLE.color.characteristicUUID:
+        case typeConfig.color.characteristicUUID:
           device.characteristics.color = characteristic;
           break;
-        case types.CANDLE.effects.characteristicUUID:
+        case typeConfig.effects.characteristicUUID:
           device.characteristics.effect = characteristic;
           break;
-        case types.CANDLE.name.characteristicUUID:
+        case typeConfig.name.characteristicUUID:
           device.characteristics.name = characteristic;
           break;
-        case types.CANDLE.battery.characteristicUUID:
+        case typeConfig.battery.characteristicUUID:
           device.characteristics.battery = characteristic;
           break;
       }
@@ -440,34 +470,27 @@
       log.info("change", data, isNotification);
     }
 
-    win.loadURL("file://" + __dirname + "/../browser/index.html");
-    win.webContents.on("did-finish-load", () => {
-      log.info("Window Did Load");
-      win.setTitle(app.getName());
-    });
-    win.on("closed", () => {
-      log.info("Window Closed");
-      win = null;
-      app.quit();
-    });
-
-    function disconnect(device) {
-      if (typeof device == "string") {
-        device = deviceStore.getByUUID(device);
-      }
-      log.info("Disconnecting", device.uuid);
-      device.disconnect(error => {
-        if (error) {
-          log.error();
-        }
-        webContents.send("disconnected", serializeDevice(device));
-      });
-    }
   });
+  
+  function disconnect(device) {
+    // if uuid, look up device
+    if (typeof device == "string") {
+      device = deviceStore.getByUUID(device);
+    }
+    log.info("before Disconnecting", device.uuid);
+    device.disconnect(error => {
+      if (error) {
+        log.error("Disconnection error:", error);
+      }
+      log.info("Disconnected", device.uuid);
+      webContents.send("disconnected", bulbStore.serializeDevice(device));
+    });
+  }
 
   function disconnectAll() {
     log.info("disconnectAll");
-    let discoveredDevices = bulbStore.getDiscoveredDevices;
+    let discoveredDevices = bulbStore.getDiscoveredDevices();
+    log.info("disconnect devices", discoveredDevices);
     for (let uuid in discoveredDevices) {
       if (typeof discoveredDevices[uuid].disconnect === "function") {
         disconnect(discoveredDevices[uuid]);
@@ -475,11 +498,6 @@
     }
   }
 
-  app.on("quit", function () {
-    // Make sure device is disconnected before exiting.
-    disconnectAll();
-  });
-  
   // utility functions
   function getConfigCharacteristicUUIDs(type) {
     return getUUIDfromConfig(type, "characteristic");
@@ -490,13 +508,14 @@
   }
   
   function getUUIDfromConfig(type, property) {
+    let types = config.get(`Bulb.Types.${type}`);
     let uuids = [];
-    for (let name in types[type]) {
-      if (uuids.indexOf(types[type][name][`${property}UUID`]) === -1) {
-        uuids.push(types[type][name][`${property}UUID`]);
+    for (let name in types) {
+      let typeUUID = types[name][`${property}UUID`];
+      if (uuids.indexOf(typeUUID) === -1) {
+        uuids.push(typeUUID);
       }
     }
-    
     uuids.sort();
     return uuids;
   }

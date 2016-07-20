@@ -1,7 +1,11 @@
 (function() {
   "use strict";
   
+  const config = require('./config').config;
   const log = require('./logger').log;
+  const bulbStore = require("./device-store").bulbStore;
+  
+  let playbulbType = "";
 
   class Bulb {
     
@@ -35,19 +39,11 @@
       
       // this is needed to add the noble extra object stuff that can't be stored in the persistent storage
       bulbStore.setDiscoveredDevice(device);
+      
+      return device;
+    }
 
-      // send notification to renderer that a device has been discovered
-      log.info("onNobleDiscovered: sending discovered device to renderer", device.uuid, device);
-      webContents.send("device.discovered", bulbStore.serializeDevice(device));
-      return "hello";
-    }
-    
-    test() {
-      log.info("test function");
-      return "tested";
-    }
   }
 
   exports.Bulb = new Bulb();
-  // 
 })();

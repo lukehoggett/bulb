@@ -3,10 +3,10 @@ html > body {
 }
 
 .green {
-  color: #4CAF50;
+  color: rgb(37, 135, 64);
 }
 .red {
-  color: #F44336;
+  color: rgb(130, 44, 44);
 }
 
 #container {}
@@ -22,7 +22,6 @@ html > body {
 }
 
 #menu {
-  
 }
 
 #menu md-icon {
