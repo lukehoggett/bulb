@@ -20,7 +20,7 @@ class BulbService {
       ipc.on("scanning", (event) => this.onScanning(event));
       ipc.on("services", (event, services) => this.onServices(event, services));
       ipc.on("connected", (event, device) => this.onConnected(event, device));
-      ipc.on("disconnected", (event, device) => this.onDisconnected(event, device));
+      ipc.on("device.disconnected", (event, device) => this.onDisconnected(event, device));
       ipc.on("characteristics", (event, characteristic) => this.onCharacteristics(event, characteristic));
 
     }

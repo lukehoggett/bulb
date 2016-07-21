@@ -475,16 +475,24 @@
   });
   
   function disconnect(device) {
+    log.info("disconnect()", device);
     // if uuid, look up device
     if (typeof device == "string") {
-      device = deviceStore.getByUUID(device);
+      device = bulbStore.getDiscoveredDeviceByUUID(device);
     }
+    
     log.info("before Disconnecting", device.uuid);
     device.disconnect(error => {
       if (error) {
         log.error("Disconnection error:", error);
       }
-      log.info("Disconnected", device.uuid, "\n");
+      log.info("Disconnected", device.uuid);
+      device.connected = false;
+      // send disconnect event to the render process
+      if (win !== null) {
+        win.webContents.send('device.disconnected', device);
+      }
+      
     });
   }
 
