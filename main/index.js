@@ -17,7 +17,9 @@
   const yargs = require("yargs");
   
   // local module for device storage and retrieval from persistent storage
-  const bulbStore = require("./device-store").bulbStore;
+  const deviceStore = require("./device-store");
+  const bulbStore = deviceStore.bulbStore;
+  
   // local module for handling bulb actions
   const Bulb = require('./bulb').Bulb;
 
@@ -482,8 +484,7 @@
       if (error) {
         log.error("Disconnection error:", error);
       }
-      log.info("Disconnected", device.uuid);
-      webContents.send("disconnected", bulbStore.serializeDevice(device));
+      log.info("Disconnected", device.uuid, "\n");
     });
   }
 

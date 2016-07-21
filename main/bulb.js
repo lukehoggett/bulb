@@ -3,7 +3,8 @@
   
   const config = require('./config').config;
   const log = require('./logger').log;
-  const bulbStore = require("./device-store").bulbStore;
+  const deviceStore = require("./device-store");
+  const bulbStore = deviceStore.bulbStore;
   
   let playbulbType = "";
 
