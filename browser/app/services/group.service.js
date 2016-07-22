@@ -41,6 +41,7 @@ class GroupService {
     }
     
     update(group) {
+      console.info("GroupService update group");
       // update local variable
       this.groups[group.uuid] = group;
       // console.info("group update", this.groups);
@@ -63,7 +64,7 @@ class GroupService {
     
     // IPC listeners
     onGroupGetStoredReply(event, group) {
-      // console.log("GroupService: group.get.stored.reply", group);
+      console.log("GroupService: group.get.stored.reply", group);
       this.groups[group.uuid] = group;
     }
   

@@ -7,8 +7,10 @@ export function GroupedDevice() {
   // 'ngInject';
   return function(devices, groupUUID) {
     let out = [];
+    // console.info("filter GroupedDevice", devices, groupUUID);
     angular.forEach(devices, (device) => {
-      if (device.group === "" || device.group === null || device.group == groupUUID) {
+      // console.info("device.group", device.group);
+      if (device.group === null || device.group == groupUUID) {
         out.push(device);
       }
     });

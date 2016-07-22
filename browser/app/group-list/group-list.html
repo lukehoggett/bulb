@@ -28,7 +28,9 @@
                             Select Device to Add
                         </md-menu-item>
                         <md-menu-divider></md-menu-divider>
+                        {{groupList.bulb.devices}}
                         <md-menu-item ng-repeat="(uuid, device) in groupList.bulb.devices | groupedDevice:group.uuid">
+                          {{device.group}}
                             <md-checkbox ng-checked="device.group !== null" aria-label="{{device.name}}" ng-click="groupList.toggleDeviceToGroup(device, group)">
                                 {{device.name}}
                             </md-checkbox>

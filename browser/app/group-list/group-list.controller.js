@@ -35,6 +35,7 @@ class GroupListCtrl {
   }
   
   toggleDeviceToGroup(device, group) {
+    console.info("toggleDeviceToGroup", device, group);
     if (device.group == group.uuid) {
       this.bulb.devices[device.uuid].group = null;
       this.groupService.groups[group.uuid].devices.splice(this.groupService.groups.devices, 1);
@@ -42,7 +43,7 @@ class GroupListCtrl {
       this.bulb.devices[device.uuid].group = group.uuid;
       this.groupService.groups[group.uuid].devices.push(device.uuid);
     }
-    
+    console.info("toggleDeviceToGroup,  this.groupService.groups", this.groupService.groups);
     // update main proces storage
     this.groupService.update(this.groupService.groups[group.uuid]);
     this.bulb.setDevice(this.bulb.devices[device.uuid]);
