@@ -13,7 +13,7 @@ class DeviceListCtrl {
     this.$mdDialog = $mdDialog;
     this.bulb = bulbService;
     this.groupService = groupService;
-    
+
     this.originatorEvent;
   }
 
@@ -22,7 +22,7 @@ class DeviceListCtrl {
     this.$rootScope.$broadcast('device_selected', device.uuid);
     this.showCharacteristicsPanel();
   }
-  
+
   getCharacterisics(device) {
     console.log("list get characteristics", device);
     this.bulb.getCharacteristics(device.uuid);
@@ -32,23 +32,23 @@ class DeviceListCtrl {
     console.log("show characteristic");
     this.$mdSidenav('characteristic').toggle();
   }
-  
+
   updateDeviceName(uuid) {
     console.log("updateDeviceName", uuid, this.bulb.devices[uuid]);
     // send update command to main process
     this.bulb.setCharacteristic(uuid, this.bulb.devices[uuid].name, 'name');
   }
-  
+
   openMoreMenu($mdOpenMenu, $event) {
     console.info("list: openMoreMenu", $mdOpenMenu, $event);
     this.originatorEvent = $event;
     $mdOpenMenu($event);
   }
-  
+
   addToGroupClick(device) {
     console.info("list: addToGroup", device);
   }
-  
+
   addToGroup(device) {
     console.info("list: addToGroup", device);
     // this.$mdDialog.show(
@@ -84,13 +84,12 @@ class DeviceListCtrl {
     //     .ok('Add')
     //     .cancel('Cancel')
     // );
-    
+
     var parentEl = angular.element(document.body);
-       this.$mdDialog.show({
-         parent: parentEl,
-         targetEvent: this.originatorEvent,
-         template:
-           `<md-dialog aria-label="List dialog">
+    this.$mdDialog.show({
+      parent: parentEl,
+      targetEvent: this.originatorEvent,
+      template: `<md-dialog aria-label="List dialog">
              <md-dialog-content>
                <md-input-container>
                <label>State</label>
@@ -110,12 +109,12 @@ class DeviceListCtrl {
                </md-button>
              </md-dialog-actions>
            </md-dialog>`,
-         locals: {
-           items: []
-         },
-         controller: DeviceListCtrl
-      });
-    
+      locals: {
+        items: []
+      },
+      controller: DeviceListCtrl
+    });
+
     this.originatorEvent = null;
   }
 }

@@ -128,7 +128,7 @@ class CharacteristicCtrl {
     let colorRGBA = tinycolor(this.colorPicker.color).toRgb();
     if (this.type === this.TYPE_EFFECT) {
       console.log("value is ", this.TYPE_EFFECT, this.colorPicker, this.effect);
-      if ([0,1,4].indexOf(this.effect.mode) !== -1) {
+      if ([0, 1, 4].indexOf(this.effect.mode) !== -1) {
         this.effect.saturation = colorRGBA.a;
         this.effect.red = colorRGBA.r;
         this.effect.green = colorRGBA.g;
@@ -139,7 +139,7 @@ class CharacteristicCtrl {
         this.effect.green = 0;
         this.effect.blue = 0;
       }
-      
+
       value = this.effect;
     } else {
       console.log("value is ", this.TYPE_COLOR);

@@ -1,4 +1,3 @@
-
 // logging module
 const bunyan = require("bunyan");
 const config = require('./config').config;

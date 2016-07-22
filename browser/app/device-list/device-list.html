@@ -11,10 +11,10 @@
             <div class="status" layout="row" layout-align="start center">
                 <span ng-if="device.characteristics.battery.value[0]" class="md-caption" md-colors="{color: 'primary-200'}">{{device.characteristics.battery.value[0]}}%</span>
                 <md-icon ng-if="device.characteristics.battery.value[0]" class="md-avatar-icon">
-                  battery_std
+                    battery_std
                 </md-icon>
                 <md-icon ng-if="!device.characteristics.battery.value[0]" class="md-avatar-icon">
-                  battery_unknown
+                    battery_unknown
                 </md-icon>
                 <span ng-if="device.group !== null" class="md-caption" md-colors="{color: 'primary-200'}">{{list.groupService.get(device.group).name}}</span>
                 <md-icon aria-label="Discovered" class="md-avatar-icon" ng-class="device.discovered ? 'green' : 'red'">{{device.discovered ? 'cast_connected' : 'cast'}}
@@ -47,8 +47,8 @@
                         Get Characteristics
                     </md-tooltip>
                 </md-button> -->
-                  <md-button ng-click="list.selectDevice(device)" class="md-primary md-icon-button" aria-label="Edit Characteristics">
-                <!-- <md-button ng-click="list.selectDevice(device)" class="md-primary md-icon-button" aria-label="Edit Characteristics" ng-disabled="device.state == 'connected' ? false : true"> -->
+                <md-button ng-click="list.selectDevice(device)" class="md-primary md-icon-button" aria-label="Edit Characteristics">
+                    <!-- <md-button ng-click="list.selectDevice(device)" class="md-primary md-icon-button" aria-label="Edit Characteristics" ng-disabled="device.state == 'connected' ? false : true"> -->
                     <md-icon aria-label="Edit Characteristics">edit</md-icon>
                     <md-tooltip md-direction="top">Edit Characteristics</md-tooltip>
                 </md-button>

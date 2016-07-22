@@ -1,9 +1,9 @@
 (function() {
   "use strict";
-  
-  
 
-  
+
+
+
 
   const storage = require("node-persist");
   let bunyan = require("bunyan");
@@ -13,8 +13,8 @@
   });
 
   // initialise storage
-  
-  
+
+
   let storageConfig = {
     stringify: JSON.stringify,
     parse: JSON.parse,
@@ -24,12 +24,16 @@
     interval: false,
     ttl: false
   };
-  
-  let deviceStorageConfig = Object.assign({dir: __dirname + "/../data/device-storage"}, storageConfig);
+
+  let deviceStorageConfig = Object.assign({
+    dir: __dirname + "/../data/device-storage"
+  }, storageConfig);
   let deviceStorage = storage.create(deviceStorageConfig);
   deviceStorage.initSync();
-  
-  let groupStorageConfig = Object.assign({dir: __dirname + "/../data/group-storage"}, storageConfig);
+
+  let groupStorageConfig = Object.assign({
+    dir: __dirname + "/../data/group-storage"
+  }, storageConfig);
   let groupStorage = storage.create(groupStorageConfig);
   groupStorage.initSync();
 
@@ -38,23 +42,23 @@
   const discoveredDevices = {};
 
   const serializedGroups = new Map();
-  
+
   class BulbStore {
     constructor() {
       // read from persistent storage
       this.getDevicesFromStorage();
       this.getGroupsFromStorage();
     }
-    
+
     getDevicesFromStorage() {
       // @TODO implement caching in local variable, or not as needed
       log.info("BulbStore: getDevicesFromStorage");
       let haveCached = Object.keys(devices).length !== 0 && devices.constructor === Object;
       if (!haveCached) {
-        
+
         let deviceKeys = deviceStorage.keys();
         deviceKeys.forEach((uuid, index) => {
-          
+
           let device = deviceStorage.getItem(uuid, (error, device) => {
             if (error) {
               log.error(error);
@@ -71,11 +75,11 @@
       // log.info("getDevicesFromStorage serializedDevices", serializedDevices);
       return serializedDevices;
     }
-    
+
     getGroupsFromStorage() {
       let groupKeys = groupStorage.keys();
       groupKeys.forEach((uuid, index) => {
-        
+
         let group = groupStorage.getItem(uuid, (error, group) => {
           if (error) {
             log.error(error);
@@ -85,18 +89,18 @@
         // log.info("getGroupsFromStorage group", group, uuid);
         serializedGroups.set(uuid, group);
       });
-      
+
       return serializedGroups;
     }
-    
+
     getStoredDevices() {
       return serializedDevices;
     }
-    
+
     getStoredGroups() {
       return serializedGroups;
     }
-    
+
     getStoredDeviceByUUID(uuid) {
       if (!serializedDevices.has(uuid)) {
         log.error(`Device ${uuid} is not in deviceStorage.`);
@@ -104,7 +108,7 @@
       }
       return serializedDevices.get(uuid);
     }
-    
+
     getStoredGroupByUUID(uuid) {
       if (!serializedGroups.has(uuid)) {
         log.error(`Group ${uuid} is not in groupStorage.`);
@@ -112,13 +116,13 @@
       }
       return serializedGroups.get(uuid);
     }
-    
+
     setStoredDevices(devices) {
       devices.forEach((device) => {
         this.setStoredDevice(device);
       });
     }
-    
+
     setStoredDevice(device) {
       device.stored = true;
       device.state = 'disconnected';
@@ -130,13 +134,13 @@
       });
       this.getDevicesFromStorage();
     }
-    
+
     setStoredGroups(groups) {
       groups.forEach((group) => {
         this.setStoredGroup(group);
       });
     }
-    
+
     setStoredGroup(group) {
       log.info("bulbStore setStoredGroup", group);
       // remove properties not needed to be stored
@@ -147,15 +151,15 @@
       });
       this.getGroupsFromStorage();
     }
-    
+
     hasStoredDevice(uuid) {
       return serializedDevices.has(uuid);
     }
-    
+
     getDiscoveredDevices() {
       return discoveredDevices;
     }
-    
+
     getDiscoveredDeviceByUUID(uuid) {
       if (!Object.keys(discoveredDevices).includes(uuid)) {
         log.error(`Device ${uuid} has not been discovered.`);
@@ -163,21 +167,21 @@
       }
       return discoveredDevices[uuid];
     }
-    
+
     setDiscoveredDevices(devices) {
       devices.forEach((device) => {
         tis.setDiscoveredDevice(device);
       });
     }
-    
+
     setDiscoveredDevice(device) {
       discoveredDevices[device.uuid] = device;
     }
-    
+
     deleteStoredGroup(group) {
       log.info("bulbStore deleteStoredGroup group", group);
     }
-    
+
     /**
      * Prepare a Noble device for serialization to send to a renderer process.
      Copies out all the attributes the renderer might need.  Seems to be
@@ -203,7 +207,7 @@
         group: device.group || null
       };
     }
-    
+
     serializeCharacteristics(deviceUUID, characteristicValues) {
       let device = this.serializeDevice(this.getDiscoveredDeviceByUUID(deviceUUID));
       let charList = {};
@@ -219,18 +223,18 @@
       return device;
     }
   }
-  
+
   exports.bulbStore = new BulbStore();
-  
+
 
 
   // load all currently stored devices
-  let getAll = function () {
+  let getAll = function() {
     // @TODO implement caching in local variable, or not as needed
     log.info("device-deviceStorage: getAll");
     let haveCached = Object.keys(devices).length !== 0 && devices.constructor === Object;
     if (!haveCached) {
-      
+
       let deviceKeys = deviceStorage.keys();
       deviceKeys.forEach((uuid, index) => {
         let device = deviceStorage.getItem(uuid, (error, device) => {

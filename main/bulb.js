@@ -1,17 +1,17 @@
 (function() {
   "use strict";
-  
+
   const config = require('./config').config;
   const log = require('./logger').log;
   const deviceStore = require("./device-store");
   const bulbStore = deviceStore.bulbStore;
-  
+
   let playbulbType = "";
 
   class Bulb {
-    
+
     constructor() {}
-    
+
     discovered(device) {
       // check which type of device it is
       switch (device.advertisement.serviceUUIDs) {
@@ -22,25 +22,25 @@
           playbulbType = type.COLOR;
           break;
         default:
-          
+
       }
       device.type = playbulbType;
       log.info("onNobleDiscovered: Discovered Playbulb device with UUID", device.uuid);
       log.info("onNobleDiscovered: device.advertisement.serviceUuids", device.advertisement.serviceUuids);
       // on discovery check if device is in stored devices, if not update stored
       // if (!bulbStore.hasStoredDevice(device.uuid)) {
-        // save discovered device to persistent storage
-        bulbStore.setStoredDevice(device);
-        
+      // save discovered device to persistent storage
+      bulbStore.setStoredDevice(device);
+
       // }
-      
+
       // add properties to the device
       device.discovered = true; // we don't save discovered so need to add it here
       device.stored = true; // doesn't feel like we should have to add stored her, but ok till I find a better way
-      
+
       // this is needed to add the noble extra object stuff that can't be stored in the persistent storage
       bulbStore.setDiscoveredDevice(device);
-      
+
       return device;
     }
 

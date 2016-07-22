@@ -6,21 +6,21 @@ const DEVICE_STATE = 'device';
 const GROUP_STATE = 'group';
 
 class MenuService {
-  
-    constructor() {
-      this.setState(DEVICE_STATE);
-      
-      console.info("menuService state", this.getState());
-    }
-    
-    getState() {
-      return this.state;
-    }
-    
-    setState(value) {
-      this.state = value;
-    }
-  
+
+  constructor() {
+    this.setState(DEVICE_STATE);
+
+    console.info("menuService state", this.getState());
+  }
+
+  getState() {
+    return this.state;
+  }
+
+  setState(value) {
+    this.state = value;
+  }
+
 }
 
 export {

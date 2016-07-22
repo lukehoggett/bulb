@@ -6,9 +6,9 @@
 class MenuCtrl {
 
   constructor(menuService) {
-    
+
     this.menuService = menuService;
-    
+
     this.menuItems = [{
       id: 1,
       name: "device",
@@ -21,11 +21,11 @@ class MenuCtrl {
       icon: "group_work"
     }];
   }
-  
+
   navSelect(item) {
     console.info("menu: navSelect", item);
     this.menuService.setState(item.name);
-    
+
   }
 
 }

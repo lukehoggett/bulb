@@ -28,8 +28,8 @@ import {
 } from './characteristic/characteristic.controller';
 console.log("Imported Controllers");
 
-import { 
-  GroupedDevice 
+import {
+  GroupedDevice
 } from './filter/grouped-device.filter';
 
 import {

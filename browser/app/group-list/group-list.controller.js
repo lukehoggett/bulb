@@ -11,29 +11,29 @@ class GroupListCtrl {
     // this.$mdDialog = $mdDialog;
     this.bulb = bulbService;
     this.groupService = groupService;
-    
+
     this.originatorEvent;
   }
 
-  
-  
+
+
   createGroup() {
     this.groupService.add();
   }
-  
+
   updateGroupName(group) {
     this.groupService.update(group);
   }
-  
+
   deleteGroup(group) {
     this.groupSevice.delete(group);
   }
-  
+
   openAddDeviceMenu($mdOpenMenu, $event, group) {
     this.originatorEvent = $event;
     $mdOpenMenu($event);
   }
-  
+
   toggleDeviceToGroup(device, group) {
     console.info("toggleDeviceToGroup", device, group);
     if (device.group == group.uuid) {
@@ -48,7 +48,7 @@ class GroupListCtrl {
     this.groupService.update(this.groupService.groups[group.uuid]);
     this.bulb.setDevice(this.bulb.devices[device.uuid]);
   }
-  
+
 }
 
 GroupListCtrl.$inject = ['groupService', 'bulbService'];
