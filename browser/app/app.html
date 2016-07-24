@@ -5,7 +5,7 @@
                 <md-icon aria-label="menu" class="material-icons">menu</md-icon>
             </md-button>
             <h1>Bulbs</h1>
-            <md-button ng-click="app.toggleScan()" class="md-raised md-primary">{{app.scanStateMessage}}</md-button>
+            <md-button ng-click="app.toggleScan()" class="md-raised md-primary">{{app.bulbService.scanning ? app.bulbService.scanStopMessage : app.bulbService.scanStartMessage}}</md-button>
             <md-button ng-click="app.doCrash()" class="md-raised md-primary">Crash</md-button>
             <md-button ng-click="app.openDevTools()" class="md-raised md-primary">Dev Tools</md-button>
         </md-toolbar>

@@ -14,22 +14,11 @@ class AppCtrl {
     this.menuService = menuService;
     this.toast = $mdToast;
     console.info("AppCtrl menuService state", this.menuService.getState());
-
+    
     ipc.on('error', (event, message) => {
       console.info("Error:", message);
       this.showErrorToast(message);
     });
-
-    this.scanStateMessage = "Stop Scan";
-
-    ipc.on('scanning.start', () => {
-      this.scanStateMessage = "Stop Scan";
-    });
-
-    ipc.on('scanning.stop', () => {
-      this.scanStateMessage = "Start Scan";
-    });
-
   }
 
   showErrorToast(message) {
@@ -42,14 +31,11 @@ class AppCtrl {
   }
 
   toggleScan() {
+    console.log("app.controller isScanning", this.bulbService.isScanning());
     if (this.bulbService.isScanning()) {
-      console.log("app.controller isScanning", this.bulbService.isScanning());
       this.bulbService.stopScan();
-      this.scanStateMessage = "Start Scan";
     } else {
-      console.log("app.controller isScanning", this.bulbService.isScanning());
       this.bulbService.startScan();
-      this.scanStateMessage = "Stop Scan";
     }
     this.scan = this.bulbService.isScanning();
   }

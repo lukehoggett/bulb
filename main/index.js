@@ -148,6 +148,8 @@
       if (noble.state === "poweredOn") {
         log.info("onScanStart... poweredOn ");
         noble.startScanning();
+      } else {
+        log.warn(`Cannot scan as the Bluetooth adapter is: ${noble.state}`);
       }
     }
 
