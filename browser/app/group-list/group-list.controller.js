@@ -4,11 +4,12 @@
 
 class GroupListCtrl {
 
-  constructor(groupService, bulbService) {
+  constructor($rootScope, groupService, bulbService) {
 
     // this.$rootScope = $rootScope;
     // this.$mdSidenav = $mdSidenav;
     // this.$mdDialog = $mdDialog;
+    this.$rootScope = $rootScope;
     this.bulb = bulbService;
     this.groupService = groupService;
 
@@ -48,10 +49,15 @@ class GroupListCtrl {
     this.groupService.update(this.groupService.groups[group.uuid]);
     this.bulb.setDevice(this.bulb.devices[device.uuid]);
   }
+  
+  selectGroup(group) {
+    console.log("GroupListCtrl: selectGroup", group);
+    this.$rootScope.$broadcast('group_selected', group.uuid);
+  }
 
 }
 
-GroupListCtrl.$inject = ['groupService', 'bulbService'];
+GroupListCtrl.$inject = ['$rootScope', 'groupService', 'bulbService'];
 
 
 export {

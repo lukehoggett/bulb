@@ -76,11 +76,44 @@ class CharacteristicCtrl {
     // this.colorPicker
 
     this.$scope.$on("device_selected", this.deviceSelected.bind(this));
+    this.$scope.$on("group_selected", this.groupSelected.bind(this));
 
   }
 
   deviceSelected(event, uuid) {
     console.log("CharCtrl device_selcted", uuid);
+    this.togglePane();
+    
+    this.device = this.bulbService.getDevice(uuid);
+    let characteristics = this.device.characteristics;
+    console.info("characteristic panel device", characteristics);
+
+    this.color = {
+      saturation: characteristics.color.value[0],
+      red: characteristics.color.value[1],
+      green: characteristics.color.value[2],
+      blue: characteristics.color.value[3]
+    };
+
+    this.effect = {
+      saturation: characteristics.effect.value[0],
+      red: characteristics.effect.value[1],
+      green: characteristics.effect.value[2],
+      blue: characteristics.effect.value[3],
+      mode: characteristics.effect.value[4],
+      speed: characteristics.effect.value[6]
+    };
+    console.info("DeviceSelected color", this.color);
+    console.info("DeviceSelected effect", this.effect);
+    this.detectType();
+  }
+  
+  groupSelected(event, uuid) {
+    console.log("CharCtrl group_selcted", uuid);
+    this.togglePane();
+    
+    
+    return;
     this.device = this.bulbService.getDevice(uuid);
     let characteristics = this.device.characteristics;
     console.info("characteristic panel device", characteristics);
@@ -106,7 +139,7 @@ class CharacteristicCtrl {
   }
 
   togglePane() {
-    console.log("Toggling Pane", this.mdSidenav);
+    console.log("Toggling Pane");
     this.mdSidenav("characteristic").toggle();
   }
 

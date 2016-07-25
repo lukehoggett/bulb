@@ -6,7 +6,7 @@ const ipc = require('electron').ipcRenderer;
 
 class DeviceListCtrl {
 
-  constructor($rootScope, $mdSidenav, $mdDialog, bulbService, groupService) {
+  constructor($rootScope, $mdDialog, bulbService, groupService) {
 
     this.$rootScope = $rootScope;
     this.$mdSidenav = $mdSidenav;
@@ -20,17 +20,11 @@ class DeviceListCtrl {
   selectDevice(device) {
     console.log("DeviceListCtrl: selectDevice", device);
     this.$rootScope.$broadcast('device_selected', device.uuid);
-    this.showCharacteristicsPanel();
   }
 
   getCharacterisics(device) {
     console.log("list get characteristics", device);
     this.bulb.getCharacteristics(device.uuid);
-  }
-
-  showCharacteristicsPanel() {
-    console.log("show characteristic");
-    this.$mdSidenav('characteristic').toggle();
   }
 
   updateDeviceName(uuid) {
@@ -119,7 +113,7 @@ class DeviceListCtrl {
   }
 }
 
-DeviceListCtrl.$inject = ['$rootScope', '$mdSidenav', '$mdDialog', 'bulbService', 'groupService'];
+DeviceListCtrl.$inject = ['$rootScope', '$mdDialog', 'bulbService', 'groupService'];
 
 
 export {

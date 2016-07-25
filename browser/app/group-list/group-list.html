@@ -7,7 +7,7 @@
             </md-button>
         </div>
     </md-toolbar>
-    <md-list>
+    <md-list class="list">
         <md-list-item ng-repeat="group in groupList.groupService.groups" class="list noright" layout-align="start center" arai-label="Group">
             <p>
                 <md-input-container>
@@ -39,6 +39,11 @@
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>
+                <md-button ng-click="groupList.selectGroup(group)" class="md-primary md-icon-button" aria-label="Edit Characteristics">
+                    <!-- <md-button ng-click="groupList.selectDevice(device)" class="md-primary md-icon-button" aria-label="Edit Characteristics" ng-disabled="device.state == 'connected' ? false : true"> -->
+                    <md-icon aria-label="Edit Characteristics">edit</md-icon>
+                    <md-tooltip md-direction="top">Edit Characteristics</md-tooltip>
+                </md-button>
             </div>
         </md-list-item>
     </md-list>
