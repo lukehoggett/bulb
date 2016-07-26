@@ -30,12 +30,10 @@ class GroupService {
   getDeviceGroupName(device) {
     let deviceGroupName = "";
     angular.forEach(this.getAll(), (group) => {
-      console.info("deviceGroupName", group, device.uuid);
       if (group.devices.indexOf(device.uuid) !== -1) {
         deviceGroupName = group.name;
       }
     });
-    console.info("deviceGroupName", deviceGroupName);
     return deviceGroupName;
   }
   

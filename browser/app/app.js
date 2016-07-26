@@ -28,9 +28,6 @@ import {
 } from './characteristic/characteristic.controller';
 console.log("Imported Controllers");
 
-import {
-  GroupedDevice
-} from './filter/grouped-device.filter';
 
 import {
   MenuService
@@ -55,7 +52,6 @@ angular.module('bulb', [
   .service('bulbService', BulbService)
   .service('groupService', GroupService)
   .service('menuService', MenuService)
-  .filter('groupedDevice', GroupedDevice)
   .controller('appCtrl', AppCtrl)
   .controller('menuCtrl', MenuCtrl)
   .controller('device-listCtrl', DeviceListCtrl)
