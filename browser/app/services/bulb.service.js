@@ -129,6 +129,7 @@ class BulbService {
   onDeviceGetStoredReply(event, device) {
     console.log("BulbService: device.get.stored.reply", device);
     this.devices[device.uuid] = device;
+    console.log("################## BulbService: device.get.stored.reply", this.devices);
   }
 
   onDiscovered(event, device) {

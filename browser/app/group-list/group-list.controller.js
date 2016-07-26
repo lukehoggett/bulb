@@ -36,23 +36,61 @@ class GroupListCtrl {
   }
 
   toggleDeviceToGroup(device, group) {
-    console.info("toggleDeviceToGroup", device, group);
-    if (device.group == group.uuid) {
-      this.bulb.devices[device.uuid].group = null;
+    console.info("toggleDeviceToGroup()", device, group);
+    
+    if (group.devices.indexOf(device.uuid) !== -1) { // removing
       this.groupService.groups[group.uuid].devices.splice(this.groupService.groups.devices, 1);
-    } else {
-      this.bulb.devices[device.uuid].group = group.uuid;
+    } else { //adding
       this.groupService.groups[group.uuid].devices.push(device.uuid);
     }
     console.info("toggleDeviceToGroup,  this.groupService.groups", this.groupService.groups);
     // update main proces storage
     this.groupService.update(this.groupService.groups[group.uuid]);
-    this.bulb.setDevice(this.bulb.devices[device.uuid]);
   }
   
   selectGroup(group) {
     console.log("GroupListCtrl: selectGroup", group);
     this.$rootScope.$broadcast('group_selected', group.uuid);
+  }
+  
+  isDeviceInGroup(group, device) {
+    // console.info("GroupListCtrl: isDeviceInGroup", group, device);
+    return group.devices.indexOf(device.uuid) !== -1;
+  }
+  
+  isDeviceDisabled(device, group) {
+    console.info("=================================================================");
+    console.info(`GroupListCtrl() Device: ${device.name} Group: ${group.name}`, group.devices);
+    
+    let result = false;
+    let currentGroupUUID = group.uuid;
+    let deviceIsInCurrentGroup = false;
+    let deviceIsInOtherGroup = false;
+    
+    
+    
+    if (group.devices.indexOf(device.uuid) !== -1) {
+      // device is selected for current group so don't disable it
+      deviceIsInCurrentGroup = true;
+      
+      // console.info(`GroupListCtrl() device ${device.name} ${device.uuid} is in currentGroup ${currentGroupUUID}`);
+    } else {
+      // device isn't selected for current group so chjeck if it is selected in another group
+      angular.forEach(this.groupService.groups, (_group) => {
+        console.info("group and _group uuid", group.uuid, _group.uuid);
+        if (_group.uuid !== group.uuid) { // ignore current group
+          if (_group.devices.indexOf(device.uuid) !== -1) {
+            result = true;
+          }
+        }
+      });
+    }
+    
+    console.info(`GroupListCtrl() isDeviceDisabled Device: ${device.name} Group: ${group.name}`, result);
+    
+    
+    
+    return result;
   }
 
 }

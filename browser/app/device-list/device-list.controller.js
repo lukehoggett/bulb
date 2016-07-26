@@ -9,7 +9,6 @@ class DeviceListCtrl {
   constructor($rootScope, $mdDialog, bulbService, groupService) {
 
     this.$rootScope = $rootScope;
-    this.$mdSidenav = $mdSidenav;
     this.$mdDialog = $mdDialog;
     this.bulb = bulbService;
     this.groupService = groupService;
