@@ -9,7 +9,7 @@
             </p>
             <p class="device-uuid">{{device.uuid}}</p>
             <div class="status" layout="row" layout-align="start center">
-                <span ng-if="device.group !== null" class="device-group md-caption" md-colors="{color: 'primary-200'}">{{list.groupService.get(device.group).name}}</span>
+                <span ng-if="list.groupService.getDeviceGroupName(device) !== ''" class="device-group md-caption" md-colors="{color: 'primary-200'}">{{list.groupService.getDeviceGroupName(device)}}</span>
                 <span ng-if="device.characteristics.battery.value[0]" class="md-caption" md-colors="{color: 'primary-200'}">{{device.characteristics.battery.value[0]}}%</span>
                 <md-icon ng-if="device.characteristics.battery.value[0]" class="md-avatar-icon">
                     battery_std

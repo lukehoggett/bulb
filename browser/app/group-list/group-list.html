@@ -30,18 +30,11 @@
                             Select Device to Add
                         </md-menu-item>
                         <md-menu-divider></md-menu-divider>
-                        <!-- <md-menu-item ng-repeat="(uuid, device) in groupList.bulb.devices | groupedDevice:device:groupList.groupService.groups:group">
-                            {{device.group}}
-                            <md-checkbox ng-checked="groupList.isDeviceInGroup(group, device)" aria-label="{{device.name}}" ng-click="groupList.toggleDeviceToGroup(device, group)">
-                                {{device.name}}
-                            </md-checkbox>
-                        </md-menu-item> -->
-                        <md-menu-item ng-repeat="(uuid, device) in groupList.bulb.devices">
+                        <md-menu-item ng-repeat="(uuid, device) in groupList.bulb.devices" ng-if="groupList.isDeviceInMenu(device, group)">
                             <md-checkbox 
                                 ng-checked="groupList.isDeviceInGroup(group, device)" 
                                 aria-label="{{device.name}}" 
-                                ng-click="groupList.toggleDeviceToGroup(device, group, selected)"
-                                ng-disabled="groupList.isDeviceDisabled(device, group)">
+                                ng-click="groupList.toggleDeviceToGroup(device, group, selected)">
                                 {{device.name}} {{groupList.isDeviceDisabled(device, group)}}
                             </md-checkbox>
                         </md-menu-item>

@@ -203,8 +203,7 @@
         connectable: device.connectable,
         discovered: device.discovered || false,
         stored: device.stored || false,
-        lastSeen: Date.now(),
-        group: device.group || null
+        lastSeen: Date.now()
       };
     }
 

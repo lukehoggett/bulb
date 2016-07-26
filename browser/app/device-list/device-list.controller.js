@@ -37,7 +37,7 @@ class DeviceListCtrl {
     this.originatorEvent = $event;
     $mdOpenMenu($event);
   }
-
+  
   addToGroupClick(device) {
     console.info("list: addToGroup", device);
   }
