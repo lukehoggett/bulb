@@ -21,22 +21,28 @@
                 {{groupList.bulb.getDevice(deviceUUID).name}}
             </span>
             <div class="controls" layout="row" layout-align="start center">
-                <md-menu>
+                <md-button ng-click="groupList.groupService.toggleConnection(group)" class="md-primary md-icon-button" aria-label="{{group.state == 'connected' ? 'Disconnect' : 'Connect'}}">
+                    <md-icon ng-if="group.state == 'connected'" aria-label="Disconnect">close</md-icon>
+                    <md-icon ng-if="group.state == 'disconnected'" aria-label="Connect">check</md-icon>
+                    <md-tooltip md-direction="top">
+                        {{group.state == 'connected' ? 'Disconnect' : 'Connect'}}
+                    </md-tooltip>
+                </md-button>
+                <md-menu md-position-mode="target-right target">
                     <md-button md-menu-origin class="md-primary md-icon-button" aria-label="Add Devices" ng-click="groupList.openAddDeviceMenu($mdOpenMenu, $event, group)">
                         <md-icon aria-label="Add Devices">add</md-icon>
                     </md-button>
                     <md-menu-content width="4">
                         <md-menu-item>
-                            Select Device to Add
+                            <span flex>Select device to add</span>
                         </md-menu-item>
                         <md-menu-divider></md-menu-divider>
                         <md-menu-item ng-repeat="(uuid, device) in groupList.bulb.devices" ng-if="groupList.isDeviceInMenu(device, group)">
-                            <md-checkbox 
-                                ng-checked="groupList.isDeviceInGroup(group, device)" 
-                                aria-label="{{device.name}}" 
-                                ng-click="groupList.toggleDeviceToGroup(device, group, selected)">
-                                {{device.name}} {{groupList.isDeviceDisabled(device, group)}}
-                            </md-checkbox>
+                            <span flex>
+                                <md-checkbox ng-checked="groupList.isDeviceInGroup(group, device)" aria-label="{{device.name}}"                 ng-click="groupList.toggleDeviceToGroup(device, group, selected)">
+                                    {{device.name}}
+                                </md-checkbox>
+                            </span>
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>

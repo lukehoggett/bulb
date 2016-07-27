@@ -5,9 +5,9 @@ const ipc = require("electron").ipcRenderer;
 const uuid = require("uuid");
 
 class GroupService {
-  constructor($timeout) {
+  constructor($timeout, bulbService) {
     this.$timeout = $timeout;
-
+    this.bulbService = bulbService;
     this.groups = {};
 
     // request any stored groups from the main process
@@ -22,9 +22,9 @@ class GroupService {
     return this.groups;
   }
 
-  get(groupUUID) {
-    // console.info("GroupService() get", groupUUID, this.groups[groupUUID]);
-    return this.groups[groupUUID];
+  get(uuid) {
+    // console.info("GroupService() get", uuid, this.groups, this.groups[uuid]);
+    return this.groups[uuid];
   }
   
   getDeviceGroupName(device) {
@@ -63,6 +63,22 @@ class GroupService {
     delete this.groups[group.uuid];
     // update persistent storage
     ipc.send('group.delete.stored', group);
+  }
+  
+  toggleConnection(group) {
+    console.info(`BulbService: Handling connection to device `, group);
+    let device = null;
+    if (group.state == "disconnected") {
+      angular.forEach(group.devices, (deviceUUID) => {
+        device = this.bulbService.get(deviceUUID);
+        this.bulbService.connect(device);
+      });
+    } else {
+      angular.forEach(group.devices, (deviceUUID) => {
+        device = this.bulbService.get(deviceUUID);
+        this.bulbService.disconnect(device);
+      });
+    }
   }
 
   getStoredGroups() {

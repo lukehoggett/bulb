@@ -6,17 +6,23 @@
 
 class CharacteristicCtrl {
 
-  constructor($scope, $mdSidenav, bulbService) {
+  constructor($scope, $mdSidenav, bulbService, groupService) {
     this.mdSidenav = $mdSidenav;
     this.$scope = $scope;
     this.bulbService = bulbService;
+    this.groupService = groupService;
 
     this.TYPE_COLOR = "color";
     this.TYPE_EFFECT = "effect";
     this.EFFECTS_OFF_VALUES = [0, 0, 0, 0, 255, 0, 1, 0];
 
+    this.DEVICE_EDIT_TYPE = 'device';
+    this.GROUP_EDIT_TYPE = 'group';
 
     this.device = null;
+    this.group = null;
+    
+    this.editType = this.DEVICE_EDIT_TYPE;
 
     this.type = "";
     this.effect = {
@@ -82,7 +88,7 @@ class CharacteristicCtrl {
 
   deviceSelected(event, uuid) {
     console.log("CharCtrl device_selcted", uuid);
-    this.togglePane();
+    this.togglePane(this.DEVICE_EDIT_TYPE);
     
     this.device = this.bulbService.getDevice(uuid);
     let characteristics = this.device.characteristics;
@@ -109,37 +115,28 @@ class CharacteristicCtrl {
   }
   
   groupSelected(event, uuid) {
-    console.log("CharCtrl group_selcted", uuid);
-    this.togglePane();
+    console.log("CharCtrl groupSelected", uuid);
+    this.togglePane(this.GROUP_EDIT_TYPE);
     
+    this.group = this.groupService.get(uuid);
+    console.log("CharCtrl this.group", this.group);
     
+    this.color = {
+      saturation: 255,
+      red: 255,
+      green: 128,
+      blue: 128
+    };
     return;
     this.device = this.bulbService.getDevice(uuid);
     let characteristics = this.device.characteristics;
     console.info("characteristic panel device", characteristics);
 
-    this.color = {
-      saturation: characteristics.color.value[0],
-      red: characteristics.color.value[1],
-      green: characteristics.color.value[2],
-      blue: characteristics.color.value[3]
-    };
-
-    this.effect = {
-      saturation: characteristics.effect.value[0],
-      red: characteristics.effect.value[1],
-      green: characteristics.effect.value[2],
-      blue: characteristics.effect.value[3],
-      mode: characteristics.effect.value[4],
-      speed: characteristics.effect.value[6]
-    };
-    console.info("DeviceSelected color", this.color);
-    console.info("DeviceSelected effect", this.effect);
-    this.detectType();
+    
   }
 
-  togglePane() {
-    console.log("Toggling Pane");
+  togglePane(source) {
+    this.editType = source;
     this.mdSidenav("characteristic").toggle();
   }
 
@@ -157,6 +154,7 @@ class CharacteristicCtrl {
 
   save(characteristic) {
     console.log("save()", this, this.colorPicker);
+    console.log("save()", this.editType);
     let value = null;
     let colorRGBA = tinycolor(this.colorPicker.color).toRgb();
     if (this.type === this.TYPE_EFFECT) {
@@ -187,11 +185,28 @@ class CharacteristicCtrl {
       };
       value = this.color;
     }
+    
     // send new values to the event process
     console.log("Save characteristic", characteristic);
     console.log("Save value", value);
     console.log("Save type", this.type);
-    this.bulbService.setCharacteristic(this.device.uuid, value, this.type);
+    
+    switch (this.editType) {
+      case this.DEVICE_EDIT_TYPE:
+        console.info("device edit");
+        this.bulbService.setCharacteristic(this.device.uuid, value, this.type);
+        break;
+      case this.GROUP_EDIT_TYPE:
+        console.info("group edit");
+        angular.forEach(this.group.devices, (deviceUUID) => {
+          this.bulbService.setCharacteristic(deviceUUID, value, this.type);
+        });
+        break;
+      default:
+        
+    } 
+    
+    
   }
 
 }

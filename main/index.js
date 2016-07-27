@@ -439,7 +439,7 @@
     }
 
     function writeCharacteristic(value, type, uuid) {
-      log.debug("writeCharacteristic: ...");
+      log.debug("writeCharacteristic: ...", value, type, uuid);
       let device = bulbStore.getDiscoveredDeviceByUUID(uuid);
       let wChar = device.characteristics[type];
       log.info(`writeCharacteristic: Writing ${ type } Characteristic with value`, value);
