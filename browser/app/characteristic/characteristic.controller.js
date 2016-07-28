@@ -90,7 +90,7 @@ class CharacteristicCtrl {
     console.log("CharCtrl device_selcted", uuid);
     this.togglePane(this.DEVICE_EDIT_TYPE);
     
-    this.device = this.bulbService.getDevice(uuid);
+    this.device = this.bulbService.get(uuid);
     let characteristics = this.device.characteristics;
     console.info("characteristic panel device", characteristics);
 
@@ -128,7 +128,7 @@ class CharacteristicCtrl {
       blue: 128
     };
     return;
-    this.device = this.bulbService.getDevice(uuid);
+    this.device = this.bulbService.get(uuid);
     let characteristics = this.device.characteristics;
     console.info("characteristic panel device", characteristics);
 
@@ -160,7 +160,7 @@ class CharacteristicCtrl {
     if (this.type === this.TYPE_EFFECT) {
       console.log("value is ", this.TYPE_EFFECT, this.colorPicker, this.effect);
       if ([0, 1, 4].indexOf(this.effect.mode) !== -1) {
-        this.effect.saturation = colorRGBA.a;
+        this.effect.saturation = 255 - colorRGBA.a * 255;
         this.effect.red = colorRGBA.r;
         this.effect.green = colorRGBA.g;
         this.effect.blue = colorRGBA.b;
@@ -178,7 +178,7 @@ class CharacteristicCtrl {
       console.log("tinycolor", tinycolor, tinycolor(this.colorPicker.color).toRgb());
       let colorRGBA = tinycolor(this.colorPicker.color).toRgb();
       this.color = {
-        saturation: colorRGBA.a,
+        saturation: 255 - colorRGBA.a * 255,
         red: colorRGBA.r,
         green: colorRGBA.g,
         blue: colorRGBA.b

@@ -18,12 +18,14 @@
                 <span ng-if="$first">Devices:</span>
                 <span ng-if="!$first">,
                 </span>
-                {{groupList.bulb.getDevice(deviceUUID).name}}
+                {{groupList.bulb.get(deviceUUID).name}}
             </span>
             <div class="controls" layout="row" layout-align="start center">
                 <md-button ng-click="groupList.groupService.toggleConnection(group)" class="md-primary md-icon-button" aria-label="{{group.state == 'connected' ? 'Disconnect' : 'Connect'}}">
-                    <md-icon ng-if="group.state == 'connected'" aria-label="Disconnect">close</md-icon>
-                    <md-icon ng-if="group.state == 'disconnected'" aria-label="Connect">check</md-icon>
+                    <!-- <md-icon ng-if="group.state == 'connected'" aria-label="Disconnect">close</md-icon>
+                    <md-icon ng-if="group.state == 'disconnected'" aria-label="Connect">check</md-icon> -->
+                    <!-- <md-icon aria-label="Disconnect">close</md-icon> -->
+                    <md-icon aria-label="Connect">check</md-icon>
                     <md-tooltip md-direction="top">
                         {{group.state == 'connected' ? 'Disconnect' : 'Connect'}}
                     </md-tooltip>

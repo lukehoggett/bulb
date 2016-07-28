@@ -91,13 +91,13 @@ class BulbService {
     console.log("BulbService: setDeviceName", uuid, name);
   }
 
-  getDevices() {
-    // console.log("BulbService: getDevices called: ", this.devices);
+  getAll() {
+    // console.log("BulbService: getAll called: ", this.devices);
     return this.devices;
   }
 
-  getDevice(uuid) {
-    // console.log("BulbService: getDevice called: ", uuid);
+  get(uuid) {
+    // console.log("BulbService: get called: ", uuid);
     return this.devices[uuid];
   }
 

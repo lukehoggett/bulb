@@ -68,12 +68,16 @@ class GroupService {
   toggleConnection(group) {
     console.info(`BulbService: Handling connection to device `, group);
     let device = null;
+    group.state = 'disconnected';
+    console.info("GroupService toggleConnection", group.state);
     if (group.state == "disconnected") {
+      console.info("GroupService toggleConnection disconnected");
       angular.forEach(group.devices, (deviceUUID) => {
         device = this.bulbService.get(deviceUUID);
         this.bulbService.connect(device);
       });
     } else {
+      console.info("GroupService toggleConnection connected");
       angular.forEach(group.devices, (deviceUUID) => {
         device = this.bulbService.get(deviceUUID);
         this.bulbService.disconnect(device);
