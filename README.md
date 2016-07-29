@@ -43,6 +43,10 @@ baseURL: __dirname + "/",
 Every time npm i is run need to run `./node_modules/.bin/electron-rebuild` from the app/ dir
 
 
+gulp transpile:app && sudo ./node_modules/electron-prebuilt/dist/electron main/dist/index.js --displaysize=sm | node_modules/bunyan/bin/bunyan
+
+
+
 
 
 
