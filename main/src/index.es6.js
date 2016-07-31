@@ -41,6 +41,12 @@ import {Bulb} from './bulb';
   let colorChar = null;
   let effectChar = null;
   let nameChar = null;
+  
+  process.on("uncaughtException", onProcessUncaughtException);
+  
+  function onProcessUncaughtException() {
+    console.info("onProcessUncaughtException", arguments);
+  }
 
   // handle quitting
   app.on('window-all-closed', onAppWindowAllClosed);
@@ -52,6 +58,8 @@ import {Bulb} from './bulb';
       app.quit();
     }
   }
+  
+  
 
   function onAppQuit() {
     disconnectAll();
@@ -59,14 +67,14 @@ import {Bulb} from './bulb';
 
   function getWindowOptions(display) {
     let options = config.get('Window');
-    console.info(options, `Args.DisplaySize.${argv.displaysize}`, config.get(`Args.DisplaySize.${argv.displaysize}`));
+    // console.info(options, `Args.DisplaySize.${argv.displaysize}`, config.get(`Args.DisplaySize.${argv.displaysize}`));
     if (argv.displaysize) {
       // @TODO work out why I get Cannot assign to read only property 'width' of object
       // Object.assign(options, config.get(`Args.DisplaySize.${argv.displaysize}`));
       Object.assign(options, config.get(`Args.DisplaySize`));
     }
     
-    console.info(options);
+    // console.info(options);
     return options;
   }
 
@@ -84,6 +92,19 @@ import {Bulb} from './bulb';
 
     // window events
     win.on("closed", onWindowClosed);
+    win.on("unresponsive", onWindowUnresponsive);
+    
+    function onWindowClosed() {
+      log.info("Window Closed");
+      noble.stopScanning();
+      win = null;
+      app.quit();
+    }
+    
+    function onWindowUnresponsive() {
+      console.info("onWindowUnresponsive", arguments);
+    }
+    
 
 
     let webContents = win.webContents;
@@ -93,14 +114,13 @@ import {Bulb} from './bulb';
       mode: "undocked"
     });
     webContents.on("did-finish-load", onWebContentsDidFinishLoad);
+    webContents.on("crashed", onWebContentsCrashed);
 
 
-    function onWindowClosed() {
-      log.info("Window Closed");
-      noble.stopScanning();
-      win = null;
-      app.quit();
-    }
+    
+    
+    
+    
 
 
     function onWebContentsDidFinishLoad() {
@@ -114,6 +134,10 @@ import {Bulb} from './bulb';
       }
       // });
       win.setTitle(app.getName());
+    }
+    
+    function onWebContentsCrashed() {
+      console.info("onWebContentsCrashed", arguments);
     }
 
 

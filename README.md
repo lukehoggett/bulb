@@ -33,7 +33,12 @@ npm install --save-dev electron-rebuild`
 Need to run `npm install` in the `app/` dir, and then fix the `baseUrl` in `app/browser/config.json` for jspm
 
 
-## Caveat
+## Caveats
+
+```sh
+sudo setcap cap_net_raw+eip $(eval readlink -f `which node`)
+```
+
 Whenever you ran 'jspm init' correct line 2 of browser/config.js to:
 
 ```

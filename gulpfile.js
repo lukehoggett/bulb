@@ -3,7 +3,9 @@
 const gulp = require("gulp");
 const babel = require("gulp-babel");
 const rename = require("gulp-rename");
-const electron = require('electron-connect').server.create();
+const electronServer = require('electron-connect').server.create({
+  verbose: true
+});
 // const runSequence = require("run-sequence");
 // const del = require("del");
 // const exec = require("child_process").exec;
@@ -19,9 +21,11 @@ gulp.task("transpile:app", () => {
 });
 
 gulp.task('serve', ['transpile:app'], () => {
-  electron.start();
+  console.info("Starting Electron...");
+  electronServer.start();
+  // console.info("Electron connect", electronServer);
   
-  gulp.watch(['main/src/*.js'], electron.restart());
+  // gulp.watch(['main/src/*.js'], electronServer.restart());
 });
 
 
