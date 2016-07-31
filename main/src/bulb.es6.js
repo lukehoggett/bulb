@@ -6,8 +6,6 @@ import {bulbStore} from './device-store';
 (function() {
   "use strict";
 
-  
-
   let playbulbType = "";
 
   class Bulb {

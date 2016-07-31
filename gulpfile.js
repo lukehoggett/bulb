@@ -1,13 +1,14 @@
+'use strict';
+
 const gulp = require("gulp");
 const babel = require("gulp-babel");
-// const runSequence = require("run-sequence");
-// const runElectron = require("gulp-run-electron");
 const rename = require("gulp-rename");
-// const electron  = require("gulp-atom-electron");
+const electron = require('electron-connect').server.create();
+// const runSequence = require("run-sequence");
 // const del = require("del");
 // const exec = require("child_process").exec;
 
-gulp.task("transpile:app", function() {
+gulp.task("transpile:app", () => {
   console.info('Transpiling');
   return gulp.src("main/src/*.es6.js")
     .pipe(babel())
@@ -15,6 +16,12 @@ gulp.task("transpile:app", function() {
       path.basename = path.basename.replace('.es6', '');
     }))
     .pipe(gulp.dest("main/dist"));
+});
+
+gulp.task('serve', ['transpile:app'], () => {
+  electron.start();
+  
+  gulp.watch(['main/src/*.js'], electron.restart());
 });
 
 
