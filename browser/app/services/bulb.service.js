@@ -127,15 +127,18 @@ class BulbService {
 
   // IPC listeners
   onDeviceGetStoredReply(event, device) {
-    console.log("BulbService: device.get.stored.reply", device);
+    console.log("BulbService: onDeviceGetStoredReply...", device);
     this.devices[device.uuid] = device;
-    console.log("################## BulbService: device.get.stored.reply", this.devices);
   }
 
   onDiscovered(event, device) {
-    console.log("BulbService: onDiscovered ^^^^^ ", device);
+    console.log("BulbService: onDiscovered...", device);
     if (device.uuid in this.devices) {
-      console.log("Existing device");
+      console.log("Existing device", device.uuid);
+    }
+    
+    if (device.characteristics) {
+      console.log("Device Characteristics", device.characteristics);
     }
     this.devices[device.uuid] = device;
     this.$timeout(() => {}, 0);

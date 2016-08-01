@@ -11,10 +11,15 @@
         <link href="css/app.css" rel='stylesheet'>
     </head>
     <body ng-cloak>
+        <!-- build:remove -->
+        <!-- Connect to server process -->
+        <!--script>
+            require('electron-connect').client.create()
+        </script-->
+        <!-- end:build -->
         <ng-view></ng-view>
     </body>
     <script>
-        console.info("importing tinycolor");
         // tinycolor is a cjs module, in electron module exists so we have to ensure it loads
         window.tinycolor = require('./jspm_packages/npm/tinycolor2@1.4.1/dist/tinycolor-min.js');
         console.log("Doing System Import");

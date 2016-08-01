@@ -94,7 +94,7 @@ class GroupService {
 
   // IPC listeners
   onGroupGetStoredReply(event, group) {
-    console.log("GroupService: group.get.stored.reply", group);
+    console.log("GroupService: onGroupGetStoredReply...", group);
     this.groups[group.uuid] = group;
   }
 

@@ -3,8 +3,14 @@
 const gulp = require("gulp");
 const babel = require("gulp-babel");
 const rename = require("gulp-rename");
+console.info("Electron path", `${process.cwd()}/node_modules/electron-prebuilt/dist/electron`);
 const electronServer = require('electron-connect').server.create({
-  verbose: true
+  electron: `${process.cwd()}/node_modules/electron-prebuilt/`,
+  verbose: true/*,
+  spawnOpt: {
+    uid: 0,
+    gid: 0
+  }*/
 });
 // const runSequence = require("run-sequence");
 // const del = require("del");
@@ -22,10 +28,15 @@ gulp.task("transpile:app", () => {
 
 gulp.task('serve', ['transpile:app'], () => {
   console.info("Starting Electron...");
+  // Start browser process
   electronServer.start();
-  // console.info("Electron connect", electronServer);
   
-  // gulp.watch(['main/src/*.js'], electronServer.restart());
+  // console.info("Electron connect", electronServer);
+  // Restart browser process
+  gulp.watch(['main/src/*.js'], electronServer.restart());
+
+  // Reload renderer process
+  gulp.watch(['browser/index.html', 'browser/app/**/*.js', 'browser/css/**/*'], electronServer.reload);
 });
 
 

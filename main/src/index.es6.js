@@ -22,6 +22,17 @@ import {Bulb} from './bulb';
 
 (function() {
   'use strict';
+  
+  const IPC_SCAN_START = "scan.start";
+  const IPC_SCAN_STOP = "scan.stop";
+  const IPC_DEVICE_CONNECT = "device.connect";
+  const IPC_DEVICE_DISCONNECT = "device.disconnect";
+  const IPC_DEVICE_CHARACTERISTICS_GET = "device.characteristics.get";
+  const IPC_DEVICE_CHARACTERISTIC_SET = "device.characteristic.set";
+  const IPC_DEVICE_GET = "device.get";
+  const IPC_DEVICE_GET_STORED = "device.get.stored";
+  const IPC_DEVICE_SET_STORED = "device.set.stored";
+  const IPC_DEV_TOOLS_OPEN = "dev.tools.open";
 
   /* ------------------------------------------- */
   log.info('Electron Version', process.versions.electron);
@@ -104,8 +115,6 @@ import {Bulb} from './bulb';
     function onWindowUnresponsive() {
       console.info("onWindowUnresponsive", arguments);
     }
-    
-
 
     let webContents = win.webContents;
 
@@ -115,13 +124,6 @@ import {Bulb} from './bulb';
     });
     webContents.on("did-finish-load", onWebContentsDidFinishLoad);
     webContents.on("crashed", onWebContentsCrashed);
-
-
-    
-    
-    
-    
-
 
     function onWebContentsDidFinishLoad() {
       log.info("onWebContentsDidFinishLoad...");
@@ -142,16 +144,16 @@ import {Bulb} from './bulb';
 
 
     // adding ipcMain listeners
-    ipcMain.on("scan.start", onIpcScanStart);
-    ipcMain.on("scan.stop", onIpcScanStop);
-    ipcMain.on("device.connect", onIpcDeviceConnect);
-    ipcMain.on("device.disconnect", onIpcDeviceDisconnect);
-    ipcMain.on("device.characteristics.get", onIpcDeviceGetCharacteristics);
-    ipcMain.on("device.characteristic.set", onIpcDeviceSetCharacteristic);
-    ipcMain.on("device.get", onIpcDeviceGet);
-    ipcMain.on("dev.tools.open", onIpcDevToolsOpen);
-    ipcMain.on("device.get.stored", onIpcDeviceGetStored);
-    ipcMain.on("device.set.stored", onIpcDeviceSetStored);
+    ipcMain.on(IPC_SCAN_START, onIpcScanStart);
+    ipcMain.on(IPC_SCAN_STOP, onIpcScanStop);
+    ipcMain.on(IPC_DEVICE_CONNECT, onIpcDeviceConnect);
+    ipcMain.on(IPC_DEVICE_DISCONNECT, onIpcDeviceDisconnect);
+    ipcMain.on(IPC_DEVICE_CHARACTERISTICS_GET, onIpcDeviceGetCharacteristics);
+    ipcMain.on(IPC_DEVICE_CHARACTERISTIC_SET, onIpcDeviceSetCharacteristic);
+    ipcMain.on(IPC_DEVICE_GET, onIpcDeviceGet);
+    ipcMain.on(IPC_DEVICE_GET_STORED, onIpcDeviceGetStored);
+    ipcMain.on(IPC_DEVICE_SET_STORED, onIpcDeviceSetStored);
+    ipcMain.on(IPC_DEV_TOOLS_OPEN, onIpcDevToolsOpen);
 
     ipcMain.on("group.set.stored", onIpcGroupSetStored);
     ipcMain.on("group.delete.stored", onIpcGroupDeleteStored);

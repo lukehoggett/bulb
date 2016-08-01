@@ -110,6 +110,10 @@ class DeviceListCtrl {
 
     this.originatorEvent = null;
   }
+  
+  isEditDisabled(device) {
+    return !(device.state === 'connected') && (device.characteristics === undefined);
+  }
 }
 
 DeviceListCtrl.$inject = ['$rootScope', '$mdDialog', 'bulbService', 'groupService'];

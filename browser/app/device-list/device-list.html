@@ -41,14 +41,8 @@
                         {{device.state == 'connected' ? 'Disconnect' : 'Connect'}}
                     </md-tooltip>
                 </md-button>
-                <!-- <md-button ng-click="list.getCharacterisics(device)" class="md-primary md-icon-button" aria-label="Get Characteristics" ng-disabled="device.state == 'connected' ? false : true">
-                    <md-icon aria-label="Get Characteristics">system_update_alt</md-icon>
-                    <md-tooltip md-direction="top">
-                        Get Characteristics
-                    </md-tooltip>
-                </md-button> -->
-                <md-button ng-click="list.selectDevice(device)" class="md-primary md-icon-button" aria-label="Edit Characteristics">
-                    <!-- <md-button ng-click="list.selectDevice(device)" class="md-primary md-icon-button" aria-label="Edit Characteristics" ng-disabled="device.state == 'connected' ? false : true"> -->
+                <md-button ng-click="list.selectDevice(device)" class="md-primary md-icon-button" aria-label="Edit Characteristics" ng-disabled="list.isEditDisabled(device)">
+                    
                     <md-icon aria-label="Edit Characteristics">edit</md-icon>
                     <md-tooltip md-direction="top">Edit Characteristics</md-tooltip>
                 </md-button>
