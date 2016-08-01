@@ -1,8 +1,7 @@
-/* jshint esnext: true */
-/* jshint node: true */
-"use strict";
-const ipc = require("electron").ipcRenderer;
-const uuid = require("uuid");
+'use strict';
+
+const ipc = require('electron').ipcRenderer;
+const uuid = require('uuid');
 
 class GroupService {
   constructor($timeout, bulbService) {
@@ -14,7 +13,7 @@ class GroupService {
     this.getStoredGroups();
 
     // listening to messages from the main
-    ipc.on("group.get.stored.reply", (event, group, uuid) => this.onGroupGetStoredReply(event, group, uuid));
+    ipc.on('group.get.stored.reply', (event, group, uuid) => this.onGroupGetStoredReply(event, group, uuid));
 
   }
 
@@ -23,12 +22,12 @@ class GroupService {
   }
 
   get(uuid) {
-    // console.info("GroupService() get", uuid, this.groups, this.groups[uuid]);
+    // console.info('GroupService() get', uuid, this.groups, this.groups[uuid]);
     return this.groups[uuid];
   }
   
   getDeviceGroupName(device) {
-    let deviceGroupName = "";
+    let deviceGroupName = '';
     angular.forEach(this.getAll(), (group) => {
       if (group.devices.indexOf(device.uuid) !== -1) {
         deviceGroupName = group.name;
@@ -38,10 +37,10 @@ class GroupService {
   }
   
   add() {
-    // console.info("GroupService: add:");
+    // console.info('GroupService: add:');
     let group = {};
     group.uuid = uuid.v4();
-    group.name = "New Group";
+    group.name = 'New Group';
     group.devices = [];
 
     // add to local variable
@@ -51,10 +50,10 @@ class GroupService {
   }
 
   update(group) {
-    console.info("GroupService update group");
+    console.info('GroupService update group');
     // update local variable
     this.groups[group.uuid] = group;
-    // console.info("group update", this.groups);
+    // console.info('group update', this.groups);
     ipc.send('group.set.stored', group);
   }
 
@@ -69,15 +68,15 @@ class GroupService {
     console.info(`BulbService: Handling connection to device `, group);
     let device = null;
     group.state = 'disconnected';
-    console.info("GroupService toggleConnection", group.state);
-    if (group.state == "disconnected") {
-      console.info("GroupService toggleConnection disconnected");
+    console.info('GroupService toggleConnection', group.state);
+    if (group.state == 'disconnected') {
+      console.info('GroupService toggleConnection disconnected');
       angular.forEach(group.devices, (deviceUUID) => {
         device = this.bulbService.get(deviceUUID);
         this.bulbService.connect(device);
       });
     } else {
-      console.info("GroupService toggleConnection connected");
+      console.info('GroupService toggleConnection connected');
       angular.forEach(group.devices, (deviceUUID) => {
         device = this.bulbService.get(deviceUUID);
         this.bulbService.disconnect(device);
@@ -86,15 +85,15 @@ class GroupService {
   }
 
   getStoredGroups() {
-    // console.info("Requesting stored groups");
-    ipc.send("group.get.stored", (event) => {
-      // console.log("GroupService: get stored groups", event);
+    // console.info('Requesting stored groups');
+    ipc.send('group.get.stored', (event) => {
+      // console.log('GroupService: get stored groups', event);
     });
   }
 
   // IPC listeners
   onGroupGetStoredReply(event, group) {
-    console.log("GroupService: onGroupGetStoredReply...", group);
+    console.log('GroupService: onGroupGetStoredReply...', group);
     this.groups[group.uuid] = group;
   }
 

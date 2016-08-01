@@ -17,33 +17,33 @@ class DeviceListCtrl {
   }
 
   selectDevice(device) {
-    console.log("DeviceListCtrl: selectDevice", device);
+    console.log('DeviceListCtrl: selectDevice', device);
     this.$rootScope.$broadcast('device_selected', device.uuid);
   }
 
   getCharacterisics(device) {
-    console.log("list get characteristics", device);
+    console.log('list get characteristics', device);
     this.bulb.getCharacteristics(device.uuid);
   }
 
   updateDeviceName(uuid) {
-    console.log("updateDeviceName", uuid, this.bulb.devices[uuid]);
+    console.log('updateDeviceName', uuid, this.bulb.devices[uuid]);
     // send update command to main process
     this.bulb.setCharacteristic(uuid, this.bulb.devices[uuid].name, 'name');
   }
 
   openMoreMenu($mdOpenMenu, $event) {
-    console.info("list: openMoreMenu", $mdOpenMenu, $event);
+    console.info('list: openMoreMenu', $mdOpenMenu, $event);
     this.originatorEvent = $event;
     $mdOpenMenu($event);
   }
   
   addToGroupClick(device) {
-    console.info("list: addToGroup", device);
+    console.info('list: addToGroup', device);
   }
 
   addToGroup(device) {
-    console.info("list: addToGroup", device);
+    console.info('list: addToGroup', device);
     // this.$mdDialog.show(
     //   this.$mdDialog.alert()
     //     .targetEvent(this.originatorEvent)

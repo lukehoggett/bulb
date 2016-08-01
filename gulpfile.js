@@ -1,9 +1,10 @@
 'use strict';
 
-const gulp = require("gulp");
-const babel = require("gulp-babel");
-const rename = require("gulp-rename");
-console.info("Electron path", `${process.cwd()}/node_modules/electron-prebuilt/dist/electron`);
+const gulp = require('gulp');
+const babel = require('gulp-babel');
+const eslint = require('gulp-eslint');
+const rename = require('gulp-rename');
+console.info('Electron path', `${process.cwd()}/node_modules/electron-prebuilt/dist/electron`);
 const electronServer = require('electron-connect').server.create({
   electron: `${process.cwd()}/node_modules/electron-prebuilt/`,
   verbose: true/*,
@@ -12,26 +13,62 @@ const electronServer = require('electron-connect').server.create({
     gid: 0
   }*/
 });
-// const runSequence = require("run-sequence");
-// const del = require("del");
-// const exec = require("child_process").exec;
+// const runSequence = require('run-sequence');
+// const del = require('del');
+// const exec = require('child_process').exec;
 
-gulp.task("transpile:app", () => {
+gulp.task('lint:main', () => {
+    // ESLint ignores files with 'node_modules' paths.
+    // So, it's best to have gulp ignore the directory as well.
+    // Also, Be sure to return the stream from the task;
+    // Otherwise, the task may end before the stream has finished.
+    return gulp.src(['main/**/*.js','!node_modules/**'])
+        // eslint() attaches the lint output to the 'eslint' property
+        // of the file object so it can be used by other modules.
+        .pipe(eslint())
+        // eslint.format() outputs the lint results to the console.
+        // Alternatively use eslint.formatEach() (see Docs).
+        .pipe(eslint.format());
+        // To have the process exit with an error code (1) on
+        // lint error, return the stream and pipe to failAfterError last.
+        // .pipe(eslint.failAfterError());
+});
+
+gulp.task('lint:browser', () => {
+    // ESLint ignores files with 'node_modules' paths.
+    // So, it's best to have gulp ignore the directory as well.
+    // Also, Be sure to return the stream from the task;
+    // Otherwise, the task may end before the stream has finished.
+    return gulp.src(['browser/**/*.js','!node_modules/**'])
+        // eslint() attaches the lint output to the 'eslint' property
+        // of the file object so it can be used by other modules.
+        .pipe(eslint())
+        // eslint.format() outputs the lint results to the console.
+        // Alternatively use eslint.formatEach() (see Docs).
+        .pipe(eslint.format());
+        // To have the process exit with an error code (1) on
+        // lint error, return the stream and pipe to failAfterError last.
+        // .pipe(eslint.failAfterError());
+});
+
+gulp.task('lint', ['lint:main', 'lint:browser']);
+
+gulp.task('transpile:app', ['lint'], () => {
   console.info('Transpiling');
-  return gulp.src("main/src/*.es6.js")
+  return gulp.src('main/src/*.es6.js')
     .pipe(babel())
     .pipe(rename(function (path) {
       path.basename = path.basename.replace('.es6', '');
     }))
-    .pipe(gulp.dest("main/dist"));
+    .pipe(gulp.dest('main/dist'));
 });
 
 gulp.task('serve', ['transpile:app'], () => {
-  console.info("Starting Electron...");
+  console.info('Starting Electron...');
   // Start browser process
   electronServer.start();
   
-  // console.info("Electron connect", electronServer);
+  // console.info('Electron connect', electronServer);
   // Restart browser process
   gulp.watch(['main/src/*.js'], electronServer.restart());
 
@@ -86,6 +123,6 @@ gulp.task('serve', ['transpile:app'], () => {
 //     });
 // });
 
-// gulp.watch(["**/*.js", "**/*.html"], ["run", runElectron.rerun]);
+// gulp.watch(['**/*.js', '**/*.html'], ['run', runElectron.rerun]);
 
-gulp.task("default", ["transpile:app"]);
+gulp.task('default', ['transpile:app']);

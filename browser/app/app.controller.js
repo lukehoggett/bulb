@@ -13,10 +13,10 @@ class AppCtrl {
     this.bulbService = bulbService;
     this.menuService = menuService;
     this.toast = $mdToast;
-    console.info("AppCtrl menuService state", this.menuService.getState());
+    console.info('AppCtrl menuService state', this.menuService.getState());
     
     ipc.on('error', (event, message) => {
-      console.info("Error:", message);
+      console.info('Error:', message);
       this.showErrorToast(message);
     });
   }
@@ -25,13 +25,13 @@ class AppCtrl {
     this.toast.show(
       this.toast.simple()
       .textContent(message)
-      .position("bottom left")
+      .position('bottom left')
       .hideDelay(5000)
     );
   }
 
   toggleScan() {
-    console.log("app.controller isScanning", this.bulbService.isScanning());
+    console.log('app.controller isScanning', this.bulbService.isScanning());
     if (this.bulbService.isScanning()) {
       this.bulbService.stopScan();
     } else {
@@ -41,7 +41,7 @@ class AppCtrl {
   }
 
   showDevices() {
-    console.log("show devices");
+    console.log('show devices');
   }
 
   navSelect(item) {
@@ -53,17 +53,17 @@ class AppCtrl {
   }
 
   toggleMenu() {
-    console.log("Toggle Menu", this.mdSidenav);
+    console.log('Toggle Menu', this.mdSidenav);
     this.mdSidenav('menu').toggle();
   }
 
   doCrash() {
-    console.log("Crash Reporting");
+    console.log('Crash Reporting');
     ipc.send('crash', 'Something bad happened...');
   }
 
   openDevTools() {
-    console.log("DevTools");
+    console.log('DevTools');
     ipc.send('dev.tools.open', null);
   }
 

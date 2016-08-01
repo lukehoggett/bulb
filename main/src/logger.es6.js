@@ -1,5 +1,5 @@
 // logging module
-import bunyan from "bunyan";
+import bunyan from 'bunyan';
 import {
   config
 } from './config';

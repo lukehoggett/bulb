@@ -49,12 +49,12 @@ class GroupListCtrl {
   }
 
   selectGroup(group) {
-    console.log("GroupListCtrl: selectGroup", group);
+    console.log('GroupListCtrl: selectGroup', group);
     this.$rootScope.$broadcast('group_selected', group.uuid);
   }
 
   isDeviceInGroup(group, device) {
-    // console.info("GroupListCtrl: isDeviceInGroup", group, device);
+    // console.info('GroupListCtrl: isDeviceInGroup', group, device);
     return group.devices.indexOf(device.uuid) !== -1;
   }
 

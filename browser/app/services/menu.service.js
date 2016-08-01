@@ -1,6 +1,4 @@
-/* jshint esnext: true */
-/* jshint node: true */
-"use strict";
+'use strict';
 
 const DEVICE_STATE = 'device';
 const GROUP_STATE = 'group';
@@ -10,7 +8,7 @@ class MenuService {
   constructor() {
     this.setState(DEVICE_STATE);
 
-    console.info("menuService state", this.getState());
+    console.info('menuService state', this.getState());
   }
 
   getState() {

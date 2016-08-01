@@ -10,13 +10,11 @@
         "node": true
     },
     "rules": {
-        "no-console": ["error", {
-            "allow": ["warn", "error", "log", "info"]
-        }],
+        "no-console": [2, { "allow": ["warn", "error"] }],
         "no-undef": "off",
         "semi": [2, "always"],
         "linebreak-style": ["error", "unix"],
-        "quotes": "off"
+        "quotes": [2, "single", {"avoidEscape": true, "allowTemplateLiterals": true}]
     },
     "parserOptions": {
         "sourceType": "module"

@@ -1,6 +1,6 @@
 /* jshint esnext: true */
 /* jshint node: true */
-"use strict";
+'use strict';
 
 
 
@@ -12,8 +12,8 @@ class CharacteristicCtrl {
     this.bulbService = bulbService;
     this.groupService = groupService;
 
-    this.TYPE_COLOR = "color";
-    this.TYPE_EFFECT = "effect";
+    this.TYPE_COLOR = 'color';
+    this.TYPE_EFFECT = 'effect';
     this.EFFECTS_OFF_VALUES = [0, 0, 0, 0, 255, 0, 1, 0];
 
     this.DEVICE_EDIT_TYPE = 'device';
@@ -24,7 +24,7 @@ class CharacteristicCtrl {
     
     this.editType = this.DEVICE_EDIT_TYPE;
 
-    this.type = "";
+    this.type = '';
     this.effect = {
       saturation: 0,
       red: 0,
@@ -36,23 +36,23 @@ class CharacteristicCtrl {
 
     this.effectModes = [
       {
-        name: "Flashing",
+        name: 'Flashing',
         value: 0
       },
       {
-        name: "Pulse",
+        name: 'Pulse',
         value: 1
       },
       {
-        name: "Rainbow",
+        name: 'Rainbow',
         value: 2
       },
       {
-        name: "Rainbow Fade",
+        name: 'Rainbow Fade',
         value: 3
       },
       {
-        name: "Candle",
+        name: 'Candle',
         value: 4
       }
     ];
@@ -67,9 +67,9 @@ class CharacteristicCtrl {
     this.colorPicker = {};
     this.colorPicker.options = {
       type: 1,
-      label: "Color",
-      icon: "brush",
-      default: "rgb(0,255,0)",
+      label: 'Color',
+      icon: 'brush',
+      default: 'rgb(0,255,0)',
       openOnInput: true,
       clearButton: true,
       alphaChannel: true,
@@ -77,22 +77,22 @@ class CharacteristicCtrl {
       history: false,
       hex: false,
       hsl: false,
-      defaultTab: "sliders"
+      defaultTab: 'sliders'
     };
     // this.colorPicker
 
-    this.$scope.$on("device_selected", this.deviceSelected.bind(this));
-    this.$scope.$on("group_selected", this.groupSelected.bind(this));
+    this.$scope.$on('device_selected', this.deviceSelected.bind(this));
+    this.$scope.$on('group_selected', this.groupSelected.bind(this));
 
   }
 
   deviceSelected(event, uuid) {
-    console.log("CharCtrl device_selcted", uuid);
+    console.log('CharCtrl device_selcted', uuid);
     this.togglePane(this.DEVICE_EDIT_TYPE);
     
     this.device = this.bulbService.get(uuid);
     let characteristics = this.device.characteristics;
-    console.info("characteristic panel device", characteristics);
+    console.info('characteristic panel device', characteristics);
 
     this.color = {
       saturation: characteristics.color.value[0],
@@ -109,17 +109,17 @@ class CharacteristicCtrl {
       mode: characteristics.effect.value[4],
       speed: characteristics.effect.value[6]
     };
-    console.info("DeviceSelected color", this.color);
-    console.info("DeviceSelected effect", this.effect);
+    console.info('DeviceSelected color', this.color);
+    console.info('DeviceSelected effect', this.effect);
     this.detectType();
   }
   
   groupSelected(event, uuid) {
-    console.log("CharCtrl groupSelected", uuid);
+    console.log('CharCtrl groupSelected', uuid);
     this.togglePane(this.GROUP_EDIT_TYPE);
     
     this.group = this.groupService.get(uuid);
-    console.log("CharCtrl this.group", this.group);
+    console.log('CharCtrl this.group', this.group);
     
     this.color = {
       saturation: 255,
@@ -130,14 +130,14 @@ class CharacteristicCtrl {
     return;
     this.device = this.bulbService.get(uuid);
     let characteristics = this.device.characteristics;
-    console.info("characteristic panel device", characteristics);
+    console.info('characteristic panel device', characteristics);
 
     
   }
 
   togglePane(source) {
     this.editType = source;
-    this.mdSidenav("characteristic").toggle();
+    this.mdSidenav('characteristic').toggle();
   }
 
   detectType() {
@@ -153,12 +153,12 @@ class CharacteristicCtrl {
   }
 
   save(characteristic) {
-    console.log("save()", this, this.colorPicker);
-    console.log("save()", this.editType);
+    console.log('save()', this, this.colorPicker);
+    console.log('save()', this.editType);
     let value = null;
     let colorRGBA = tinycolor(this.colorPicker.color).toRgb();
     if (this.type === this.TYPE_EFFECT) {
-      console.log("value is ", this.TYPE_EFFECT, this.colorPicker, this.effect);
+      console.log('value is ', this.TYPE_EFFECT, this.colorPicker, this.effect);
       if ([0, 1, 4].indexOf(this.effect.mode) !== -1) {
         this.effect.saturation = 255 - colorRGBA.a * 255;
         this.effect.red = colorRGBA.r;
@@ -173,9 +173,9 @@ class CharacteristicCtrl {
 
       value = this.effect;
     } else {
-      console.log("value is ", this.TYPE_COLOR);
+      console.log('value is ', this.TYPE_COLOR);
       // get value from this.colorPicker
-      console.log("tinycolor", tinycolor, tinycolor(this.colorPicker.color).toRgb());
+      console.log('tinycolor', tinycolor, tinycolor(this.colorPicker.color).toRgb());
       let colorRGBA = tinycolor(this.colorPicker.color).toRgb();
       this.color = {
         saturation: 255 - colorRGBA.a * 255,
@@ -187,17 +187,17 @@ class CharacteristicCtrl {
     }
     
     // send new values to the event process
-    console.log("Save characteristic", characteristic);
-    console.log("Save value", value);
-    console.log("Save type", this.type);
+    console.log('Save characteristic', characteristic);
+    console.log('Save value', value);
+    console.log('Save type', this.type);
     
     switch (this.editType) {
       case this.DEVICE_EDIT_TYPE:
-        console.info("device edit");
+        console.info('device edit');
         this.bulbService.setCharacteristic(this.device.uuid, value, this.type);
         break;
       case this.GROUP_EDIT_TYPE:
-        console.info("group edit");
+        console.info('group edit');
         angular.forEach(this.group.devices, (deviceUUID) => {
           this.bulbService.setCharacteristic(deviceUUID, value, this.type);
         });

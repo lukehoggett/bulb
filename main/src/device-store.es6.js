@@ -2,13 +2,13 @@ import {log} from './logger';
 
 import storage from 'node-persist';
 (function() {
-  "use strict";
+  'use strict';
 
   // initialise storage
   let storageConfig = {
     stringify: JSON.stringify,
     parse: JSON.parse,
-    encoding: "utf8",
+    encoding: 'utf8',
     logging: false,
     continuous: true,
     interval: false,
@@ -42,7 +42,7 @@ import storage from 'node-persist';
 
     getDevicesFromStorage() {
       // @TODO implement caching in local variable, or not as needed
-      log.info("BulbStore: getDevicesFromStorage");
+      log.info('BulbStore: getDevicesFromStorage');
       let haveCached = Object.keys(devices).length !== 0 && devices.constructor === Object;
       if (!haveCached) {
 
@@ -58,11 +58,11 @@ import storage from 'node-persist';
           device.stored = true;
           device.power = false;
           device.state = 'disconnected';
-          // log.info("getDevicesFromStorage device", device, uuid);
+          // log.info('getDevicesFromStorage device', device, uuid);
           serializedDevices.set(uuid, device);
         });
       }
-      // log.info("getDevicesFromStorage serializedDevices", serializedDevices);
+      // log.info('getDevicesFromStorage serializedDevices', serializedDevices);
       return serializedDevices;
     }
 
@@ -76,7 +76,7 @@ import storage from 'node-persist';
           }
         });
 
-        // log.info("getGroupsFromStorage group", group, uuid);
+        // log.info('getGroupsFromStorage group', group, uuid);
         serializedGroups.set(uuid, group);
       });
 
@@ -119,7 +119,7 @@ import storage from 'node-persist';
       let serializedDevice = this.serializeDevice(device);
       deviceStorage.setItem(serializedDevice.uuid, serializedDevice, error => {
         if (error) {
-          log.error("Storage error: on set", error);
+          log.error('Storage error: on set', error);
         }
       });
       this.getDevicesFromStorage();
@@ -132,11 +132,11 @@ import storage from 'node-persist';
     }
 
     setStoredGroup(group) {
-      log.info("bulbStore setStoredGroup", group);
+      log.info('bulbStore setStoredGroup', group);
       // remove properties not needed to be stored
       groupStorage.setItem(group.uuid, group, error => {
         if (error) {
-          log.error("Storage error: on set", error);
+          log.error('Storage error: on set', error);
         }
       });
       this.getGroupsFromStorage();
@@ -169,15 +169,15 @@ import storage from 'node-persist';
     }
 
     deleteStoredGroup(group) {
-      log.info("bulbStore deleteStoredGroup group", group);
+      log.info('bulbStore deleteStoredGroup group', group);
     }
 
     /**
      * Prepare a Noble device for serialization to send to a renderer process.
      Copies out all the attributes the renderer might need.  Seems to be
-     necessary as Noble"s objects don"t serialize well and lose attributes when
+     necessary as Noble's objects don't serialize well and lose attributes when
      pass around with the ipc class.
-     log.info("Serializing device", device);
+     log.info('Serializing device', device);
      * @return {[type]} [description]
      */
     serializeDevice(device) {
@@ -220,7 +220,7 @@ import storage from 'node-persist';
   // load all currently stored devices
   let getAll = function() {
     // @TODO implement caching in local variable, or not as needed
-    log.info("device-deviceStorage: getAll");
+    log.info('device-deviceStorage: getAll');
     let haveCached = Object.keys(devices).length !== 0 && devices.constructor === Object;
     if (!haveCached) {
 
@@ -232,7 +232,7 @@ import storage from 'node-persist';
           }
         });
 
-        log.info("device-deviceStorage: loaded UUID", device.uuid);
+        log.info('device-deviceStorage: loaded UUID', device.uuid);
 
         device.stored = true;
         device.power = false;
@@ -254,7 +254,7 @@ import storage from 'node-persist';
   let set = function(uuid, serializedDevice) {
     deviceStorage.setItem(uuid, serializedDevice, error => {
       if (error) {
-        log.error("Storage error: on set", error);
+        log.error('Storage error: on set', error);
       }
     });
   };

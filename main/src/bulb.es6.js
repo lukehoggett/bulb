@@ -1,12 +1,12 @@
 import {config} from './config';
 import {log} from './logger';
-import deviceStore from "./device-store";
+import deviceStore from './device-store';
 import {bulbStore} from './device-store';
 
 (function() {
-  "use strict";
+  'use strict';
 
-  let playbulbType = "";
+  let playbulbType = '';
 
   class Bulb {
 
@@ -25,8 +25,8 @@ import {bulbStore} from './device-store';
 
       }
       device.type = playbulbType;
-      log.info("onNobleDiscovered: Discovered Playbulb device with UUID", device.uuid);
-      log.info("onNobleDiscovered: device.advertisement.serviceUuids", device.advertisement.serviceUuids);
+      log.info('onNobleDiscovered: Discovered Playbulb device with UUID', device.uuid);
+      log.info('onNobleDiscovered: device.advertisement.serviceUuids', device.advertisement.serviceUuids);
       // on discovery check if device is in stored devices, if not update stored
       // if (!bulbStore.hasStoredDevice(device.uuid)) {
       // save discovered device to persistent storage
