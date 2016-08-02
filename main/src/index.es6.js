@@ -1,4 +1,5 @@
 // config and logging modules
+
 import {config} from './config';
 import {log} from './logger';
 
@@ -65,12 +66,18 @@ import {Bulb} from './bulb';
   const NOBLE_SCAN_STOP = 'scanStop';
   const NOBLE_WARNING = 'warning';
 
-
   /* ------------------------------------------- */
+  log.info('----------- Starting Bulb -----------');
+  log.info('                 :');
+  log.info('             \'.  _  .\'');
+  log.info('            -=  (~)  =-');
+  log.info('            .\'   #  \'.');
+  log.info('');
   log.info('Electron Version', process.versions.electron);
   log.info('Chrome Version', process.versions.chrome);
+  log.info('-------------------------------------');
   /* ------------------------------------------- */
-
+  log.info(process);
   // yargs config @TODO
   let argv = yargs.usage('$0 <cmd> [args]').option('displaysize', {
       alias: 'd',

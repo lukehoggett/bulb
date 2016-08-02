@@ -43,7 +43,6 @@ gulp.task('lint:browser', () => {
 gulp.task('lint', ['lint:main', 'lint:browser']);
 
 gulp.task('transpile:main', ['lint'], () => {
-  console.info('Transpiling');
   return gulp.src('main/src/*.es6.js')
     .pipe(debug({title: 'transpile file...'}))
     .pipe(babel())
@@ -54,7 +53,6 @@ gulp.task('transpile:main', ['lint'], () => {
 });
 
 gulp.task('serve', ['transpile:main'], () => {
-  console.info('Starting Electron...');
   // Start browser process
   electronServer.start();
   
