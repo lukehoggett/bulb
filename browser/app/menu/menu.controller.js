@@ -5,9 +5,10 @@
 
 class MenuCtrl {
 
-  constructor(menuService) {
+  constructor(menuService, $log) {
 
     this.menuService = menuService;
+    this.$log = $log;
 
     this.menuItems = [{
       id: 1,
@@ -23,7 +24,7 @@ class MenuCtrl {
   }
 
   navSelect(item) {
-    console.info('menu: navSelect', item);
+    this.$log.info('menu: navSelect', item);
     this.menuService.setState(item.name);
 
   }

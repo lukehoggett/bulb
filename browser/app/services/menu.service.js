@@ -5,10 +5,11 @@ const GROUP_STATE = 'group';
 
 class MenuService {
 
-  constructor() {
+  constructor($log) {
     this.setState(DEVICE_STATE);
-
-    console.info('menuService state', this.getState());
+    this.$log = $log;
+    
+    this.$log.info('menuService state', this.getState());
   }
 
   getState() {

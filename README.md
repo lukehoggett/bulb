@@ -39,7 +39,7 @@ Need to run `npm install` in the `app/` dir, and then fix the `baseUrl` in `app/
 
 with sudo 
 ```sh
-gulp transpile:app && sudo ./node_modules/electron-prebuilt/dist/electron main/dist/index.js --displaysize=sm | node_modules/bunyan/bin/bunyan
+gulp transpile:main && sudo ./node_modules/electron-prebuilt/dist/electron main/dist/index.js --displaysize=sm | node_modules/bunyan/bin/bunyan
 ```
 
 @TODO
@@ -48,7 +48,7 @@ without sudo if you have already run
 sudo setcap cap_net_raw+eip $(eval readlink -f `which node`)
 ```
 ```sh
-gulp transpile:app && ./node_modules/electron-prebuilt/dist/electron main/dist/index.js --displaysize=sm | node_modules/bunyan/bin/bunyan
+gulp transpile:main && ./node_modules/electron-prebuilt/dist/electron main/dist/index.js --displaysize=sm | node_modules/bunyan/bin/bunyan
 ```
 
 ## Caveats

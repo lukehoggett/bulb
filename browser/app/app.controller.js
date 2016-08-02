@@ -7,16 +7,17 @@ const ipc = require('electron').ipcRenderer;
 
 class AppCtrl {
 
-  constructor($mdSidenav, $mdToast, bulbService, menuService) {
+  constructor($mdSidenav, $mdToast, bulbService, menuService, $log) {
 
     this.mdSidenav = $mdSidenav;
     this.bulbService = bulbService;
     this.menuService = menuService;
     this.toast = $mdToast;
-    console.info('AppCtrl menuService state', this.menuService.getState());
+    this.$log = $log; 
+    this.$log.info('AppCtrl menuService state', this.menuService.getState());
     
     ipc.on('error', (event, message) => {
-      console.info('Error:', message);
+      this.$log.info('Error:', message);
       this.showErrorToast(message);
     });
   }
@@ -31,7 +32,7 @@ class AppCtrl {
   }
 
   toggleScan() {
-    console.log('app.controller isScanning', this.bulbService.isScanning());
+    this.$log.log('app.controller isScanning', this.bulbService.isScanning());
     if (this.bulbService.isScanning()) {
       this.bulbService.stopScan();
     } else {
@@ -41,7 +42,7 @@ class AppCtrl {
   }
 
   showDevices() {
-    console.log('show devices');
+    this.$log.log('show devices');
   }
 
   navSelect(item) {
@@ -53,17 +54,17 @@ class AppCtrl {
   }
 
   toggleMenu() {
-    console.log('Toggle Menu', this.mdSidenav);
+    this.$log.log('Toggle Menu', this.mdSidenav);
     this.mdSidenav('menu').toggle();
   }
 
   doCrash() {
-    console.log('Crash Reporting');
+    this.$log.log('Crash Reporting');
     ipc.send('crash', 'Something bad happened...');
   }
 
   openDevTools() {
-    console.log('DevTools');
+    this.$log.log('DevTools');
     ipc.send('dev.tools.open', null);
   }
 
@@ -72,7 +73,7 @@ class AppCtrl {
 
 }
 
-AppCtrl.$inject = ['$mdSidenav', '$mdToast', 'bulbService', 'menuService'];
+AppCtrl.$inject = ['$mdSidenav', '$mdToast', 'bulbService', 'menuService', '$log'];
 export {
   AppCtrl
 };

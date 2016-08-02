@@ -4,14 +4,12 @@
 
 class GroupListCtrl {
 
-  constructor($rootScope, groupService, bulbService) {
+  constructor($rootScope, groupService, bulbService, $log) {
 
-    // this.$rootScope = $rootScope;
-    // this.$mdSidenav = $mdSidenav;
-    // this.$mdDialog = $mdDialog;
     this.$rootScope = $rootScope;
     this.bulb = bulbService;
     this.groupService = groupService;
+    this.$log = $log;
 
     this.originatorEvent;
   }
@@ -49,12 +47,12 @@ class GroupListCtrl {
   }
 
   selectGroup(group) {
-    console.log('GroupListCtrl: selectGroup', group);
+    this.$log.log('GroupListCtrl: selectGroup', group);
     this.$rootScope.$broadcast('group_selected', group.uuid);
   }
 
   isDeviceInGroup(group, device) {
-    // console.info('GroupListCtrl: isDeviceInGroup', group, device);
+    // this.$log.info('GroupListCtrl: isDeviceInGroup', group, device);
     return group.devices.indexOf(device.uuid) !== -1;
   }
 
@@ -76,7 +74,7 @@ class GroupListCtrl {
 
 }
 
-GroupListCtrl.$inject = ['$rootScope', 'groupService', 'bulbService'];
+GroupListCtrl.$inject = ['$rootScope', 'groupService', 'bulbService', '$log'];
 
 
 export {

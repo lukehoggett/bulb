@@ -251,7 +251,7 @@ import {Bulb} from './bulb';
       log.info('onDeviceGetStored...');
       bulbStore.getStoredDevices().forEach((device, uuid) => {
         // log.info('onDeviceGetStored sending ', device, uuid);
-        event.sender.send(DEVICE_GET_STORED_REPLY, device);
+        event.sender.send(IPC_DEVICE_GET_STORED_REPLY, device);
       });
     }
 

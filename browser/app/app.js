@@ -9,7 +9,7 @@ import mdColorPicker from 'md-color-picker';
 
 
 
-console.log('Imported vendor libraries');
+// console.log('Imported vendor libraries');
 
 import {
   AppCtrl
@@ -26,7 +26,7 @@ import {
 import {
   CharacteristicCtrl
 } from './characteristic/characteristic.controller';
-console.log('Imported Controllers');
+// console.log('Imported Controllers');
 
 
 import {
