@@ -3,10 +3,11 @@
 const ipc = require('electron').ipcRenderer;
 
 class BulbService {
-  constructor($rootScope, $timeout, $log) {
+  constructor($rootScope, $timeout, $log, C) {
     this.$rootScope = $rootScope;
     this.$timeout = $timeout;
     this.$log = $log;
+    this.C = C;
 
     this.devices = {};
     this.scanning = false;
@@ -17,20 +18,20 @@ class BulbService {
     this.getStoredDevices();
 
     // listening to messages from the main
-    ipc.on('device.get.stored.reply', (event, device, uuid) => this.onDeviceGetStoredReply(event, device, uuid));
-    ipc.on('device.discovered', (event, device) => this.onDiscovered(event, device));
-    ipc.on('scanning.start', (event) => this.onScanningStart(event));
-    ipc.on('scanning.stop', (event) => this.onScanningStop(event));
-    ipc.on('services', (event, services) => this.onServices(event, services));
-    ipc.on('device.connected', (event, device) => this.onConnected(event, device));
-    ipc.on('device.disconnected', (event, device) => this.onDisconnected(event, device));
-    ipc.on('characteristics', (event, characteristic) => this.onCharacteristics(event, characteristic));
+    ipc.on(this.C.IPC_DEVICE_GET_STORED_REPLY, (event, device, uuid) => this.onDeviceGetStoredReply(event, device, uuid));
+    ipc.on(this.C.IPC_DEVICE_DISCOVERED, (event, device) => this.onDiscovered(event, device));
+    ipc.on(this.C.IPC_SCANNING_START, (event) => this.onScanningStart(event));
+    ipc.on(this.C.IPC_SCANNING_STOP, (event) => this.onScanningStop(event));
+    // ipc.on('services', (event, services) => this.onServices(event, services));
+    ipc.on(this.C.IPC_DEVICE_CONNECTED, (event, device) => this.onConnected(event, device));
+    ipc.on(this.C.IPC_DEVICE_DISCONNECTED, (event, device) => this.onDisconnected(event, device));
+    // ipc.on('characteristics', (event, characteristic) => this.onCharacteristics(event, characteristic));
 
   }
 
   getStoredDevices() {
     // this.$log.info('Requesting stored devices');
-    ipc.send('device.get.stored', (event) => {
+    ipc.send(this.C.IPC_DEVICE_GET_STORED, (event) => {
       // this.$log.log('BulbService: get stored devices', event);
     });
   }
@@ -41,13 +42,13 @@ class BulbService {
 
   startScan() {
     this.$log.info('startScan sending IPC to main');
-    ipc.send('scan.start');
+    ipc.send(this.C.IPC_SCAN_START);
     this.scanning = true;
   }
 
   stopScan() {
     this.$log.info('stopScan sending IPC to main');
-    ipc.send('scan.stop');
+    ipc.send(this.C.IPC_SCAN_STOP);
     this.scanning = false;
   }
   
@@ -79,12 +80,12 @@ class BulbService {
 
   connect(device) {
     this.$log.log('BulbService: connecting');
-    ipc.send('device.connect', device.uuid);
+    ipc.send(this.C.IPC_DEVICE_CONNECT, device.uuid);
   }
 
   disconnect(device) {
     this.$log.log('BulbService: disconnecting');
-    ipc.send('device.disconnect', device.uuid);
+    ipc.send(this.C.IPC_DEVICE_DISCONNECT, device.uuid);
   }
 
   setDeviceName(uuid, name) {
@@ -104,12 +105,12 @@ class BulbService {
   setDevice(device) {
     this.devices[device.uuid] = device;
     this.$log.info('device update', this.devices);
-    ipc.send('device.set.stored', device);
+    ipc.send(this.C.IPC_DEVICE_SET_STORED, device);
   }
 
   getCharacteristics(uuid) {
     // this.$log.log('BulbService: getCharacteristics', uuid);
-    ipc.send('device.get.characteristics', uuid);
+    ipc.send(this.C.IPC_DEVICE_CHARACTERISTICS_GET, uuid);
   }
 
   getCharacteristic(uuid, characteristic) {
@@ -122,7 +123,7 @@ class BulbService {
 
   setCharacteristic(uuid, value, type) {
     this.$log.log('BulbService: setCharacteristic', uuid, value, type);
-    ipc.send('device.characteristic.set', uuid, value, type);
+    ipc.send(this.C.IPC_DEVICE_CHARACTERISTIC_SET, uuid, value, type);
   }
 
   // IPC listeners

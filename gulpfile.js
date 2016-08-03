@@ -7,12 +7,15 @@ const rename = require('gulp-rename');
 const debug = require('gulp-debug');
 const del = require('del');
 const electronServer = require('electron-connect').server.create({
-  electron: `${process.cwd()}/node_modules/electron-prebuilt/`,
-  verbose: true/*,
+  // electron: `${process.cwd()}/node_modules/electron-prebuilt/`,
+  verbose: true,
   spawnOpt: {
+    env: {
+      execPath: '/home/luke/.nvm/versions/node/v6.2.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games',
+    },
     uid: 0,
     gid: 0
-  }*/
+  }
 });
 // const runSequence = require('run-sequence');
 // const del = require('del');
@@ -35,7 +38,7 @@ gulp.task('lint:browser', () => {
         '!browser/jspm_packages/**', 
         '!node_modules/**'
       ])
-      .pipe(debug({title: 'linting main file...'}))
+      .pipe(debug({title: 'linting browser file...'}))
       .pipe(eslint())
       .pipe(eslint.format());
 });
@@ -44,7 +47,7 @@ gulp.task('lint', ['lint:main', 'lint:browser']);
 
 gulp.task('transpile:main', ['lint'], () => {
   return gulp.src('main/src/*.es6.js')
-    .pipe(debug({title: 'transpile file...'}))
+    .pipe(debug({title: 'transpile main file...'}))
     .pipe(babel())
     .pipe(rename(function (path) {
       path.basename = path.basename.replace('.es6', '');
@@ -54,7 +57,9 @@ gulp.task('transpile:main', ['lint'], () => {
 
 gulp.task('serve', ['transpile:main'], () => {
   // Start browser process
-  electronServer.start();
+  electronServer.start(() => {
+    // console.info(arguments);
+  });
   
   // console.info('Electron connect', electronServer);
   // Restart browser process

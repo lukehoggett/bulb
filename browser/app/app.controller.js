@@ -7,16 +7,17 @@ const ipc = require('electron').ipcRenderer;
 
 class AppCtrl {
 
-  constructor($mdSidenav, $mdToast, bulbService, menuService, $log) {
-
+  constructor($mdSidenav, $mdToast, bulbService, menuService, $log, C) {
+    this.C = C;
     this.mdSidenav = $mdSidenav;
     this.bulbService = bulbService;
     this.menuService = menuService;
     this.toast = $mdToast;
     this.$log = $log; 
+    
     this.$log.info('AppCtrl menuService state', this.menuService.getState());
     
-    ipc.on('error', (event, message) => {
+    ipc.on(this.C.IPC_ERROR, (event, message) => {
       this.$log.info('Error:', message);
       this.showErrorToast(message);
     });
@@ -60,12 +61,12 @@ class AppCtrl {
 
   doCrash() {
     this.$log.log('Crash Reporting');
-    ipc.send('crash', 'Something bad happened...');
+    ipc.send(this.C.IPC_CRASH, 'Something bad happened...');
   }
 
   openDevTools() {
     this.$log.log('DevTools');
-    ipc.send('dev.tools.open', null);
+    ipc.send(this.C.IPC_DEV_TOOLS_OPEN, null);
   }
 
 
@@ -73,7 +74,7 @@ class AppCtrl {
 
 }
 
-AppCtrl.$inject = ['$mdSidenav', '$mdToast', 'bulbService', 'menuService', '$log'];
+AppCtrl.$inject = ['$mdSidenav', '$mdToast', 'bulbService', 'menuService', '$log', 'C'];
 export {
   AppCtrl
 };

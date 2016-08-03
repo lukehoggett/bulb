@@ -1,4 +1,4 @@
-/* jshint esnext: true */
+// external libraries
 import angular from 'angular';
 import ngRoute from 'angular-route';
 import ngMaterial from 'angular-material';
@@ -7,10 +7,10 @@ import ngMdIcons from 'angular-material-icons';
 import ngOrderObjectBy from 'angular-order-object-by';
 import mdColorPicker from 'md-color-picker';
 
+// constants
+import * as C from '../../main/dist/constants';
 
-
-// console.log('Imported vendor libraries');
-
+// controllers
 import {
   AppCtrl
 } from './app.controller';
@@ -26,9 +26,8 @@ import {
 import {
   CharacteristicCtrl
 } from './characteristic/characteristic.controller';
-// console.log('Imported Controllers');
 
-
+// services
 import {
   MenuService
 } from './services/menu.service';
@@ -49,6 +48,7 @@ angular.module('bulb', [
     'ngOrderObjectBy',
     'mdColorPicker'
   ])
+  .constant('C', C)
   .service('bulbService', BulbService)
   .service('groupService', GroupService)
   .service('menuService', MenuService)

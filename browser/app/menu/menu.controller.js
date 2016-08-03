@@ -30,7 +30,7 @@ class MenuCtrl {
   }
 
 }
-MenuCtrl.$inject = ['menuService'];
+MenuCtrl.$inject = ['menuService', '$log'];
 export {
   MenuCtrl
 };

@@ -4,10 +4,11 @@ const ipc = require('electron').ipcRenderer;
 const uuid = require('uuid');
 
 class GroupService {
-  constructor($timeout, bulbService, $log) {
+  constructor($timeout, bulbService, $log, C) {
     this.$timeout = $timeout;
     this.bulbService = bulbService;
     this.$log = $log;
+    this.C = C;
     
     this.groups = {};
     
@@ -49,7 +50,7 @@ class GroupService {
     // add to local variable
     this.groups[group.uuid] = group;
     // update persistent storage
-    ipc.send('group.set.stored', group);
+    ipc.send(this.C.IPC_GROUP_SET_STORED, group);
   }
 
   update(group) {
@@ -57,14 +58,14 @@ class GroupService {
     // update local variable
     this.groups[group.uuid] = group;
     // this.$log.info('group update', this.groups);
-    ipc.send('group.set.stored', group);
+    ipc.send(this.C.IPC_GROUP_SET_STORED, group);
   }
 
   delete(group) {
     // remove from local variable
     delete this.groups[group.uuid];
     // update persistent storage
-    ipc.send('group.delete.stored', group);
+    ipc.send(this.C.IPC_GROUP_DELETE_STORED, group);
   }
   
   toggleConnection(group) {
@@ -74,22 +75,24 @@ class GroupService {
     this.$log.info('GroupService toggleConnection', group.state);
     if (group.state == 'disconnected') {
       this.$log.info('GroupService toggleConnection disconnected');
-      angular.forEach(group.devices, (deviceUUID) => {
-        device = this.bulbService.get(deviceUUID);
-        this.bulbService.connect(device);
-      });
+      ipc.send(this.C.IPC_GROUP_CONNECT, group);
+      // angular.forEach(group.devices, (deviceUUID) => {
+      //   device = this.bulbService.get(deviceUUID);
+      //   this.bulbService.connect(device);
+      // });
     } else {
       this.$log.info('GroupService toggleConnection connected');
-      angular.forEach(group.devices, (deviceUUID) => {
-        device = this.bulbService.get(deviceUUID);
-        this.bulbService.disconnect(device);
-      });
+      ipc.send(this.C.IPC_GROUP_DISCONNECT, group);
+      // angular.forEach(group.devices, (deviceUUID) => {
+      //   device = this.bulbService.get(deviceUUID);
+      //   this.bulbService.disconnect(device);
+      // });
     }
   }
 
   getStoredGroups() {
     // this.$log.info('Requesting stored groups');
-    ipc.send('group.get.stored', (event) => {
+    ipc.send(this.C.IPC_GROUP_GET_STORED, (event) => {
       // this.$log.log('GroupService: get stored groups', event);
     });
   }
