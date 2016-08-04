@@ -22,6 +22,7 @@ System.config({
     "angular-material-icons": "npm:angular-material-icons@0.7.1",
     "angular-order-object-by": "bower:angular-order-object-by@1.3.0",
     "angular-route": "github:angular/bower-angular-route@1.5.8",
+    "angular-ui-router": "github:angular-ui/angular-ui-router-bower@0.3.1",
     "babel": "npm:babel-core@5.8.38",
     "babel-runtime": "npm:babel-runtime@5.8.38",
     "brianpkelley/md-color-picker": "github:brianpkelley/md-color-picker@develop",
@@ -33,6 +34,9 @@ System.config({
     "tinycolor2": "npm:tinycolor2@1.4.1",
     "bower:angular-order-object-by@1.3.0": {
       "angular": "bower:angular@1.5.8"
+    },
+    "github:angular-ui/angular-ui-router-bower@0.3.1": {
+      "angular": "github:angular/bower-angular@1.5.8"
     },
     "github:angular/bower-angular-animate@1.5.8": {
       "angular": "github:angular/bower-angular@1.5.8"

@@ -12,6 +12,7 @@
     </div>
     <div id="content" layout="row">
         <!-- <menu> -->
+        <bulb-menu>
         <ng-include src="'app/menu/menu.html'"></ng-include>
         <!-- <device-list> -->
         <ng-include ng-show="app.menuService.getState() == 'device'" layout-fill src="'app/device-list/device-list.html'"></ng-include>

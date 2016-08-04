@@ -23,6 +23,6 @@
         // tinycolor is a cjs module, in electron module exists so we have to ensure it loads
         window.tinycolor = require('./jspm_packages/npm/tinycolor2@1.4.1/dist/tinycolor-min.js');
         console.log("Doing System Import");
-        System.import ('./app/app');
+        System.import ('./app/index.module');
     </script>
 </html>
