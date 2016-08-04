@@ -19,19 +19,18 @@ import {routerConfig} from './index.route';
 import {
   bulbApp
 } from './bulb-app/bulb-app.module';
-
 import {
   bulbMenu
 } from './bulb-menu/bulb-menu.module';
-
 import {
   bulbCharacteristic
 } from './bulb-characteristic/bulb-characteristic.module';
-
-
 import {
-  DeviceListCtrl
-} from './device-list/device-list.controller';
+  bulbDeviceList
+} from './bulb-device-list/bulb-device-list.module';
+
+
+
 import {
   GroupListCtrl
 } from './group-list/group-list.controller';
@@ -52,6 +51,7 @@ const _templateBase = './app/';
 bulbApp();
 bulbMenu();
 bulbCharacteristic();
+bulbDeviceList();
 
 angular.module('bulb', [
     // 'ngRoute',
@@ -63,14 +63,14 @@ angular.module('bulb', [
     'mdColorPicker',
     'bulb.app',
     'bulb.menu',
-    'bulb.characteristic'
+    'bulb.characteristic',
+    'bulb.device-list'
   ])
   // .component('uiRoute', uiRoute)
   .constant('C', C)
   .service('bulbService', BulbService)
   .service('groupService', GroupService)
   .service('menuService', MenuService)
-  .controller('device-listCtrl', DeviceListCtrl)
   .controller('group-listCtrl', GroupListCtrl)
   // .config(['$routeProvider', routes])
   .config(routerConfig)

@@ -1,10 +1,21 @@
-/* jshint esnext: true */
-/* jshint node: true */
 'use strict';
+
+export function bulbDeviceListComponent() {
+  let component = {
+    scope: {},
+    restrict: 'EA',
+    templateUrl: 'app/bulb-device-list/bulb-device-list.views/bulb-device-list.view.html',
+    controller: BulbDeviceListController,
+    controllerAs: '$ctrl',
+    bindToController: true
+  };
+  return component;
+}
+
 
 const ipc = require('electron').ipcRenderer;
 
-class DeviceListCtrl {
+class BulbDeviceListController {
 
   constructor($rootScope, $mdDialog, bulbService, groupService, $log) {
 
@@ -116,10 +127,3 @@ class DeviceListCtrl {
     return !(device.state === 'connected') && (device.characteristics === undefined);
   }
 }
-
-DeviceListCtrl.$inject = ['$rootScope', '$mdDialog', 'bulbService', 'groupService', '$log'];
-
-
-export {
-  DeviceListCtrl
-};
