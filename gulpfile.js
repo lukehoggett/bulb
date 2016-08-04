@@ -5,6 +5,9 @@ const babel = require('gulp-babel');
 const eslint = require('gulp-eslint');
 const rename = require('gulp-rename');
 const debug = require('gulp-debug');
+// const uglify = require('gulp-uglify');
+// const sourcemaps = require('gulp-sourcemaps');
+// const ngAnnotate = require('gulp-ng-annotate');
 const del = require('del');
 const electronServer = require('electron-connect').server.create({
   // electron: `${process.cwd()}/node_modules/electron-prebuilt/`,
@@ -22,30 +25,42 @@ const electronServer = require('electron-connect').server.create({
 // const exec = require('child_process').exec;
 
 gulp.task('lint:main', () => {
-    return gulp.src([
-        'main/**/*.js', 
-        '!main/dist/*.js', 
-        '!node_modules/**'
-      ])
-      .pipe(debug({title: 'linting main file...'}))
-      .pipe(eslint())
-      .pipe(eslint.format());
+  return gulp.src([
+      'main/**/*.js', 
+      '!main/dist/*.js', 
+      '!node_modules/**'
+    ])
+    .pipe(debug({title: 'linting main file...'}))
+    .pipe(eslint())
+    .pipe(eslint.format());
 });
 
 gulp.task('lint:browser', () => {
-    return gulp.src([
-        'browser/app/**/*.js', 
-        '!browser/jspm_packages/**', 
-        '!node_modules/**'
-      ])
-      .pipe(debug({title: 'linting browser file...'}))
-      .pipe(eslint())
-      .pipe(eslint.format());
+  return gulp.src([
+      'browser/app/**/*.js', 
+      '!browser/jspm_packages/**', 
+      '!node_modules/**'
+    ])
+    .pipe(debug({title: 'linting browser file...'}))
+    .pipe(eslint())
+    .pipe(eslint.format());
 });
 
 gulp.task('lint', ['lint:main', 'lint:browser']);
 
-gulp.task('transpile:main', ['lint'], () => {
+// gulp.task('minify:browser', () => {
+//   return gulp.src(['browser/app/**/*.js'])
+//     .pipe(debug({title: 'minify browser file...'}))
+//     // .pipe(sourcemaps.init())
+//       .pipe(uglify())
+//       .pipe(debug({title: 'uglify browser file...'}))
+//       .pipe(rename({ extname: '.min.js' }))
+//     // .pipe(sourcemaps.write())
+//     .pipe(gulp.dest('browser/app'));
+//   
+// });
+
+gulp.task('transpile:main', ['lint'/*, 'minify:browser'*//*, 'annotate'*/], () => {
   return gulp.src('main/src/*.es6.js')
     .pipe(debug({title: 'transpile main file...'}))
     .pipe(babel())
@@ -54,6 +69,12 @@ gulp.task('transpile:main', ['lint'], () => {
     }))
     .pipe(gulp.dest('main/dist'));
 });
+
+// gulp.task('annotate', () => {
+//   return gulp.src('broswer/app/**/*.js')
+//     .pipe(ngAnnotate())
+//     .pipe(gulp.dest('broswer/app'));
+// });
 
 gulp.task('serve', ['transpile:main'], () => {
   // Start browser process

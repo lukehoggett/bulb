@@ -4,7 +4,9 @@ const ipc = require('electron').ipcRenderer;
 const uuid = require('uuid');
 
 class GroupService {
+  
   constructor($timeout, bulbService, $log, C) {
+    'ngInject';
     this.$timeout = $timeout;
     this.bulbService = bulbService;
     this.$log = $log;
