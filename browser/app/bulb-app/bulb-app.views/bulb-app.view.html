@@ -14,7 +14,8 @@
         <!-- <menu> -->
         <bulb-menu/>
         <!-- <device-list> -->
-        <ng-include ng-show="$ctrl.menuService.getState() == 'device'" layout-fill src="'app/device-list/device-list.html'"></ng-include>
+        <bulb-device-list/>
+        <!-- <ng-include ng-show="$ctrl.menuService.getState() == 'device'" layout-fill src="'app/device-list/device-list.html'"></ng-include> -->
         <!-- <group> -->
         <ng-include ng-show="$ctrl.menuService.getState() == 'group'" layout-fill src="'app/group-list/group-list.html'"></ng-include>
     </div>
