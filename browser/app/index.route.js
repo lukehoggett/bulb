@@ -10,6 +10,7 @@
  */
 export function routerConfig($stateProvider, $urlRouterProvider) {
   'ngInject';
-  // If the user enters an URL that doesn't match the above routes then redirect to '/content' route.
+  console.info("routerConfig");
+  // If the user enters an URL that doesn't match the above routes then redirect to '/devices' route.
   $urlRouterProvider.otherwise('/devices');
 }

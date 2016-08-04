@@ -1,7 +1,7 @@
 // external libraries
 import angular from 'angular';
-import ngRoute from 'angular-route';
-// import uiRouter from 'angular-ui-router';
+// import ngRoute from 'angular-route';
+import uiRouter from 'angular-ui-router';
 
 import ngMaterial from 'angular-material';
 import ngAnimate from 'angular-animate';
@@ -12,13 +12,13 @@ import mdColorPicker from 'md-color-picker';
 // constants
 import * as C from '../../main/dist/constants';
 
-// routes
+// routes 
 import {routerConfig} from './index.route';
 
 // controllers
 import {
-  AppCtrl
-} from './app.controller';
+  bulbApp
+} from './bulb-app/bulb-app.module';
 
 import {
   bulbMenu
@@ -49,18 +49,19 @@ import {
 
 const _templateBase = './app/';
 
-
+bulbApp();
 bulbMenu();
 bulbCharacteristic();
 
 angular.module('bulb', [
-    'ngRoute',
-    // 'ui.router',
+    // 'ngRoute',
+    'ui.router',
     'ngMdIcons',
     'ngMaterial',
     'ngAnimate',
     'ngOrderObjectBy',
     'mdColorPicker',
+    'bulb.app',
     'bulb.menu',
     'bulb.characteristic'
   ])
@@ -69,21 +70,20 @@ angular.module('bulb', [
   .service('bulbService', BulbService)
   .service('groupService', GroupService)
   .service('menuService', MenuService)
-  .controller('appCtrl', AppCtrl)
   .controller('device-listCtrl', DeviceListCtrl)
   .controller('group-listCtrl', GroupListCtrl)
-  .config(['$routeProvider', routes])
-  // .config(routerConfig)
+  // .config(['$routeProvider', routes])
+  .config(routerConfig)
   .config(config);
 
 
-function routes($routeProvider) {
-  $routeProvider.when('/', {
-    templateUrl: _templateBase + '/app.html',
-    controller: 'appCtrl',
-    controllerAs: 'app'
-  });
-}
+// function routes($routeProvider) {
+//   $routeProvider.when('/', {
+//     templateUrl: _templateBase + 'bulb-app/bulb-app.views/bulb-app.view.html',
+//     controller: 'appCtrl',
+//     controllerAs: 'app'
+//   });
+// }
 
 function config($mdThemingProvider) {
   $mdThemingProvider.theme('default')
