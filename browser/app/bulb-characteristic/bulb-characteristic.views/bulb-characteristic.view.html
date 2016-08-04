@@ -1,41 +1,41 @@
-<div ng-controller="characteristicCtrl as char">
+<div>
     <md-sidenav class="characteristics site-sidenav md-sidenav-right md-whiteframe-z2" md-component-id="characteristic" layout="column">
         <md-toolbar class="md-theme-light">
             <h1 class="md-toolbar-tools">Device/Group Settings</h1>
         </md-toolbar>
         <div class="controls">
-            <md-radio-group ng-model="char.type">
+            <md-radio-group ng-model="$ctrl.type">
                 <h3>Type</h3>
-                <md-radio-button value="{{char.TYPE_COLOR}}" class="md-primary">Colour</md-radio-button>
-                <md-radio-button value="{{char.TYPE_EFFECT}}" class="md-primary">Effect</md-radio-button>
+                <md-radio-button value="{{$ctrl.TYPE_COLOR}}" class="md-primary">Colour</md-radio-button>
+                <md-radio-button value="{{$ctrl.TYPE_EFFECT}}" class="md-primary">Effect</md-radio-button>
             </md-radio-group>
 
-            <div ng-if="char.type == char.TYPE_COLOR">
-                <div md-color-picker="char.colorPicker.options" default="#0000ff" ng-model="char.colorPicker.color"></div>
+            <div ng-if="$ctrl.type == $ctrl.TYPE_COLOR">
+                <div md-color-picker="$ctrl.colorPicker.options" default="#0000ff" ng-model="$ctrl.colorPicker.color"></div>
             </div>
 
-            <div ng-if="char.type == char.TYPE_EFFECT">
+            <div ng-if="$ctrl.type == $ctrl.TYPE_EFFECT">
                 <h3>Effect</h3>
-                {{char.effect.mode}}
-                <md-radio-group ng-model="char.effect.mode" class="md-primary">
-                    <md-radio-button ng-repeat="effectMode in char.effectModes" ng-value="effectMode.value" arial-label="Select Effect {{effectMode.name}}">{{effectMode.name}}</md-radio-button>
+                {{$ctrl.effect.mode}}
+                <md-radio-group ng-model="$ctrl.effect.mode" class="md-primary">
+                    <md-radio-button ng-repeat="effectMode in $ctrl.effectModes" ng-value="effectMode.value" arial-label="Select Effect {{effectMode.name}}">{{effectMode.name}}</md-radio-button>
                 </md-radio-group>
-                <div ng-if="char.effect.mode != 2 && char.effect.mode != 3">
-                    <div md-color-picker="char.colorPicker.options" default="#00ff00" ng-model="char.colorPicker.color"></div>
+                <div ng-if="$ctrl.effect.mode != 2 && $ctrl.effect.mode != 3">
+                    <div md-color-picker="$ctrl.colorPicker.options" default="#00ff00" ng-model="$ctrl.colorPicker.color"></div>
                 </div>
                 <h4>Speed</h4>
                 <div layout>
                     <div flex="20" layout layout-align="center center">
                         <span class="md-body-1">Speed</span>
                     </div>
-                    <md-slider flex min="0" max="20" ng-model="char.effect.speed" aria-label="speed" id="speed-slider" class></md-slider>
+                    <md-slider flex min="0" max="20" ng-model="$ctrl.effect.speed" aria-label="speed" id="speed-slider" class></md-slider>
                     <md-input-container flex="20" layout layout-align="center center">
-                        <input flex type="number" ng-model="char.effect.speed" aria-label="speed" aria-controls="speed-slider">
+                        <input flex type="number" ng-model="$ctrl.effect.speed" aria-label="speed" aria-controls="speed-slider">
                     </md-input-container>
                 </div>
             </div>
         </div>
-        <md-button ng-click="char.save(char)" class="md-raised md-primary">Save</md-button>
+        <md-button ng-click="$ctrl.save(char)" class="md-raised md-primary">Save</md-button>
         <!-- <md-button ng-click="app.togglePane()">
       Toggle
     </md-button> -->

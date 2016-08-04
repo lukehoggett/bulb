@@ -1,10 +1,19 @@
-/* jshint esnext: true */
-/* jshint node: true */
 'use strict';
 
+export function bulbCharacteristicComponent() {
+  let component = {
+    scope: {},
+    restrict: 'EA',
+    templateUrl: 'app/bulb-characteristic/bulb-characteristic.views/bulb-characteristic.view.html',
+    controller: BulbCharacteristicController,
+    controllerAs: '$ctrl',
+    bindToController: true
+  };
+  return component;
+}
 
 
-class CharacteristicCtrl {
+class BulbCharacteristicController {
 
   constructor($scope, $mdSidenav, bulbService, groupService, $log) {
     this.mdSidenav = $mdSidenav;
@@ -206,11 +215,5 @@ class CharacteristicCtrl {
       default:
         
     } 
-    
-    
   }
-
 }
-export {
-  CharacteristicCtrl
-};

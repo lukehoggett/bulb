@@ -40,4 +40,3 @@ class BulbMenuController {
   }
 
 }
-// BulbMenuController.$inject = ['menuService', '$log'];

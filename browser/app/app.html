@@ -12,12 +12,13 @@
     </div>
     <div id="content" layout="row">
         <!-- <menu> -->
-        <bulb-menu>
+        <bulb-menu/>
         <!-- <device-list> -->
         <ng-include ng-show="app.menuService.getState() == 'device'" layout-fill src="'app/device-list/device-list.html'"></ng-include>
         <!-- <group> -->
         <ng-include ng-show="app.menuService.getState() == 'group'" layout-fill src="'app/group-list/group-list.html'"></ng-include>
     </div>
     <!-- <characteristic> -->
-    <ng-include src="'app/characteristic/characteristic.html'"></ng-include>
+    <bulb-characteristic/>
+    <!-- <ng-include src="'app/characteristic/characteristic.html'"></ng-include> -->
 </div>
