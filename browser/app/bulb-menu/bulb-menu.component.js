@@ -4,7 +4,7 @@ export function bulbMenuComponent() {
   let component = {
     scope: {},
     restrict: 'EA',
-    templateUrl: 'app/menu/bulb-menu.views/bulb-menu.view.html',
+    templateUrl: 'app/bulb-menu/bulb-menu.views/bulb-menu.view.html',
     controller: BulbMenuController,
     controllerAs: '$ctrl',
     bindToController: true

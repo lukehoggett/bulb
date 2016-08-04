@@ -19,14 +19,12 @@ import {routerConfig} from './index.route';
 import {
   AppCtrl
 } from './app.controller';
-// import {
-//   MenuCtrl
-// } from './menu/menu.controller';
+
 import {
   bulbMenu
-} from './menu/bulb-menu.module';
+} from './bulb-menu/bulb-menu.module';
 
-console.warn(bulbMenu);
+
 import {
   DeviceListCtrl
 } from './device-list/device-list.controller';
@@ -69,7 +67,6 @@ angular.module('bulb', [
   .service('groupService', GroupService)
   .service('menuService', MenuService)
   .controller('appCtrl', AppCtrl)
-  // .controller('menuCtrl', MenuCtrl)
   .controller('device-listCtrl', DeviceListCtrl)
   .controller('group-listCtrl', GroupListCtrl)
   .controller('characteristicCtrl', CharacteristicCtrl)
