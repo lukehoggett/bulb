@@ -12,14 +12,8 @@ export function bulbMenuComponent() {
   return component;
 }
 
-
 class BulbMenuController {
-
-  constructor(menuService, $log) {
-
-    this.menuService = menuService;
-    this.$log = $log;
-
+  constructor() {
     this.menuItems = [{
       id: 1,
       name: 'device',
@@ -32,11 +26,4 @@ class BulbMenuController {
       icon: 'group_work'
     }];
   }
-
-  navSelect(item) {
-    this.$log.info('menu: navSelect', item);
-    this.menuService.setState(item.name);
-
-  }
-
 }

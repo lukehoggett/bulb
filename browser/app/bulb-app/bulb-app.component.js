@@ -16,15 +16,15 @@ const ipc = require('electron').ipcRenderer;
 
 class BulbAppController {
 
-  constructor($mdSidenav, $mdToast, bulbService, menuService, $log, C) {
+  constructor($state, $mdSidenav, $mdToast, bulbService, menuService, $log, C) {
+    this.$state = $state;
     this.C = C;
     this.mdSidenav = $mdSidenav;
     this.bulbService = bulbService;
     this.menuService = menuService;
     this.toast = $mdToast;
     this.$log = $log; 
-    
-    this.$log.info('AppCtrl menuService state', this.menuService.getState());
+    this.$log.info('BulbAppController constructor', this.$state);
     
     ipc.on(this.C.IPC_ERROR, (event, message) => {
       this.$log.info('Error:', message);

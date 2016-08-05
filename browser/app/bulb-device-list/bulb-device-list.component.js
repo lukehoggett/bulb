@@ -17,13 +17,14 @@ const ipc = require('electron').ipcRenderer;
 
 class BulbDeviceListController {
 
-  constructor($rootScope, $mdDialog, bulbService, groupService, $log) {
-
+  constructor($rootScope, $state, $mdDialog, bulbService, groupService, $log) {
+    this.$state = $state;
     this.$rootScope = $rootScope;
     this.$mdDialog = $mdDialog;
     this.bulb = bulbService;
     this.groupService = groupService;
     this.$log = $log;
+    this.$log.info('BulbDeviceListController constructor', this.$state);
 
     this.originatorEvent;
   }

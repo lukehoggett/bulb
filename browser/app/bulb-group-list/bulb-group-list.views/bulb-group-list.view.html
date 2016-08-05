@@ -1,27 +1,27 @@
-<div ng-controller="group-listCtrl as groupList" id="group-list" ng-cloak>
+<div id="group-list">
     <md-toolbar class="md-hue-3" md-scroll-shrink>
         <div class="md-toolbar-tools">
             <span flex=""></span>
-            <md-button class="md-icon-button" aria-label="add group" ng-click="groupList.groupService.add()">
+            <md-button class="md-icon-button" aria-label="add group" ng-click="$ctrl.groupService.add()">
                 <md-icon>add</md-icon>
             </md-button>
         </div>
     </md-toolbar>
     <md-list class="list">
-        <md-list-item ng-repeat="group in groupList.groupService.groups" class="list noright" layout-align="start center" arai-label="Group">
+        <md-list-item ng-repeat="group in $ctrl.groupService.groups" class="list noright" layout-align="start center" arai-label="Group">
             <p>
                 <md-input-container>
-                    <input ng-model="group.name" ng-model-options="{ updateOn: 'mousedown blur' }" aria-label="group name" ng-change="groupList.updateGroupName(group)"/>
+                    <input ng-model="group.name" ng-model-options="{ updateOn: 'mousedown blur' }" aria-label="group name" ng-change="$ctrl.updateGroupName(group)"/>
                 </md-input-container>
             </p>
             <span ng-repeat="deviceUUID in group.devices">
                 <span ng-if="$first">Devices:</span>
                 <span ng-if="!$first">,
                 </span>
-                {{groupList.bulb.get(deviceUUID).name}}
+                {{$ctrl.bulb.get(deviceUUID).name}}
             </span>
             <div class="controls" layout="row" layout-align="start center">
-                <md-button ng-click="groupList.groupService.toggleConnection(group)" class="md-primary md-icon-button" aria-label="{{group.state == 'connected' ? 'Disconnect' : 'Connect'}}">
+                <md-button ng-click="$ctrl.groupService.toggleConnection(group)" class="md-primary md-icon-button" aria-label="{{group.state == 'connected' ? 'Disconnect' : 'Connect'}}">
                     <!-- <md-icon ng-if="group.state == 'connected'" aria-label="Disconnect">close</md-icon>
                     <md-icon ng-if="group.state == 'disconnected'" aria-label="Connect">check</md-icon> -->
                     <!-- <md-icon aria-label="Disconnect">close</md-icon> -->
@@ -31,7 +31,7 @@
                     </md-tooltip>
                 </md-button>
                 <md-menu md-position-mode="target-right target">
-                    <md-button md-menu-origin class="md-primary md-icon-button" aria-label="Add Devices" ng-click="groupList.openAddDeviceMenu($mdOpenMenu, $event, group)">
+                    <md-button md-menu-origin class="md-primary md-icon-button" aria-label="Add Devices" ng-click="$ctrl.openAddDeviceMenu($mdOpenMenu, $event, group)">
                         <md-icon aria-label="Add Devices">add</md-icon>
                     </md-button>
                     <md-menu-content width="4">
@@ -39,17 +39,17 @@
                             <span flex>Select device to add</span>
                         </md-menu-item>
                         <md-menu-divider></md-menu-divider>
-                        <md-menu-item ng-repeat="(uuid, device) in groupList.bulb.devices" ng-if="groupList.isDeviceInMenu(device, group)">
+                        <md-menu-item ng-repeat="(uuid, device) in $ctrl.bulb.devices" ng-if="$ctrl.isDeviceInMenu(device, group)">
                             <span flex>
-                                <md-checkbox ng-checked="groupList.isDeviceInGroup(group, device)" aria-label="{{device.name}}"                 ng-click="groupList.toggleDeviceToGroup(device, group, selected)">
+                                <md-checkbox ng-checked="$ctrl.isDeviceInGroup(group, device)" aria-label="{{device.name}}"                 ng-click="$ctrl.toggleDeviceToGroup(device, group, selected)">
                                     {{device.name}}
                                 </md-checkbox>
                             </span>
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>
-                <md-button ng-click="groupList.selectGroup(group)" class="md-primary md-icon-button" aria-label="Edit Characteristics">
-                    <!-- <md-button ng-click="groupList.selectDevice(device)" class="md-primary md-icon-button" aria-label="Edit Characteristics" ng-disabled="device.state == 'connected' ? false : true"> -->
+                <md-button ng-click="$ctrl.selectGroup(group)" class="md-primary md-icon-button" aria-label="Edit Characteristics">
+                    <!-- <md-button ng-click="$ctrl.selectDevice(device)" class="md-primary md-icon-button" aria-label="Edit Characteristics" ng-disabled="device.state == 'connected' ? false : true"> -->
                     <md-icon aria-label="Edit Characteristics">edit</md-icon>
                     <md-tooltip md-direction="top">Edit Characteristics</md-tooltip>
                 </md-button>

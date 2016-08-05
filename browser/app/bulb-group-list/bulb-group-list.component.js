@@ -1,8 +1,18 @@
-/* jshint esnext: true */
-/* jshint node: true */
 'use strict';
 
-class GroupListCtrl {
+export function bulbGroupListComponent() {
+  let component = {
+    scope: {},
+    restrict: 'EA',
+    templateUrl: 'app/bulb-group-list/bulb-group-list.views/bulb-group-list.view.html',
+    controller: BulbGroupListController,
+    controllerAs: '$ctrl',
+    bindToController: true
+  };
+  return component;
+}
+
+class BulbGroupListController {
 
   constructor($rootScope, groupService, bulbService, $log) {
 
@@ -73,10 +83,3 @@ class GroupListCtrl {
   }
 
 }
-
-GroupListCtrl.$inject = ['$rootScope', 'groupService', 'bulbService', '$log'];
-
-
-export {
-  GroupListCtrl
-};
