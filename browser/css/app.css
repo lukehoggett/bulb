@@ -18,7 +18,15 @@ html> body {
 #content {
   height: 100%;
 }
-#menu {}
+#menu {
+  
+  
+}
+#menu md-sidenav {
+  min-width: 180px !important;
+  width: 85vw !important;
+  max-width: 190px !important;
+}
 #menu md-icon {
   color: #000;
 }
