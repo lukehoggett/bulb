@@ -76,13 +76,13 @@ import {Bulb} from './bulb';
   }
 
   function getWindowOptions(display) {
-    let options = config.get('Window');
+    let options = {};
+    options = Object.assign(options, config.get('Window'));
     if (argv.displaysize) {
       // @TODO work out why I get Cannot assign to read only property 'width' of object
       // Object.assign(options, config.get(`Args.DisplaySize.${argv.displaysize}`));
-      Object.assign(options, config.get(`Args.DisplaySize`));
+      Object.assign(options, config.get(`Args.DisplaySize`)[argv.displaysize]);
     }
-    
     return options;
   }
 

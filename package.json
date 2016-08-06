@@ -5,6 +5,10 @@
   "main": "main/index.js",
   "scripts": {
     "start": "gulp transpile:main && sudo ./node_modules/electron-prebuilt/dist/electron ./main/dist/index.js --displaysize=sm | node_modules/bunyan/bin/bunyan -o long",
+    "sm": "gulp transpile:main && sudo ./node_modules/electron-prebuilt/dist/electron ./main/dist/index.js --displaysize=sm | node_modules/bunyan/bin/bunyan -o long",
+    "md": "gulp transpile:main && sudo ./node_modules/electron-prebuilt/dist/electron ./main/dist/index.js --displaysize=md | node_modules/bunyan/bin/bunyan -o long",
+    "lg": "gulp transpile:main && sudo ./node_modules/electron-prebuilt/dist/electron ./main/dist/index.js --displaysize=lg | node_modules/bunyan/bin/bunyan -o long",
+    "full": "gulp transpile:main && sudo ./node_modules/electron-prebuilt/dist/electron ./main/dist/index.js --displaysize=full | node_modules/bunyan/bin/bunyan -o long",
     "postinstall": "./postinstall.sh"
   },
   "keywords": [
