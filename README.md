@@ -1,22 +1,23 @@
 # Bulb Control
 
-Control panel in electron for Playbulb
-
-
-> This based on the work of Thorsten Hans https://github.com/ThorstenHans/electron-angular-es6/ commit `075fb4b0b36e750fed2291f5d87c455b481a3728`
+Control panel in Electron for Playbulb
 
 ## Installation
 
 Prior to setup make sure that the global dependencies are met:
-- `jspm`
-- `gulp`
-- `electron-prebuilt`
-- `gulp-run-electron`????
+├── babel-cli@6.11.4
+├── bower@1.7.9
+├── bunyan@1.8.1
+├── eslint@3.2.2
+├── gulp@3.9.1
+├── node-gyp@3.4.0
+└── npm@3.10.5
 
-By running:
 ```
-npm install -g jspm gulp electron-prebuilt gulp-run-electron
+npm -g i babel-cli@ bower bunyan eslint gulp node-gyp npm
 ```
+
+then `npm i`
 
 also need `jspm registry create bower jspm-bower-endpoint` for jspm 
 
