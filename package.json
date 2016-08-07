@@ -9,6 +9,7 @@
     "md": "gulp && sudo ./node_modules/electron-prebuilt/dist/electron ./main/dist/index.js --displaysize=md | node_modules/bunyan/bin/bunyan -o long",
     "lg": "gulp && sudo ./node_modules/electron-prebuilt/dist/electron ./main/dist/index.js --displaysize=lg | node_modules/bunyan/bin/bunyan -o long",
     "full": "gulp && sudo ./node_modules/electron-prebuilt/dist/electron ./main/dist/index.js --displaysize=full | node_modules/bunyan/bin/bunyan -o long",
+    "rpi": "sudo ./node_modules/electron-prebuilt/dist/electron ./main/dist/index.js | bunyan -o short",
     "postinstall": "./postinstall.sh"
   },
   "keywords": [
