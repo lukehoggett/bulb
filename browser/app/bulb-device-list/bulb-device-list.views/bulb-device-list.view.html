@@ -7,9 +7,10 @@
                     <input ng-model="device.name" ng-model-options="{ updateOn: 'mousedown blur' }" ng-change="$ctrl.bulb.setCharacteristic(device.uuid, device.name, 'name')" aria-label="device name"/>
                 </md-input-container>
             </p>
-            <p class="device-uuid">{{device.uuid}}</p>
+            <p class="device-uuid md-caption md-hue-2">{{device.uuid}}</p>
             <div class="status" layout="row" layout-align="start center">
-                <span ng-if="$ctrl.groupService.getDeviceGroupName(device) !== ''" class="device-group md-caption" md-colors="{color: 'primary-200'}">{{$ctrl.groupService.getDeviceGroupName(device)}}</span>
+                <span class="device-group">
+                <span ng-if="$ctrl.groupService.getDeviceGroupName(device) !== ''" class="md-caption" md-colors="{color: 'primary-200'}">{{$ctrl.groupService.getDeviceGroupName(device)}}</span></span>
                 <span ng-if="device.characteristics.battery.value[0]" class="md-caption" md-colors="{color: 'primary-200'}">{{device.characteristics.battery.value[0]}}%</span>
                 <md-icon ng-if="device.characteristics.battery.value[0]" class="md-avatar-icon">
                     battery_std

@@ -5,8 +5,13 @@ const babel = require('gulp-babel');
 const eslint = require('gulp-eslint');
 const rename = require('gulp-rename');
 const debug = require('gulp-debug');
+const sass = require('gulp-sass');
+const concat = require('gulp-concat');
+const minify = require('gulp-minify-css');
+const merge = require('merge-stream');
+
 // const uglify = require('gulp-uglify');
-// const sourcemaps = require('gulp-sourcemaps');
+const sourcemaps = require('gulp-sourcemaps');
 // const ngAnnotate = require('gulp-ng-annotate');
 const del = require('del');
 const electronServer = require('electron-connect').server.create({
@@ -24,6 +29,13 @@ const electronServer = require('electron-connect').server.create({
 // const del = require('del');
 // const exec = require('child_process').exec;
 
+gulp.task('default', ['main', 'renderer']);
+
+gulp.task('renderer', ['lint:renderer', 'styles']);
+gulp.task('main', ['transpile:main']);
+
+gulp.task('lint', ['lint:main', 'lint:renderer']);
+
 gulp.task('lint:main', () => {
   return gulp.src([
       'main/**/*.js', 
@@ -35,7 +47,7 @@ gulp.task('lint:main', () => {
     .pipe(eslint.format());
 });
 
-gulp.task('lint:browser', () => {
+gulp.task('lint:renderer', () => {
   return gulp.src([
       'browser/app/**/*.js', 
       '!browser/jspm_packages/**', 
@@ -46,7 +58,33 @@ gulp.task('lint:browser', () => {
     .pipe(eslint.format());
 });
 
-gulp.task('lint', ['lint:main', 'lint:browser']);
+gulp.task('transpile:main', ['lint:main'], () => {
+  return gulp.src('main/src/*.es6.js')
+    .pipe(debug({title: 'transpile main file...'}))
+    .pipe(babel())
+    .pipe(rename(function (path) {
+      path.basename = path.basename.replace('.es6', '');
+    }))
+    .pipe(gulp.dest('main/dist'));
+});
+
+gulp.task('styles', () => {
+  let sassOptions = {
+    errLogToConsole: true,
+    outputStyle: 'expanded'
+  };
+  return gulp.src(['browser/styles/*.scss', 'browser/app/**/*.scss'])
+    .pipe(debug({title: 'transpile renderer file...'}))
+    .pipe(sourcemaps.init())  // Process the original sources
+    .pipe(debug({title: 'css renderer sourcemap...'}))
+      .pipe(sass(sassOptions).on('error', sass.logError))
+    .pipe(sourcemaps.write('./browser/styles/maps')) // Add the map to modified source.
+    .pipe(concat('app.css'))
+    .pipe(minify())
+    .pipe(gulp.dest('browser/styles/'));
+});
+
+
 
 // gulp.task('minify:browser', () => {
 //   return gulp.src(['browser/app/**/*.js'])
@@ -60,15 +98,7 @@ gulp.task('lint', ['lint:main', 'lint:browser']);
 //   
 // });
 
-gulp.task('transpile:main', ['lint'/*, 'minify:browser'*//*, 'annotate'*/], () => {
-  return gulp.src('main/src/*.es6.js')
-    .pipe(debug({title: 'transpile main file...'}))
-    .pipe(babel())
-    .pipe(rename(function (path) {
-      path.basename = path.basename.replace('.es6', '');
-    }))
-    .pipe(gulp.dest('main/dist'));
-});
+
 
 // gulp.task('annotate', () => {
 //   return gulp.src('broswer/app/**/*.js')
@@ -94,6 +124,8 @@ gulp.task('serve', ['transpile:main'], () => {
 gulp.task('clean', function(){
     return del('main/dist', {force: true});
 });
+
+
 // 
 // gulp.task('copy:app', ['clean'], function(){
 //     return gulp.src(['main/**/*', 'browser/**/*', 'package.json'], {base: '.'})
@@ -138,5 +170,3 @@ gulp.task('clean', function(){
 // });
 
 // gulp.watch(['**/*.js', '**/*.html'], ['run', runElectron.rerun]);
-
-gulp.task('default', ['transpile:main']);

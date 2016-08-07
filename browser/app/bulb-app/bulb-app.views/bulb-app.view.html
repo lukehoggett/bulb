@@ -1,12 +1,14 @@
-<div id="container" layout="column" layout-fill ng-cloak class="md-hue-3">
-    <div id="header">
-        <bulb-header/>
-    </div>
-    <div id="content" layout="row">
-        <div id="menu">
+<main layout="column" layout-fill ng-cloak class="md-hue-3">
+    <header>
+        <bulb-header><bulb-header/>
+    </header>
+    <section id="content" layout="row">
+        <nav>
             <bulb-menu/>
-        </div>
+        </nav>
         <ui-view layout-fill></ui-view>
-    </div>
-    <bulb-characteristic/>
-</div>
+    </section>
+    <section>
+        <bulb-characteristic/>
+    </section>
+</main>

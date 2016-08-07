@@ -1,0 +1,13 @@
+header {
+  h1 {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+  bulb-header {
+    button {
+      &.md-button {
+        margin: 32px 16px;
+      }
+    }
+  }
+}

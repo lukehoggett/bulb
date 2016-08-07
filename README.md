@@ -71,10 +71,11 @@ Every time npm i is run need to run `./node_modules/.bin/electron-rebuild` from 
 
 
 ## Todo
-
+- [ ] convert css to sass
+- [ ] process sass in gulp
 - [ ] promisify pingback from renderer
-- [ ] handle group connection 
+- [/] handle group connection 
 - [ ] get gulp tasks running electron
 - [ ] effect and color previews in device and group lists
-- [ ] refactor to Angular 1.5+ components
+- [x] refactor to Angular 1.5+ components
 - [ ] refactor to Angular 2 with TypeScript

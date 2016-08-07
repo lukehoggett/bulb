@@ -1,0 +1,51 @@
+.list {
+  margin: 0 8px;
+  md-list-item {
+    border-bottom: 1px solid #efefef;
+    min-height: 32px;
+  }
+  md-input-container {
+    margin: 2px 0;
+    height: 30px;
+  }
+  md-list-item {
+    &:first-child {
+      border-top: 1px solid #efefef;
+    }
+    button {
+      min-width: 42px;
+    }
+  }
+  // .device-uuid {
+  //   color: rgba(0, 0, 0, 0.26);
+  //   font-size: 12px;
+  // }
+  .device-group {
+    display: inline-block;
+    width: 80px;
+  }
+  .status {
+    md-icon {
+      margin: 0 2px;
+    }
+  }
+  .controls {
+    button {
+      &.md-icon-button {
+        margin: 0 2px;
+        padding: 0 2px;
+      }
+    }
+    md-menu {
+      height: 48px;
+      margin: 0;
+    }
+    md-menu {
+      button {
+        md-icon {
+          margin-top: -4px;
+        }
+      }
+    }
+  }
+}
