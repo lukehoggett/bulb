@@ -4,8 +4,14 @@ nav {
     width: 85vw !important;
     max-width: 190px !important;
     
-    md-icon {
-      color: #000;
+    md-list-item {
+      .active {
+        background-color: rgb(144,164,174);
+      }
+      md-icon {
+        color: #000;
+      }
     }
+    
   }
 }

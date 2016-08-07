@@ -12,23 +12,23 @@
                 <span class="device-group">
                 <span ng-if="$ctrl.groupService.getDeviceGroupName(device) !== ''" class="md-caption" md-colors="{color: 'primary-200'}">{{$ctrl.groupService.getDeviceGroupName(device)}}</span></span>
                 <span ng-if="device.characteristics.battery.value[0]" class="md-caption" md-colors="{color: 'primary-200'}">{{device.characteristics.battery.value[0]}}%</span>
-                <md-icon ng-if="device.characteristics.battery.value[0]" class="md-avatar-icon">
+                <md-icon ng-if="device.characteristics.battery.value[0]">
                     battery_std
                 </md-icon>
-                <md-icon ng-if="!device.characteristics.battery.value[0]" class="md-avatar-icon">
+                <md-icon ng-if="!device.characteristics.battery.value[0]">
                     battery_unknown
                 </md-icon>
-                <md-icon aria-label="Discovered" class="md-avatar-icon" ng-class="device.discovered ? 'green' : 'red'">{{device.discovered ? 'cast_connected' : 'cast'}}
+                <md-icon aria-label="Discovered" ng-class="device.discovered ? 'green' : 'red'">{{device.discovered ? 'cast_connected' : 'cast'}}
                     <md-tooltip md-direction="top">
                         {{device.discovered ? 'Discovered' : 'Not Discovered'}}
                     </md-tooltip>
                 </md-icon>
-                <md-icon aria-label="Connected" class="md-avatar-icon" ng-class="device.state == 'connected' ? 'green' : 'red'">{{device.state == 'connected' ? 'bluetooth_connected' : 'bluetooth_disabled'}}
+                <md-icon aria-label="Connected" ng-class="device.state == 'connected' ? 'green' : 'red'">{{device.state == 'connected' ? 'bluetooth_connected' : 'bluetooth_disabled'}}
                     <md-tooltip md-direction="top">
                         {{device.state == 'connected' ? 'Connected' : 'Disconnected'}}
                     </md-tooltip>
                 </md-icon>
-                <md-icon aria-label="Stored" class="md-avatar-icon" ng-class="device.stored ? 'green' : 'red'">bookmark
+                <md-icon aria-label="Stored" ng-class="device.stored ? 'green' : 'red'">bookmark
                     <md-tooltip md-direction="top">
                         {{device.stored ? 'Stored' : 'Not Stored'}}
                     </md-tooltip>
