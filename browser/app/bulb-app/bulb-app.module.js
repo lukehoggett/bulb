@@ -1,4 +1,5 @@
 'use strict';
+
 import { bulbAppComponent } from './bulb-app.component';
 import { bulbAppRoute } from './bulb-app.route';
 

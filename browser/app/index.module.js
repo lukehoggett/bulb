@@ -22,6 +22,9 @@ import {
   bulbApp
 } from './bulb-app/bulb-app.module';
 import {
+  bulbHeader
+} from './bulb-header/bulb-header.module';
+import {
   bulbMenu
 } from './bulb-menu/bulb-menu.module';
 import {
@@ -45,6 +48,7 @@ import {
 const _templateBase = './app/';
 
 bulbApp();
+bulbHeader();
 bulbMenu();
 bulbCharacteristic();
 bulbDeviceList();
@@ -58,6 +62,7 @@ angular.module('bulb', [
     'ngOrderObjectBy',
     'mdColorPicker',
     'bulb.app',
+    'bulb.header',
     'bulb.menu',
     'bulb.characteristic',
     'bulb.device-list',

@@ -1,14 +1,6 @@
-<div id="container" layout="column" style="width:100%; height: 100%;" ng-cloak class="md-hue-3">
-    <div id="header" layout="row">
-        <md-toolbar layout="row" class="md-hue-1">
-            <md-button id="menu" ng-click="$ctrl.toggleMenu()" hide-gt-sm aria-label="Menu" class="md-raised md-primary">
-                <md-icon aria-label="menu" class="material-icons">menu</md-icon>
-            </md-button>
-            <h1>Bulbs</h1>
-            <md-button ng-click="$ctrl.toggleScan()" class="md-raised md-primary">{{$ctrl.bulbService.scanning ? $ctrl.bulbService.scanStopMessage : $ctrl.bulbService.scanStartMessage}}</md-button>
-            <md-button ng-click="$ctrl.doCrash()" class="md-raised md-primary">Crash</md-button>
-            <md-button ng-click="$ctrl.openDevTools()" class="md-raised md-primary">Dev Tools</md-button>
-        </md-toolbar>
+<div id="container" layout="column" layout-fill ng-cloak class="md-hue-3">
+    <div id="header">
+        <bulb-header/>
     </div>
     <div id="content" layout="row">
         <div id="menu">

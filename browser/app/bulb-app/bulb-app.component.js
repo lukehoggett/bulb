@@ -16,15 +16,10 @@ const ipc = require('electron').ipcRenderer;
 
 class BulbAppController {
 
-  constructor($state, $mdSidenav, $mdToast, bulbService, menuService, $log, C) {
-    this.$state = $state;
+  constructor($mdToast, $log, C) {
     this.C = C;
-    this.mdSidenav = $mdSidenav;
-    this.bulbService = bulbService;
-    this.menuService = menuService;
     this.toast = $mdToast;
     this.$log = $log; 
-    this.$log.info('BulbAppController constructor', this.$state);
     
     ipc.on(this.C.IPC_ERROR, (event, message) => {
       this.$log.info('Error:', message);
@@ -41,19 +36,7 @@ class BulbAppController {
     );
   }
 
-  toggleScan() {
-    this.$log.log('app.controller isScanning', this.bulbService.isScanning());
-    if (this.bulbService.isScanning()) {
-      this.bulbService.stopScan();
-    } else {
-      this.bulbService.startScan();
-    }
-    this.scan = this.bulbService.isScanning();
-  }
 
-  showDevices() {
-    this.$log.log('show devices');
-  }
 
   navSelect(item) {
     if (item.id == 1) {
@@ -63,18 +46,5 @@ class BulbAppController {
     }
   }
 
-  toggleMenu() {
-    this.$log.log('Toggle Menu', this.mdSidenav);
-    this.mdSidenav('menu').toggle();
-  }
 
-  doCrash() {
-    this.$log.log('Crash Reporting');
-    ipc.send(this.C.IPC_CRASH, 'Something bad happened...');
-  }
-
-  openDevTools() {
-    this.$log.log('DevTools');
-    ipc.send(this.C.IPC_DEV_TOOLS_OPEN, null);
-  }
 }
