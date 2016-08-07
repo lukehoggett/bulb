@@ -4,7 +4,7 @@
     height: 1200,
     minwidth: 800,
     minHeight: 480,
-    backgroundColor: "#000",
+    backgroundColor: "#000000",
     x: 2560,
     y: 100,
     show: false
@@ -13,7 +13,8 @@
     "DisplaySize": {
       sm: {
         width: 800,
-        height: 600
+        height: 600,
+        frame: false
       },
       md: {
         width: 1280,

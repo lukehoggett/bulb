@@ -81,13 +81,12 @@ import {Bulb} from './bulb';
     if (argv.displaysize) {
       Object.assign(options, config.get(`Args.DisplaySize.${argv.displaysize}`));
       
-      // ful screen needs x and y stripped out
+      // full screen needs x and y stripped out
       if (argv.displaysize === C.DISPLAYSIZE_FULL) {
         delete options.x;
         delete options.y;
       } 
     }
-    log.debug('window options', options);
     return options;
   }
 
@@ -109,26 +108,28 @@ import {Bulb} from './bulb';
     win.on(C.WINDOW_UNRESPONSIVE, onWindowUnresponsive);
     
     function onWindowReadyToShow() {
-      log.debug(arguments);
+      log.debug('onWindowReadyToShow...');
       win.show();
     }
+    
     function onWindowClosed() {
-      log.info('Window Closed');
+      log.info('onWindowClosed...');
       noble.stopScanning();
       win = null;
       app.quit();
     }
     
     function onWindowUnresponsive() {
-      log.warn('onWindowUnresponsive', arguments);
+      log.warn('onWindowUnresponsive...', arguments);
     }
 
     let webContents = win.webContents;
 
-    // we content events
     webContents.openDevTools({
       mode: 'undocked'
     });
+    
+    // webContent events
     webContents.on(C.WEBCONTENTS_DID_FINISH_LOAD, onWebContentsDidFinishLoad);
     webContents.on(C.WEBCONTENTS_CRASHED, onWebContentsCrashed);
 
