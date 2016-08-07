@@ -39,7 +39,7 @@ import {Bulb} from './bulb';
   // yargs config @TODO
   let argv = yargs.usage('$0 <cmd> [args]').option('displaysize', {
       alias: 'd',
-      describe: 'what size to open the application window sm|md|lg|full'
+      describe: `Size to open the application window ${C.DISPLAYSIZE_SMALL}|${C.DISPLAYSIZE_MEDIUM}|${C.DISPLAYSIZE_LARGE}|${C.DISPLAYSIZE_FULL}`
     })
     .help('help').argv;
   // log.info('YAAARGS', argv, argv.displaysize);
@@ -79,15 +79,20 @@ import {Bulb} from './bulb';
     let options = {};
     options = Object.assign(options, config.get('Window'));
     if (argv.displaysize) {
-      // @TODO work out why I get Cannot assign to read only property 'width' of object
-      // Object.assign(options, config.get(`Args.DisplaySize.${argv.displaysize}`));
-      Object.assign(options, config.get(`Args.DisplaySize`)[argv.displaysize]);
+      Object.assign(options, config.get(`Args.DisplaySize.${argv.displaysize}`));
+      
+      // ful screen needs x and y stripped out
+      if (argv.displaysize === C.DISPLAYSIZE_FULL) {
+        delete options.x;
+        delete options.y;
+      } 
     }
+    log.debug('window options', options);
     return options;
   }
 
   // open window and handle event cycle
-  app.on('ready', () => {
+  app.on(C.APP_READY, () => {
     const {
       screen
     } = electron;
@@ -99,9 +104,14 @@ import {Bulb} from './bulb';
     win.loadURL(`file://${process.cwd()}/browser/index.html`);
 
     // window events
-    win.on(C.WINDOWS_CLOSED, onWindowClosed);
-    win.on(C.WINDOWS_UNRESPONSIVE, onWindowUnresponsive);
+    win.once(C.WINDOW_READY_TO_SHOW, onWindowReadyToShow);
+    win.on(C.WINDOW_CLOSED, onWindowClosed);
+    win.on(C.WINDOW_UNRESPONSIVE, onWindowUnresponsive);
     
+    function onWindowReadyToShow() {
+      log.debug(arguments);
+      win.show();
+    }
     function onWindowClosed() {
       log.info('Window Closed');
       noble.stopScanning();

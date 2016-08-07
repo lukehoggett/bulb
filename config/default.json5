@@ -6,7 +6,8 @@
     minHeight: 480,
     backgroundColor: "#000",
     x: 2560,
-    y: 100
+    y: 100,
+    show: false
   },
   Args: {
     "DisplaySize": {
@@ -24,7 +25,8 @@
       },
       full: {
         fullscreen: true,
-        frame: false
+        frame: false,
+        kiosk: true
       }
     }
   },
