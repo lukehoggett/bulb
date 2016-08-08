@@ -136,12 +136,7 @@ import {Bulb} from './bulb';
     function onWebContentsDidFinishLoad() {
       log.info('onWebContentsDidFinishLoad...');
       // noble.on('stateChange', (state) => {
-      if (noble.state === 'poweredOn') {
-        setTimeout(() => {
-          noble.startScanning();
-          webContents.send(C.IPC_SCANNING_START);
-        }, 2000);
-      }
+      startScanning();
       // });
       win.setTitle(app.getName());
     }
@@ -174,12 +169,7 @@ import {Bulb} from './bulb';
     function onIpcScanStart() {
       log.info('onIpcScanStart...');
       // Start scanning only if already powered up.
-      if (noble.state === 'poweredOn') {
-        log.info('onScanStart... poweredOn ');
-        noble.startScanning();
-      } else {
-        log.warn(`Cannot scan as the Bluetooth adapter is: ${noble.state}`);
-      }
+      startScanning();
     }
 
     function onIpcScanStop() {
@@ -322,6 +312,19 @@ import {Bulb} from './bulb';
       } else {
         log.info('onNobleDiscovered: Ignoring non bulb device');
       }
+    }
+    
+    
+    function startScanning() {
+        log.debug('startScanning...');
+        if (noble.state === 'poweredOn') {
+          setTimeout(() => {
+            noble.startScanning();
+            webContents.send(C.IPC_SCANNING_START);
+          }, 2000);
+        } else {
+          log.warn(`Cannot scan as the Bluetooth adapter is: ${noble.state}`);
+        }
     }
 
     function connect(uuid, inGroup = false) {
@@ -491,7 +494,7 @@ import {Bulb} from './bulb';
     }
 
     function readCharacteristic(type, characteristic) {
-      log.debug('readCharacteristic...');
+      log.debug('readCharacteristic...', type);
       return new Promise((resolve, reject) => {
         characteristic.read((error, data) => {
           if (error) {

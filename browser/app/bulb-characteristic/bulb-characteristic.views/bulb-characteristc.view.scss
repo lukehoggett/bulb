@@ -2,6 +2,22 @@ md-sidenav {
   &.characteristics {
     .controls {
       padding: 10px;
+      
+      h3 {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      h4 {
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+      md-radio-button {
+        margin-bottom: 16px;
+        width: 132px;
+      }
+      .picker-container {
+        height: 70px;
+      }
     }
   }
 }

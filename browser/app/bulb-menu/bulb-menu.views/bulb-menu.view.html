@@ -1,7 +1,7 @@
 <md-sidenav class="site-sidenav md-sidenav-left md-whiteframe-z2" md-component-id="menu" md-is-locked-open="$mdMedia('gt-sm')" layout="column">
     <md-list>
         <md-list-item ng-repeat="item in $ctrl.menuItems">
-            <div ui-sref-active="md-focused" flex>
+            <div ui-sref-active="active" flex>
             <md-button ui-sref="{{item.name}}-list" flex>
                 <md-icon aria-label="Discovered" layout-align="start center">{{item.icon}}</md-icon>
                 {{item.title}}

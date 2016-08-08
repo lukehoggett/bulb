@@ -25,13 +25,12 @@ class BulbHeaderController {
   }
 
   toggleScan() {
-    this.$log.log('app.controller isScanning', this.bulbService.isScanning());
+    // this.$log.log('header.controller isScanning', this.bulbService.isScanning());
     if (this.bulbService.isScanning()) {
       this.bulbService.stopScan();
     } else {
       this.bulbService.startScan();
     }
-    this.scan = this.bulbService.isScanning();
   }
   
   doCrash() {

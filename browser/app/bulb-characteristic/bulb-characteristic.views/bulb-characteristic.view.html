@@ -3,22 +3,26 @@
         <h1 class="md-toolbar-tools">Device/Group Settings</h1>
     </md-toolbar>
     <div class="controls">
-        <md-radio-group ng-model="$ctrl.type">
-            <h3>Type</h3>
-            <md-radio-button value="{{$ctrl.TYPE_COLOR}}" class="md-primary">Colour</md-radio-button>
-            <md-radio-button value="{{$ctrl.TYPE_EFFECT}}" class="md-primary">Effect</md-radio-button>
-        </md-radio-group>
-
-        <div ng-if="$ctrl.type == $ctrl.TYPE_COLOR">
+        <h3>Type</h3>
+        <div>
+            <md-radio-group ng-model="$ctrl.type" layout="row">
+                <md-radio-button value="{{$ctrl.TYPE_COLOR}}">Colour</md-radio-button>
+                <md-radio-button value="{{$ctrl.TYPE_EFFECT}}">Effect</md-radio-button>
+            </md-radio-group>
+        </duv>
+        <div class="picker-container" ng-if="$ctrl.type == $ctrl.TYPE_COLOR">
             <div md-color-picker="$ctrl.colorPicker.options" ng-model="$ctrl.colorPicker.color"></div>
         </div>
+        <md-divider></md-divider>
 
         <div ng-if="$ctrl.type == $ctrl.TYPE_EFFECT">
             <h3>Effect</h3>
-            <md-radio-group ng-model="$ctrl.effect.mode" class="md-primary">
-                <md-radio-button ng-repeat="effectMode in $ctrl.effectModes" ng-value="effectMode.value" arial-label="Select Effect {{effectMode.name}}">{{effectMode.name}}</md-radio-button>
-            </md-radio-group>
-            <div ng-if="$ctrl.effect.mode != 2 && $ctrl.effect.mode != 3">
+            <div>
+                <md-radio-group ng-model="$ctrl.effect.mode" layout="row" layout-wrap layout-align="start center">
+                    <md-radio-button ng-repeat="effectMode in $ctrl.effectModes" ng-value="effectMode.value" arial-label="Select Effect {{effectMode.name}}">{{effectMode.name}}</md-radio-button>
+                </md-radio-group>
+            </div>
+            <div class="picker-container" ng-if="$ctrl.effect.mode != 2 && $ctrl.effect.mode != 3">
                 <div md-color-picker="$ctrl.colorPicker.options" ng-model="$ctrl.colorPicker.color"></div>
             </div>
             <h4>Speed</h4>
@@ -31,6 +35,7 @@
                     <input flex type="number" ng-model="$ctrl.effect.speed" aria-label="speed" aria-controls="speed-slider">
                 </md-input-container>
             </div>
+            <md-divider></md-divider>
         </div>
     </div>
     <md-button ng-click="$ctrl.save(char)" class="md-raised md-primary">Save</md-button>
