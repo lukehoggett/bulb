@@ -2,8 +2,8 @@
     <md-list class="list">
         <md-list-item ng-repeat="device in $ctrl.bulb.devices | orderObjectBy: 'discovered' : true" class="list noright" layout-align="start center">
             <p>
-                <span ng-if="device.state == 'disconnected'">{{device.name}}</span>
-                <md-input-container ng-if="device.state == 'connected'">
+                <span ng-if="device.state == $ctrl.C.DISCONNECTED">{{device.name}}</span>
+                <md-input-container ng-if="device.state == $ctrl.C.CONNECTED">
                     <input ng-model="device.name" ng-model-options="{ updateOn: 'mousedown blur' }" ng-change="$ctrl.bulb.setCharacteristic(device.uuid, device.name, 'name')" aria-label="device name"/>
                 </md-input-container>
             </p>
@@ -25,9 +25,9 @@
                         {{device.discovered ? 'Discovered' : 'Not Discovered'}}
                     </md-tooltip>
                 </md-icon>
-                <md-icon aria-label="Connected" ng-class="device.state == 'connected' ? 'green' : 'red'">{{device.state == 'connected' ? 'bluetooth_connected' : 'bluetooth_disabled'}}
+                <md-icon aria-label="Connected" ng-class="device.state == $ctrl.C.CONNECTED ? 'green' : 'red'">{{device.state == $ctrl.C.CONNECTED ? 'bluetooth_connected' : 'bluetooth_disabled'}}
                     <md-tooltip md-direction="top">
-                        {{device.state == 'connected' ? 'Connected' : 'Disconnected'}}
+                        {{device.state == $ctrl.C.CONNECTED ? 'Connected' : 'Disconnected'}}
                     </md-tooltip>
                 </md-icon>
                 <md-icon aria-label="Stored" ng-class="device.stored ? 'green' : 'red'">bookmark
@@ -37,11 +37,11 @@
                 </md-icon>
             </div>
             <div class="controls" layout="row" layout-align="start center">
-                <md-button ng-click="$ctrl.bulb.toggleConnection(device)" class="md-accent md-icon-button" aria-label="{{device.state == 'connected' ? 'Disconnect' : 'Connect'}}">
-                    <md-icon ng-if="device.state == 'connected'" aria-label="Disconnect">close</md-icon>
-                    <md-icon ng-if="device.state == 'disconnected'" aria-label="Connect">check</md-icon>
+                <md-button ng-click="$ctrl.bulb.toggleConnection(device)" class="md-accent md-icon-button" aria-label="{{device.state == $ctrl.C.CONNECTED ? 'Disconnect' : 'Connect'}}">
+                    <md-icon ng-if="device.state == $ctrl.C.CONNECTED" aria-label="Disconnect">close</md-icon>
+                    <md-icon ng-if="device.state == $ctrl.C.DISCONNECTED" aria-label="Connect">check</md-icon>
                     <md-tooltip md-direction="top">
-                        {{device.state == 'connected' ? 'Disconnect' : 'Connect'}}
+                        {{device.state == $ctrl.C.CONNECTED ? 'Disconnect' : 'Connect'}}
                     </md-tooltip>
                 </md-button>
                 <md-button ng-click="$ctrl.selectDevice(device)" class="md-accent md-icon-button" aria-label="Edit Characteristics" ng-disabled="$ctrl.isEditDisabled(device)">
@@ -64,7 +64,7 @@
                             </md-button>
                         </md-menu-item>
                         <md-menu-item>
-                            <md-button ng-click="$ctrl.getCharacterisics(device)" class="md-accent" aria-label="Get Characteristics" ng-disabled="device.state == 'connected' ? false : true">
+                            <md-button ng-click="$ctrl.getCharacterisics(device)" class="md-accent" aria-label="Get Characteristics" ng-disabled="device.state == $ctrl.C.CONNECTED ? false : true">
                                 <md-icon aria-label="Get Characteristics">system_update_alt</md-icon>Get Characteristics
                                 <!-- <md-tooltip md-direction="top">
                                     Get Characteristics

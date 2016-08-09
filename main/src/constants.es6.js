@@ -69,3 +69,7 @@ export const DISPLAYSIZE_SMALL = 'sm';
 export const DISPLAYSIZE_MEDIUM = 'md';
 export const DISPLAYSIZE_LARGE = 'lg';
 export const DISPLAYSIZE_FULL = 'full';
+
+// DEVICE && GROUP
+export const CONNECTED = 'connected';
+export const DISCONNECTED = 'disconnected'; 

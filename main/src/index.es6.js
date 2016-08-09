@@ -337,7 +337,7 @@ import {Bulb} from './bulb';
         let device = bulbStore.getDiscoveredDeviceByUUID(uuid);
         // log.info('connect device:', device);
         if (device) {
-          if (device.state == 'connected') {
+          if (device.state == C.CONNECTED) {
             // @TODO need to send data about device is it is already connected
             log.info(`connect: device ${device.uuid} already connected`);
           } else if (typeof device.connect === 'function') {

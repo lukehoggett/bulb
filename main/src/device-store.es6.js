@@ -1,6 +1,8 @@
 import {log} from './logger';
+import * as C from './constants';
 
 import storage from 'node-persist';
+
 (function() {
   'use strict';
 
@@ -57,7 +59,7 @@ import storage from 'node-persist';
 
           device.stored = true;
           device.power = false;
-          device.state = 'disconnected';
+          device.state = C.DISCONNECTED;
           // log.info('getDevicesFromCache device', device, uuid);
           serializedDevices.set(uuid, device);
         });
@@ -115,7 +117,7 @@ import storage from 'node-persist';
 
     setCachedDevice(device) {
       device.stored = true;
-      device.state = 'disconnected';
+      device.state = C.DISCONNECTED;
       let serializedDevice = this.serializeDevice(device);
       deviceCache.setItem(serializedDevice.uuid, serializedDevice, error => {
         if (error) {

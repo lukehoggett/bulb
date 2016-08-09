@@ -46,6 +46,7 @@ class GroupService {
     let group = {};
     group.uuid = uuid.v4();
     group.name = 'New Group';
+    group.state = this.C.DISCONNECTED;
     group.devices = [];
 
     // add to local variable
@@ -72,9 +73,9 @@ class GroupService {
   toggleConnection(group) {
     this.$log.info(`BulbService: Handling connection to device `, group);
     let device = null;
-    group.state = 'disconnected';
+    // group.state = this.C.DISCONNECTED;
     this.$log.info('GroupService toggleConnection', group.state);
-    if (group.state == 'disconnected') {
+    if (group.state == this.C.DISCONNECTED) {
       this.$log.info('GroupService toggleConnection disconnected');
       ipc.send(this.C.IPC_GROUP_CONNECT, group);
       // angular.forEach(group.devices, (deviceUUID) => {

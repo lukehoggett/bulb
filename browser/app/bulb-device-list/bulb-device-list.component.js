@@ -17,8 +17,9 @@ const ipc = require('electron').ipcRenderer;
 
 class BulbDeviceListController {
 
-  constructor($rootScope, $mdDialog, bulbService, groupService, $log) {
+  constructor($rootScope, $mdDialog, bulbService, groupService, $log, C) {
     this.$rootScope = $rootScope;
+    this.C = C;
     this.$mdDialog = $mdDialog;
     this.bulb = bulbService;
     this.groupService = groupService;
@@ -123,6 +124,6 @@ class BulbDeviceListController {
   }
   
   isEditDisabled(device) {
-    return !(device.state === 'connected') && (device.characteristics === undefined);
+    return !(device.state === this.C.CONNECTED) && (device.characteristics === undefined);
   }
 }

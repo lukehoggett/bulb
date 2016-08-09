@@ -64,7 +64,7 @@ class BulbService {
 
   toggleConnection(device) {
     this.$log.info(`BulbService: Handling connection to device ${device.name} [${device.uuid}] with state ${device.state}`);
-    if (device.state == 'disconnected') {
+    if (device.state == this.C.DISCONNECTED) {
       this.connect(device);
     } else {
       this.disconnect(device);
