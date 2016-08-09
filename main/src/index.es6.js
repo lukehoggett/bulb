@@ -154,15 +154,15 @@ import {Bulb} from './bulb';
     ipcMain.on(C.IPC_DEVICE_CHARACTERISTICS_GET, onIpcDeviceGetCharacteristics);
     ipcMain.on(C.IPC_DEVICE_CHARACTERISTIC_SET, onIpcDeviceSetCharacteristic);
     ipcMain.on(C.IPC_DEVICE_GET, onIpcDeviceGet);
-    ipcMain.on(C.IPC_DEVICE_GET_STORED, onIpcDeviceGetCached);
-    ipcMain.on(C.IPC_DEVICE_SET_STORED, onIpcDeviceSetCached);
+    ipcMain.on(C.IPC_DEVICE_GET_CACHED, onIpcDeviceGetCached);
+    ipcMain.on(C.IPC_DEVICE_SET_CACHED, onIpcDeviceSetCached);
     ipcMain.on(C.IPC_DEV_TOOLS_OPEN, onIpcDevToolsOpen);
 
     ipcMain.on(C.IPC_GROUP_CONNECT, onIpcGroupConnect);
     ipcMain.on(C.IPC_GROUP_DISCONNECT, onIpcGroupDisconnect);
-    ipcMain.on(C.IPC_GROUP_SET_STORED, onIpcGroupSetCached);
-    ipcMain.on(C.IPC_GROUP_DELETE_STORED, onIpcGroupDeleteCached);
-    ipcMain.on(C.IPC_GROUP_GET_STORED, onIpcGroupGetCached);
+    ipcMain.on(C.IPC_GROUP_SET_CACHED, onIpcGroupSetCached);
+    ipcMain.on(C.IPC_GROUP_DELETE_CACHED, onIpcGroupDeleteCached);
+    ipcMain.on(C.IPC_GROUP_GET_CACHED, onIpcGroupGetCached);
     // ipcMain.on(C.IPC_GROUP_GET_CACHED_REPLY, onIpc);
 
     // ipcMain listener functions

@@ -57,7 +57,6 @@ import storage from 'node-persist';
             }
           });
 
-          device.stored = true;
           device.power = false;
           device.state = C.DISCONNECTED;
           // log.info('getDevicesFromCache device', device, uuid);
@@ -116,7 +115,6 @@ import storage from 'node-persist';
     }
 
     setCachedDevice(device) {
-      device.stored = true;
       device.state = C.DISCONNECTED;
       let serializedDevice = this.serializeDevice(device);
       deviceCache.setItem(serializedDevice.uuid, serializedDevice, error => {
@@ -194,7 +192,6 @@ import storage from 'node-persist';
         addressType: device.addressType,
         connectable: device.connectable,
         discovered: device.discovered || false,
-        stored: device.stored || false,
         lastSeen: Date.now()
       };
     }
@@ -236,7 +233,6 @@ import storage from 'node-persist';
 
         log.info('device-deviceCache: loaded UUID', device.uuid);
 
-        device.stored = true;
         device.power = false;
         devices[uuid] = device;
       });

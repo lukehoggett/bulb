@@ -30,11 +30,6 @@
                         {{device.state == $ctrl.C.CONNECTED ? 'Connected' : 'Disconnected'}}
                     </md-tooltip>
                 </md-icon>
-                <md-icon aria-label="Stored" ng-class="device.stored ? 'green' : 'red'">bookmark
-                    <md-tooltip md-direction="top">
-                        {{device.stored ? 'Stored' : 'Not Stored'}}
-                    </md-tooltip>
-                </md-icon>
             </div>
             <div class="controls" layout="row" layout-align="start center">
                 <md-button ng-click="$ctrl.bulb.toggleConnection(device)" class="md-accent md-icon-button" aria-label="{{device.state == $ctrl.C.CONNECTED ? 'Disconnect' : 'Connect'}}">

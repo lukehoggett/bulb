@@ -52,7 +52,7 @@ class GroupService {
     // add to local variable
     this.groups[group.uuid] = group;
     // update persistent storage
-    ipc.send(this.C.IPC_GROUP_SET_STORED, group);
+    ipc.send(this.C.IPC_GROUP_SET_CACHED, group);
   }
 
   update(group) {
@@ -60,14 +60,14 @@ class GroupService {
     // update local variable
     this.groups[group.uuid] = group;
     // this.$log.info('group update', this.groups);
-    ipc.send(this.C.IPC_GROUP_SET_STORED, group);
+    ipc.send(this.C.IPC_GROUP_SET_CACHED, group);
   }
 
   delete(group) {
     // remove from local variable
     delete this.groups[group.uuid];
     // update persistent storage
-    ipc.send(this.C.IPC_GROUP_DELETE_STORED, group);
+    ipc.send(this.C.IPC_GROUP_DELETE_CACHED, group);
   }
   
   toggleConnection(group) {
@@ -94,7 +94,7 @@ class GroupService {
 
   getStoredGroups() {
     // this.$log.info('Requesting stored groups');
-    ipc.send(this.C.IPC_GROUP_GET_STORED, (event) => {
+    ipc.send(this.C.IPC_GROUP_GET_CACHED, (event) => {
       // this.$log.log('GroupService: get stored groups', event);
     });
   }

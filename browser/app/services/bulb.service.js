@@ -30,7 +30,7 @@ class BulbService {
 
   getStoredDevices() {
     // this.$log.info('Requesting stored devices');
-    ipc.send(this.C.IPC_DEVICE_GET_STORED, (event) => {
+    ipc.send(this.C.IPC_DEVICE_GET_CACHED, (event) => {
       // this.$log.log('BulbService: get stored devices', event);
     });
   }
@@ -98,7 +98,7 @@ class BulbService {
   setDevice(device) {
     this.devices[device.uuid] = device;
     this.$log.info('device update', this.devices);
-    ipc.send(this.C.IPC_DEVICE_SET_STORED, device);
+    ipc.send(this.C.IPC_DEVICE_SET_CACHED, device);
   }
 
   getCharacteristics(uuid) {

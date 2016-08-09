@@ -29,14 +29,14 @@ export const IPC_DEVICE_DISCONNECT = 'device.disconnect';
 export const IPC_DEVICE_CHARACTERISTICS_GET = 'device.characteristics.get';
 export const IPC_DEVICE_CHARACTERISTIC_SET = 'device.characteristic.set';
 export const IPC_DEVICE_GET = 'device.get';
-export const IPC_DEVICE_GET_STORED = 'device.get.stored';
-export const IPC_DEVICE_SET_STORED = 'device.set.stored';
+export const IPC_DEVICE_GET_CACHED = 'device.get.cached';
+export const IPC_DEVICE_SET_CACHED = 'device.set.cached';
 export const IPC_DEV_TOOLS_OPEN = 'dev.tools.open';
 export const IPC_GROUP_CONNECT = 'group.connect';
 export const IPC_GROUP_DISCONNECT = 'group.disconnect';
-export const IPC_GROUP_SET_STORED = 'group.set.stored';
-export const IPC_GROUP_DELETE_STORED = 'group.delete.stored';
-export const IPC_GROUP_GET_STORED = 'group.get.stored';
+export const IPC_GROUP_SET_CACHED = 'group.set.cached';
+export const IPC_GROUP_DELETE_CACHED = 'group.delete.cached';
+export const IPC_GROUP_GET_CACHED = 'group.get.cached';
 
 // IPC from main
 export const IPC_SCANNING_START = 'scanning.start';
