@@ -4,6 +4,9 @@ Control panel in Electron for Playbulb
 
 ## Installation
 
+
+### Dev
+
 Prior to setup make sure that the global dependencies are met:
 ├── babel-cli@6.11.4
 ├── bower@1.7.9
@@ -33,23 +36,12 @@ npm install --save-dev electron-rebuild`
 
 Need to run `npm install` in the `app/` dir, and then fix the `baseUrl` in `app/browser/config.json` for jspm
 
+### Distribution
 
 ## Run 
 
-
-
-with sudo 
-```sh
-gulp transpile:main && sudo ./node_modules/electron-prebuilt/dist/electron main/dist/index.js --displaysize=sm | node_modules/bunyan/bin/bunyan
 ```
-
-@TODO
-without sudo if you have already run
-```sh
-sudo setcap cap_net_raw+eip $(eval readlink -f `which node`)
-```
-```sh
-gulp transpile:main && ./node_modules/electron-prebuilt/dist/electron main/dist/index.js --displaysize=sm | node_modules/bunyan/bin/bunyan
+npm run sm|md|lg|full
 ```
 
 ## Caveats
@@ -58,7 +50,7 @@ gulp transpile:main && ./node_modules/electron-prebuilt/dist/electron main/dist/
 sudo setcap cap_net_raw+eip $(eval readlink -f `which node`)
 ```
 
-Whenever you ran 'jspm init' correct line 2 of browser/config.js to:
+Whenever you ran 'jspm init' correct line 2 of browser/config.js to: (unless you run as part of npm i, npm update still will need this fix)
 
 ```
 baseURL: __dirname + "/",
