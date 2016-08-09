@@ -41,8 +41,8 @@ export const IPC_GROUP_GET_STORED = 'group.get.stored';
 // IPC from main
 export const IPC_SCANNING_START = 'scanning.start';
 export const IPC_SCANNING_STOP = 'scanning.stop';
-export const IPC_DEVICE_GET_STORED_REPLY = 'device.get.stored.reply';
-export const IPC_GROUP_GET_STORED_REPLY = 'group.get.stored.reply';
+export const IPC_DEVICE_GET_CACHED_REPLY = 'device.get.cached.reply';
+export const IPC_GROUP_GET_CACHED_REPLY = 'group.get.cached.reply';
 export const IPC_DEVICE_DISCOVERED = 'device.discovered';
 export const IPC_DEVICE_CONNECTED = 'device.connected';
 export const IPC_DEVICE_DISCONNECTED = 'device.disconnected';

@@ -14,12 +14,11 @@ class GroupService {
     
     this.groups = {};
     
-
     // request any stored groups from the main process
     this.getStoredGroups();
 
     // listening to messages from the main
-    ipc.on('group.get.stored.reply', (event, group, uuid) => this.onGroupGetStoredReply(event, group, uuid));
+    ipc.on(C.IPC_GROUP_GET_CACHED_REPLY, (event, group, uuid) => this.onGroupGetStoredReply(event, group, uuid));
 
   }
 

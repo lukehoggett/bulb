@@ -19,7 +19,7 @@ class BulbService {
     this.getStoredDevices();
 
     // listening to messages from the main
-    ipc.on(this.C.IPC_DEVICE_GET_STORED_REPLY, (event, device, uuid) => this.onDeviceGetStoredReply(event, device, uuid));
+    ipc.on(this.C.IPC_DEVICE_GET_CACHED_REPLY, (event, device, uuid) => this.onDeviceGetStoredReply(event, device, uuid));
     ipc.on(this.C.IPC_DEVICE_DISCOVERED, (event, device) => this.onDiscovered(event, device));
     ipc.on(this.C.IPC_SCANNING_START, (event) => this.onScanningStart(event));
     ipc.on(this.C.IPC_SCANNING_STOP, (event) => this.onScanningStop(event));

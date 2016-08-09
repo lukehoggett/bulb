@@ -15,17 +15,17 @@ import storage from 'node-persist';
     ttl: false
   };
 
-  let deviceStorageConfig = Object.assign({
+  let deviceCacheConfig = Object.assign({
     dir: `${process.cwd()}/data/device-storage`
   }, storageConfig);
-  let deviceStorage = storage.create(deviceStorageConfig);
-  deviceStorage.initSync();
+  let deviceCache = storage.create(deviceCacheConfig);
+  deviceCache.initSync();
 
-  let groupStorageConfig = Object.assign({
+  let groupCacheConfig = Object.assign({
     dir: `${process.cwd()}/data/group-storage`
   }, storageConfig);
-  let groupStorage = storage.create(groupStorageConfig);
-  groupStorage.initSync();
+  let groupCache = storage.create(groupCacheConfig);
+  groupCache.initSync();
 
   let devices = {};
   const serializedDevices = new Map();
@@ -36,20 +36,20 @@ import storage from 'node-persist';
   class BulbStore {
     constructor() {
       // read from persistent storage
-      this.getDevicesFromStorage();
-      this.getGroupsFromStorage();
+      this.getDevicesFromCache();
+      this.getGroupsFromCache();
     }
 
-    getDevicesFromStorage() {
+    getDevicesFromCache() {
       // @TODO implement caching in local variable, or not as needed
-      log.info('BulbStore: getDevicesFromStorage');
+      log.info('BulbCache: getDevicesFromCache');
       let haveCached = Object.keys(devices).length !== 0 && devices.constructor === Object;
       if (!haveCached) {
 
-        let deviceKeys = deviceStorage.keys();
+        let deviceKeys = deviceCache.keys();
         deviceKeys.forEach((uuid, index) => {
 
-          let device = deviceStorage.getItem(uuid, (error, device) => {
+          let device = deviceCache.getItem(uuid, (error, device) => {
             if (error) {
               log.error(error);
             }
@@ -58,91 +58,91 @@ import storage from 'node-persist';
           device.stored = true;
           device.power = false;
           device.state = 'disconnected';
-          // log.info('getDevicesFromStorage device', device, uuid);
+          // log.info('getDevicesFromCache device', device, uuid);
           serializedDevices.set(uuid, device);
         });
       }
-      // log.info('getDevicesFromStorage serializedDevices', serializedDevices);
+      // log.info('getDevicesFromCache serializedDevices', serializedDevices);
       return serializedDevices;
     }
 
-    getGroupsFromStorage() {
-      let groupKeys = groupStorage.keys();
+    getGroupsFromCache() {
+      let groupKeys = groupCache.keys();
       groupKeys.forEach((uuid, index) => {
 
-        let group = groupStorage.getItem(uuid, (error, group) => {
+        let group = groupCache.getItem(uuid, (error, group) => {
           if (error) {
             log.error(error);
           }
         });
 
-        // log.info('getGroupsFromStorage group', group, uuid);
+        // log.info('getGroupsFromCache group', group, uuid);
         serializedGroups.set(uuid, group);
       });
 
       return serializedGroups;
     }
 
-    getStoredDevices() {
+    getCachedDevices() {
       return serializedDevices;
     }
 
-    getStoredGroups() {
+    getCachedGroups() {
       return serializedGroups;
     }
 
-    getStoredDeviceByUUID(uuid) {
+    getCachedDeviceByUUID(uuid) {
       if (!serializedDevices.has(uuid)) {
-        log.error(`Device ${uuid} is not in deviceStorage.`);
+        log.error(`Device ${uuid} is not in deviceCache.`);
         // @TODO handle error
       }
       return serializedDevices.get(uuid);
     }
 
-    getStoredGroupByUUID(uuid) {
+    getCachedGroupByUUID(uuid) {
       if (!serializedGroups.has(uuid)) {
-        log.error(`Group ${uuid} is not in groupStorage.`);
+        log.error(`Group ${uuid} is not in groupCache.`);
         // @TODO handle error
       }
       return serializedGroups.get(uuid);
     }
 
-    setStoredDevices(devices) {
+    setCachedDevices(devices) {
       devices.forEach((device) => {
-        this.setStoredDevice(device);
+        this.setCachedDevice(device);
       });
     }
 
-    setStoredDevice(device) {
+    setCachedDevice(device) {
       device.stored = true;
       device.state = 'disconnected';
       let serializedDevice = this.serializeDevice(device);
-      deviceStorage.setItem(serializedDevice.uuid, serializedDevice, error => {
+      deviceCache.setItem(serializedDevice.uuid, serializedDevice, error => {
         if (error) {
-          log.error('Storage error: on set', error);
+          log.error('Cache error: on set', error);
         }
       });
-      this.getDevicesFromStorage();
+      this.getDevicesFromCache();
     }
 
-    setStoredGroups(groups) {
+    setCachedGroups(groups) {
       groups.forEach((group) => {
-        this.setStoredGroup(group);
+        this.setCachedGroup(group);
       });
     }
 
-    setStoredGroup(group) {
-      log.info('bulbStore setStoredGroup', group);
+    setCachedGroup(group) {
+      log.info('bulbCache setCachedGroup', group);
       // remove properties not needed to be stored
-      groupStorage.setItem(group.uuid, group, error => {
+      groupCache.setItem(group.uuid, group, error => {
         if (error) {
-          log.error('Storage error: on set', error);
+          log.error('Cache error: on set', error);
         }
       });
-      this.getGroupsFromStorage();
+      this.getGroupsFromCache();
     }
 
-    hasStoredDevice(uuid) {
+    hasCachedDevice(uuid) {
       return serializedDevices.has(uuid);
     }
 
@@ -168,8 +168,8 @@ import storage from 'node-persist';
       discoveredDevices[device.uuid] = device;
     }
 
-    deleteStoredGroup(group) {
-      log.info('bulbStore deleteStoredGroup group', group);
+    deleteCachedGroup(group) {
+      log.info('bulbCache deleteCachedGroup group', group);
     }
 
     /**
@@ -220,19 +220,19 @@ import storage from 'node-persist';
   // load all currently stored devices
   let getAll = function() {
     // @TODO implement caching in local variable, or not as needed
-    log.info('device-deviceStorage: getAll');
+    log.info('device-deviceCache: getAll');
     let haveCached = Object.keys(devices).length !== 0 && devices.constructor === Object;
     if (!haveCached) {
 
-      let deviceKeys = deviceStorage.keys();
+      let deviceKeys = deviceCache.keys();
       deviceKeys.forEach((uuid, index) => {
-        let device = deviceStorage.getItem(uuid, (error, device) => {
+        let device = deviceCache.getItem(uuid, (error, device) => {
           if (error) {
             log.error(error);
           }
         });
 
-        log.info('device-deviceStorage: loaded UUID', device.uuid);
+        log.info('device-deviceCache: loaded UUID', device.uuid);
 
         device.stored = true;
         device.power = false;
@@ -245,21 +245,21 @@ import storage from 'node-persist';
   let getByUUID = function(uuid) {
     let devices = getAll();
     if (!Object.keys(devices).includes(uuid)) {
-      log.error(`Device ${uuid} is not in deviceStorage.`);
+      log.error(`Device ${uuid} is not in deviceCache.`);
       // @TODO handle error
     }
     return devices[uuid];
   };
 
   let set = function(uuid, serializedDevice) {
-    deviceStorage.setItem(uuid, serializedDevice, error => {
+    deviceCache.setItem(uuid, serializedDevice, error => {
       if (error) {
-        log.error('Storage error: on set', error);
+        log.error('Cache error: on set', error);
       }
     });
   };
 
-  exports.deviceStorage = deviceStorage;
+  exports.deviceCache = deviceCache;
   exports.getAll = getAll;
   exports.getByUUID = getByUUID;
   exports.set = set;

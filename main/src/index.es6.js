@@ -15,7 +15,7 @@ import util from 'util';
 import yargs from 'yargs';
 
 // local module for device storage and retrieval from persistent storage
-import deviceStore from './device-store';
+import deviceCache from './device-store';
 import {bulbStore} from './device-store';
 
 // local module for handling bulb actions
@@ -154,16 +154,16 @@ import {Bulb} from './bulb';
     ipcMain.on(C.IPC_DEVICE_CHARACTERISTICS_GET, onIpcDeviceGetCharacteristics);
     ipcMain.on(C.IPC_DEVICE_CHARACTERISTIC_SET, onIpcDeviceSetCharacteristic);
     ipcMain.on(C.IPC_DEVICE_GET, onIpcDeviceGet);
-    ipcMain.on(C.IPC_DEVICE_GET_STORED, onIpcDeviceGetStored);
-    ipcMain.on(C.IPC_DEVICE_SET_STORED, onIpcDeviceSetStored);
+    ipcMain.on(C.IPC_DEVICE_GET_STORED, onIpcDeviceGetCached);
+    ipcMain.on(C.IPC_DEVICE_SET_STORED, onIpcDeviceSetCached);
     ipcMain.on(C.IPC_DEV_TOOLS_OPEN, onIpcDevToolsOpen);
 
     ipcMain.on(C.IPC_GROUP_CONNECT, onIpcGroupConnect);
     ipcMain.on(C.IPC_GROUP_DISCONNECT, onIpcGroupDisconnect);
-    ipcMain.on(C.IPC_GROUP_SET_STORED, onIpcGroupSetStored);
-    ipcMain.on(C.IPC_GROUP_DELETE_STORED, onIpcGroupDeleteStored);
-    ipcMain.on(C.IPC_GROUP_GET_STORED, onIpcGroupGetStored);
-    // ipcMain.on(C.IPC_GROUP_GET_STORED_REPLY, onIpc);
+    ipcMain.on(C.IPC_GROUP_SET_STORED, onIpcGroupSetCached);
+    ipcMain.on(C.IPC_GROUP_DELETE_STORED, onIpcGroupDeleteCached);
+    ipcMain.on(C.IPC_GROUP_GET_STORED, onIpcGroupGetCached);
+    // ipcMain.on(C.IPC_GROUP_GET_CACHED_REPLY, onIpc);
 
     // ipcMain listener functions
     function onIpcScanStart() {
@@ -227,7 +227,7 @@ import {Bulb} from './bulb';
 
     function onIpcDeviceGetCharacteristics(event, deviceUUID) {
       log.info('onDeviceGetCharacteristics...');
-      let device = deviceStore.getByUUID(deviceUUID);
+      let device = deviceCache.getByUUID(deviceUUID);
       log.info('service and characteristic discovery from get');
       discoverServicesAndCharacteristics(device);
     }
@@ -235,7 +235,7 @@ import {Bulb} from './bulb';
     function onIpcDeviceSetCharacteristic(event, deviceUUID, value, type) {
       log.info('onDeviceSetCharacteristic...');
       // get the characteristic
-      let device = deviceStore.getByUUID(deviceUUID);
+      let device = deviceCache.getByUUID(deviceUUID);
       log.info('device.characteristic.set device', device);
       writeCharacteristic(value, type, deviceUUID).catch(error => {
         log.error('write catch error from set characteristic event', error);
@@ -244,7 +244,7 @@ import {Bulb} from './bulb';
 
     function onIpcDeviceGet(event, deviceUUID) {
       log.info('onDeviceGet...');
-      log.info('ipc: device.get', event, deviceUUID, deviceStore.getByUUID(deviceUUID));
+      log.info('ipc: device.get', event, deviceUUID, deviceCache.getByUUID(deviceUUID));
     }
 
     function onIpcDevToolsOpen(event, arg) {
@@ -252,36 +252,36 @@ import {Bulb} from './bulb';
       win.openDevTools();
     }
 
-    function onIpcDeviceGetStored(event) {
-      log.info('onDeviceGetStored...');
-      bulbStore.getStoredDevices().forEach((device, uuid) => {
-        // log.info('onDeviceGetStored sending ', device, uuid);
-        event.sender.send(C.IPC_DEVICE_GET_STORED_REPLY, device);
+    function onIpcDeviceGetCached(event) {
+      log.info('onDeviceGetCached...');
+      bulbStore.getCachedDevices().forEach((device, uuid) => {
+        // log.info('onDeviceGetCached sending ', device, uuid);
+        event.sender.send(C.IPC_DEVICE_GET_CACHED_REPLY, device);
       });
     }
 
-    function onIpcDeviceSetStored(event, device) {
-      log.info('onIpcDeviceSetStored...', device);
-      bulbStore.setStoredDevice(device);
+    function onIpcDeviceSetCached(event, device) {
+      log.info('onIpcDeviceSetCached...', device);
+      bulbStore.setCachedDevice(device);
     }
     
     
     
 
-    function onIpcGroupSetStored(event, group) {
-      log.info('onIpcGroupSetStored...', group);
-      bulbStore.setStoredGroup(group);
+    function onIpcGroupSetCached(event, group) {
+      log.info('onIpcGroupSetCached...', group);
+      bulbStore.setCachedGroup(group);
     }
 
-    function onIpcGroupDeleteStored(event, group) {
-      bulbStore.deleteStoredGroup(group);
+    function onIpcGroupDeleteCached(event, group) {
+      bulbStore.deleteCachedGroup(group);
     }
 
-    function onIpcGroupGetStored(event) {
-      // log.info('onIpcGroupGetStored...', bulbStore.getStoredGroups());
-      bulbStore.getStoredGroups().forEach((group, uuid) => {
-        // log.info('onIpcGroupGetStored sending', group);
-        event.sender.send(C.IPC_GROUP_GET_STORED_REPLY, group);
+    function onIpcGroupGetCached(event) {
+      // log.info('onIpcGroupGetCached...', bulbStore.getCachedGroups());
+      bulbStore.getCachedGroups().forEach((group, uuid) => {
+        // log.info('onIpcGroupGetCached sending', group);
+        event.sender.send(C.IPC_GROUP_GET_CACHED_REPLY, group);
       });
 
     }
@@ -349,7 +349,7 @@ import {Bulb} from './bulb';
                 bulbStore.setDiscoveredDevice(device);
 
                 // update the local storage copy ??? is this needed?
-                // bulbStore.setStoredDevice(device);
+                // bulbStore.setCachedDevice(device);
                 
                 // timout needed for device to respond after connect
                 setTimeout(() => {

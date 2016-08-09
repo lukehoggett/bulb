@@ -1,6 +1,6 @@
 import {config} from './config';
 import {log} from './logger';
-import deviceStore from './device-store';
+import deviceCache from './device-store';
 import {bulbStore} from './device-store';
 
 (function() {
@@ -28,9 +28,9 @@ import {bulbStore} from './device-store';
       log.info('onNobleDiscovered: Discovered Playbulb device with UUID', device.uuid);
       log.info('onNobleDiscovered: device.advertisement.serviceUuids', device.advertisement.serviceUuids);
       // on discovery check if device is in stored devices, if not update stored
-      // if (!bulbStore.hasStoredDevice(device.uuid)) {
+      // if (!bulbStore.hasCachedDevice(device.uuid)) {
       // save discovered device to persistent storage
-      bulbStore.setStoredDevice(device);
+      bulbStore.setCachedDevice(device);
 
       // }
 
