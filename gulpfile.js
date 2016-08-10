@@ -49,8 +49,8 @@ gulp.task('lint:main', () => {
 
 gulp.task('lint:renderer', () => {
   return gulp.src([
-      'browser/app/**/*.js', 
-      '!browser/jspm_packages/**', 
+      'renderer/app/**/*.js', 
+      '!renderer/jspm_packages/**', 
       '!node_modules/**'
     ])
     .pipe(debug({title: 'linting browser file...'}))
@@ -73,28 +73,28 @@ gulp.task('styles', () => {
     errLogToConsole: true,
     outputStyle: 'expanded'
   };
-  return gulp.src(['browser/styles/*.scss', 'browser/app/**/*.scss'])
+  return gulp.src(['renderer/styles/*.scss', 'renderer/app/**/*.scss'])
     .pipe(debug({title: 'transpile renderer file...'}))
     .pipe(sourcemaps.init())  // Process the original sources
     .pipe(debug({title: 'css renderer sourcemap...'}))
       .pipe(sass(sassOptions).on('error', sass.logError))
-    .pipe(sourcemaps.write('./browser/styles/maps')) // Add the map to modified source.
+    .pipe(sourcemaps.write('./renderer/styles/maps')) // Add the map to modified source.
     .pipe(concat('app.css'))
     .pipe(minify())
-    .pipe(gulp.dest('browser/styles/'));
+    .pipe(gulp.dest('renderer/styles/'));
 });
 
 
 
 // gulp.task('minify:browser', () => {
-//   return gulp.src(['browser/app/**/*.js'])
+//   return gulp.src(['renderer/app/**/*.js'])
 //     .pipe(debug({title: 'minify browser file...'}))
 //     // .pipe(sourcemaps.init())
 //       .pipe(uglify())
 //       .pipe(debug({title: 'uglify browser file...'}))
 //       .pipe(rename({ extname: '.min.js' }))
 //     // .pipe(sourcemaps.write())
-//     .pipe(gulp.dest('browser/app'));
+//     .pipe(gulp.dest('renderer/app'));
 //   
 // });
 
@@ -117,7 +117,7 @@ gulp.task('serve', ['transpile:main'], () => {
   gulp.watch(['main/src/*.js'], electronServer.restart());
 
   // Reload renderer process
-  gulp.watch(['browser/index.html', 'browser/app/**/*.js', 'browser/css/**/*'], electronServer.reload);
+  gulp.watch(['renderer/index.html', 'renderer/app/**/*.js', 'renderer/css/**/*'], electronServer.reload);
 });
 
 
@@ -128,7 +128,7 @@ gulp.task('clean', function(){
 
 // 
 // gulp.task('copy:app', ['clean'], function(){
-//     return gulp.src(['main/**/*', 'browser/**/*', 'package.json'], {base: '.'})
+//     return gulp.src(['main/**/*', 'renderer/**/*', 'package.json'], {base: '.'})
 //         .pipe(gulp.dest('package'));
 // });
 
