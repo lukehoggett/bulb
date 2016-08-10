@@ -100,7 +100,7 @@ import {Bulb} from './bulb';
     let primaryDisplay = screen.getPrimaryDisplay();
 
     win = new BrowserWindow(getWindowOptions(primaryDisplay));
-    win.loadURL(`file://${process.cwd()}/browser/index.html`);
+    win.loadURL(`file://${process.cwd()}/renderer/index.html`);
 
     // window events
     win.once(C.WINDOW_READY_TO_SHOW, onWindowReadyToShow);
