@@ -14,11 +14,11 @@ class GroupService {
     
     this.groups = {};
     
-    // request any stored groups from the main process
-    this.getStoredGroups();
+    // request any cached groups from the main process
+    this.getCachedGroups();
 
     // listening to messages from the main
-    ipc.on(C.IPC_GROUP_GET_CACHED_REPLY, (event, group, uuid) => this.onGroupGetStoredReply(event, group, uuid));
+    ipc.on(C.IPC_GROUP_GET_CACHED_REPLY, (event, group, uuid) => this.onGroupGetCachedReply(event, group, uuid));
 
   }
 
@@ -73,7 +73,6 @@ class GroupService {
   toggleConnection(group) {
     this.$log.info(`BulbService: Handling connection to device `, group);
     let device = null;
-    // group.state = this.C.DISCONNECTED;
     this.$log.info('GroupService toggleConnection', group.state);
     if (group.state == this.C.DISCONNECTED) {
       this.$log.info('GroupService toggleConnection disconnected');
@@ -92,16 +91,13 @@ class GroupService {
     }
   }
 
-  getStoredGroups() {
-    // this.$log.info('Requesting stored groups');
-    ipc.send(this.C.IPC_GROUP_GET_CACHED, (event) => {
-      // this.$log.log('GroupService: get stored groups', event);
-    });
+  getCachedGroups() {
+    ipc.send(this.C.IPC_GROUP_GET_CACHED);
   }
 
   // IPC listeners
-  onGroupGetStoredReply(event, group) {
-    this.$log.log('GroupService: onGroupGetStoredReply...', group);
+  onGroupGetCachedReply(event, group) {
+    this.$log.log('GroupService: onGroupGetCachedReply...', group);
     this.groups[group.uuid] = group;
   }
 

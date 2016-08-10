@@ -209,7 +209,9 @@ class BulbCharacteristicController {
       case this.GROUP_EDIT_TYPE:
         this.$log.info('group edit');
         angular.forEach(this.group.devices, (deviceUUID) => {
-          this.bulbService.setCharacteristic(deviceUUID, value, this.type);
+          if (this.bulbService.get(deviceUUID).state === this.C.CONNECTED) {
+            this.bulbService.setCharacteristic(deviceUUID, value, this.type);
+          }
         });
         break;
       default:

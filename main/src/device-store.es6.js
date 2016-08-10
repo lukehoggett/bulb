@@ -76,6 +76,8 @@ import storage from 'node-persist';
             log.error(error);
           }
         });
+        
+        group.state = C.DISCONNECTED;
 
         // log.info('getGroupsFromCache group', group, uuid);
         serializedGroups.set(uuid, group);

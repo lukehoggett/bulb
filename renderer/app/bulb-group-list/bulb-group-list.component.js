@@ -14,8 +14,8 @@ export function bulbGroupListComponent() {
 
 class BulbGroupListController {
 
-  constructor($rootScope, groupService, bulbService, $log) {
-
+  constructor($rootScope, groupService, bulbService, $log, C) {
+    this.C = C;
     this.$rootScope = $rootScope;
     this.bulb = bulbService;
     this.groupService = groupService;

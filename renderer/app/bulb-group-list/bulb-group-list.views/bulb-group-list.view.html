@@ -16,18 +16,17 @@
             </p>
             <span ng-repeat="deviceUUID in group.devices">
                 <span ng-if="$first">Devices:</span>
-                <span ng-if="!$first">,
-                </span>
-                {{$ctrl.bulb.get(deviceUUID).name}}
+                <span ng-if="!$first">,</span>
+                <span ng-class="$ctrl.bulb.get(deviceUUID).state == $ctrl.C.CONNECTED ? 'green' : 'red'">{{$ctrl.bulb.get(deviceUUID).name}}</span>
             </span>
             <div class="controls" layout="row" layout-align="start center">
-                <md-button ng-click="$ctrl.groupService.toggleConnection(group)" class="md-icon-button" aria-label="{{group.state == this.C.CONNECTED ? 'Disconnect' : 'Connect'}}">
-                    <!-- <md-icon ng-if="group.state == this.C.CONNECTED" aria-label="Disconnect">close</md-icon>
-                    <md-icon ng-if="group.state == this.C.DISCONNECTED" aria-label="Connect">check</md-icon> -->
+                <md-button ng-click="$ctrl.groupService.toggleConnection(group)" class="md-icon-button" aria-label="{{group.state == $ctrl.C.CONNECTED ? 'Disconnect' : 'Connect'}}">
+                    <!-- <md-icon ng-if="group.state == $ctrl.C.CONNECTED" aria-label="Disconnect">close</md-icon>
+                    <md-icon ng-if="group.state == $ctrl.C.DISCONNECTED" aria-label="Connect">check</md-icon> -->
                     <!-- <md-icon aria-label="Disconnect">close</md-icon> -->
                     <md-icon aria-label="Connect">check</md-icon>
                     <md-tooltip md-direction="top">
-                        {{group.state == this.C.CONNECTED ? 'Disconnect' : 'Connect'}}
+                        {{group.state == $ctrl.C.CONNECTED ? 'Disconnect' : 'Connect'}}
                     </md-tooltip>
                 </md-button>
                 <md-menu>
@@ -49,7 +48,7 @@
                     </md-menu-content>
                 </md-menu>
                 <md-button ng-click="$ctrl.selectGroup(group)" class="md-icon-button" aria-label="Edit Characteristics">
-                    <!-- <md-button ng-click="$ctrl.selectDevice(device)" class="md-icon-button" aria-label="Edit Characteristics" ng-disabled="device.state == this.C.CONNECTED ? false : true"> -->
+                    <!-- <md-button ng-click="$ctrl.selectDevice(device)" class="md-icon-button" aria-label="Edit Characteristics" ng-disabled="device.state == $ctrl.C.CONNECTED ? false : true"> -->
                     <md-icon aria-label="Edit Characteristics">edit</md-icon>
                     <md-tooltip md-direction="top">Edit Characteristics</md-tooltip>
                 </md-button>

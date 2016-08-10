@@ -15,11 +15,6 @@ export function bulbMenuComponent() {
 class BulbMenuController {
   constructor($rootScope, $state, $log) {
     
-    $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
-      $log.info('$stateChangeSuccess', event, toState, toParams, fromState, fromParams);
-      // if (fromState.name)
-      
-    });
     this.menuItems = [{
       id: 1,
       name: 'device',

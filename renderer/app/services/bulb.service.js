@@ -15,11 +15,11 @@ class BulbService {
     this.scanStartMessage = 'Start Scan';
     this.scanStopMessage = 'Stop Scan';
 
-    // request any stored devices from the main process
-    this.getStoredDevices();
+    // request any cached devices from the main process
+    this.getCachedDevices();
 
     // listening to messages from the main
-    ipc.on(this.C.IPC_DEVICE_GET_CACHED_REPLY, (event, device, uuid) => this.onDeviceGetStoredReply(event, device, uuid));
+    ipc.on(this.C.IPC_DEVICE_GET_CACHED_REPLY, (event, device, uuid) => this.onDeviceGetCachedReply(event, device, uuid));
     ipc.on(this.C.IPC_DEVICE_DISCOVERED, (event, device) => this.onDiscovered(event, device));
     ipc.on(this.C.IPC_SCANNING_START, (event) => this.onScanningStart(event));
     ipc.on(this.C.IPC_SCANNING_STOP, (event) => this.onScanningStop(event));
@@ -28,11 +28,8 @@ class BulbService {
 
   }
 
-  getStoredDevices() {
-    // this.$log.info('Requesting stored devices');
-    ipc.send(this.C.IPC_DEVICE_GET_CACHED, (event) => {
-      // this.$log.log('BulbService: get stored devices', event);
-    });
+  getCachedDevices() {
+    ipc.send(this.C.IPC_DEVICE_GET_CACHED);
   }
 
   isScanning() {
@@ -120,8 +117,8 @@ class BulbService {
   }
 
   // IPC listeners
-  onDeviceGetStoredReply(event, device) {
-    this.$log.log('BulbService: onDeviceGetStoredReply...', device);
+  onDeviceGetCachedReply(event, device) {
+    this.$log.log('BulbService: onDeviceGetCachedReply...', device);
     this.devices[device.uuid] = device;
   }
 
