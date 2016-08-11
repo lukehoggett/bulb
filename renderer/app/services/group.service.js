@@ -73,22 +73,27 @@ class GroupService {
   toggleConnection(group) {
     this.$log.info(`BulbService: Handling connection to device `, group);
     let device = null;
-    this.$log.info('GroupService toggleConnection', group.state);
-    if (group.state == this.C.DISCONNECTED) {
-      this.$log.info('GroupService toggleConnection disconnected');
-      ipc.send(this.C.IPC_GROUP_CONNECT, group);
-      // angular.forEach(group.devices, (deviceUUID) => {
-      //   device = this.bulbService.get(deviceUUID);
-      //   this.bulbService.connect(device);
-      // });
-    } else {
-      this.$log.info('GroupService toggleConnection connected');
-      ipc.send(this.C.IPC_GROUP_DISCONNECT, group);
-      // angular.forEach(group.devices, (deviceUUID) => {
-      //   device = this.bulbService.get(deviceUUID);
-      //   this.bulbService.disconnect(device);
-      // });
+    
+    // remove undiscovered devices before requesting connection/disconnection from main, cloning group and its children
+    let groupDevicesClone = Array.from(group.devices);
+    let groupClone = Object.assign({}, group);
+    groupClone.devices = groupDevicesClone;
+    angular.forEach(groupClone.devices, (deviceUUID, index) => {
+      if (!this.bulbService.get(deviceUUID).discovered) {
+        groupClone.devices.splice(index, index + 1);
+      }
+    });
+    
+    let channel = '';
+    switch (groupClone.state) {
+      case this.C.DISCONNECTED:
+        channel = this.C.IPC_GROUP_CONNECT;
+        break;
+      case this.C.CONNECTED:
+        channel = this.C.IPC_GROUP_DISCONNECT;
+        break;  
     }
+    ipc.send(channel, groupClone);
   }
 
   getCachedGroups() {

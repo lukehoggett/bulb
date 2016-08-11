@@ -199,7 +199,7 @@ import {Bulb} from './bulb';
       log.info('onIpcGroupConnect', group, group.devices.length);
       
       if (group.devices.length > 0) {
-        log.debug('more than once device in group');
+        log.debug('More than once device in group');
         let all = [];
         group.devices.forEach((deviceUUID) => {
           log.debug(`Calling connect for device ${deviceUUID}`);
