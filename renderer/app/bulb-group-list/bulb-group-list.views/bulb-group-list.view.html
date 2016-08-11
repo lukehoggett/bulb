@@ -14,11 +14,13 @@
                     <input ng-model="group.name" ng-model-options="{ updateOn: 'mousedown blur' }" aria-label="group name" ng-change="$ctrl.updateGroupName(group)"/>
                 </md-input-container>
             </p>
-            <span ng-repeat="deviceUUID in group.devices">
-                <span ng-if="$first">Devices:</span>
-                <span ng-if="!$first">,</span>
-                <span ng-class="$ctrl.bulb.get(deviceUUID).state == $ctrl.C.CONNECTED ? 'green' : 'red'">{{$ctrl.bulb.get(deviceUUID).name}}</span>
-            </span>
+            <div class="status">
+                <span ng-repeat="deviceUUID in group.devices" class="group-devices md-caption">
+                    <md-icon ng-if="$first" aria-label="Device icon">lightbulb_outline</md-icon>
+                    <span ng-if="!$first">,</span>
+                    <span class="device-name", ng-class="$ctrl.bulb.get(deviceUUID).state == $ctrl.C.CONNECTED ? 'green' : 'red'">{{$ctrl.bulb.get(deviceUUID).name}}</span>
+                </span>
+            </div>
             <div class="controls" layout="row" layout-align="start center">
                 <md-button ng-click="$ctrl.groupService.toggleConnection(group)" class="md-icon-button" aria-label="{{group.state == $ctrl.C.CONNECTED ? 'Disconnect' : 'Connect'}}">
                     <!-- <md-icon ng-if="group.state == $ctrl.C.CONNECTED" aria-label="Disconnect">close</md-icon>
