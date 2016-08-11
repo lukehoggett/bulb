@@ -64,10 +64,12 @@ Every time npm i is run need to run `./node_modules/.bin/electron-rebuild` from 
 
 
 ## Todo
-- [ ] convert css to sass
-- [ ] process sass in gulp
+- [x] convert css to sass
+- [x] process sass in gulp
 - [ ] promisify pingback from renderer
-- [/] handle group connection 
+- [x] handle group connection 
+- [ ] store device color or effect state in cache
+- [ ] store group color or effect state in cache
 - [ ] get gulp tasks running electron
 - [ ] effect and color previews in device and group lists
 - [x] refactor to Angular 1.5+ components
