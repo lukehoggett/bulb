@@ -36,7 +36,7 @@ import {bulbStore} from './device-store';
 
       // add properties to the device
       device.discovered = true; // we don't save discovered so need to add it here
-
+      log.debug('bulb.discovered', device);
       // this is needed to add the noble extra object stuff that can't be stored in the persistent storage
       bulbStore.setDiscoveredDevice(device);
 
