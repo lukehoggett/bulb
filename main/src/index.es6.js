@@ -181,7 +181,17 @@ import {Bulb} from './bulb';
     function onIpcDeviceConnect(event, deviceUUID) {
       log.info('onDeviceConnect...');
       connect(deviceUUID)
+      .then(discoverSomeServicesAndCharacteristics, (error) => {
+        log.error('discoverSomeServicesAndCharacteristics error', error);
+      })
+      .then(mapDiscoveredCharacteristics, (error) => {
+        log.error('mapDiscoveredCharacteristics error', error);
+      })
+      .then(readCharacteristics, (error) => {
+        log.error('readCharacteristics error', error);
+      })
       .then((device) => {
+        log.debug('Sedning device connected message for device:', device);
         webContents.send(C.IPC_DEVICE_CONNECTED, device);
       })
       .catch((error) => {
@@ -289,6 +299,10 @@ import {Bulb} from './bulb';
 
     // noble event listeners
     noble.on(C.NOBLE_DISCOVER, onNobleDiscovered);
+    
+    noble.on(C.NOBLE_STATE_CHANGE, (state) => {
+      log.info('Noble State Change to: ', state);
+    });
 
     noble.on(C.NOBLE_SCAN_START, () => {
       log.info('noble on scanStart');
@@ -298,9 +312,14 @@ import {Bulb} from './bulb';
       log.info('noble on scanStop');
     });
 
+    noble.on(C.NOBLE_DISCONNECT, (message) => {
+      log.warn('noble on disconnect', message);
+    });
+    
     noble.on(C.NOBLE_WARNING, (message) => {
       log.warn('noble on warning', message);
     });
+    
 
     function onNobleDiscovered(device) {
       log.info('onNobleDiscovered...');
@@ -324,40 +343,50 @@ import {Bulb} from './bulb';
           }, 2000);
         } else {
           log.warn(`Cannot scan as the Bluetooth adapter is: ${noble.state}`);
+          app.quit();
+          // process.exit(1);
         }
     }
 
     function connect(uuid, inGroup = false) {
+      noble.stopScanning();
+      webContents.send(C.IPC_SCANNING_STOP);
       
       return new Promise((resolve, reject) => {
-        noble.stopScanning();
-        webContents.send(C.IPC_SCANNING_STOP);
         log.info('connect: to uuid', uuid);
 
         let device = bulbStore.getDiscoveredDeviceByUUID(uuid);
         // log.info('connect device:', device);
         if (device) {
+          log.warn('connect: we have device');
           if (device.state == C.CONNECTED) {
             // @TODO need to send data about device is it is already connected
             log.info(`connect: device ${device.uuid} already connected`);
           } else if (typeof device.connect === 'function') {
+            log.warn('device NOT already connected');
             device.connect(error => {
+              log.error('Device STATE 1', device.state);
               if (error) {
                 log.error('connect: error', error);
+                reject(error);
               } else {
                 // store the device as discovered
+                log.error('Device STATE 2', device.state);
                 bulbStore.setDiscoveredDevice(device);
-
+                log.error('Device STATE 3', device.state);
                 // update the local storage copy ??? is this needed?
                 // bulbStore.setCachedDevice(device);
                 
                 // timout needed for device to respond after connect
+                // log.debug('before discover timeout', Date.now());
+                log.error('Device STATE 3.1', device.state);
                 setTimeout(() => {
                   log.debug('Timeout before discoverServicesAndCharacteristics');
-                  discoverServicesAndCharacteristics(device);
+                  // discoverServicesAndCharacteristics(device);
+                  log.error('Device STATE 4', device.state);
+                  log.debug('About to resolve connection');
+                  resolve(device);
                 }, C.NOBLE_DISCOVER_TIMEOUT);
-                
-                resolve(bulbStore.serializeDevice(device));
               }
             });
           } else {
@@ -373,23 +402,44 @@ import {Bulb} from './bulb';
     }
 
     function discoverServicesAndCharacteristics(device) {
+      log.debug('discoverServicesAndCharacteristics()', device);
       discoverSomeServicesAndCharacteristics(device);
       // discoverAllServicesAndCharacteristics(device);
     }
 
     function discoverSomeServicesAndCharacteristics(device) {
       log.info('discoverSomeServicesAndCharacteristics...');
-      // just discover defined services and characteristics
+      
       let serviceUUIDs = getConfigServiceUUIDs('CANDLE');
       let characteristicUUIDs = getConfigCharacteristicUUIDs('CANDLE');
-
-      device.discoverSomeServicesAndCharacteristics(serviceUUIDs, characteristicUUIDs, (error, services, characteristics) => {
-        if (error) {
-          log.error('discoverSomeServicesAndCharacteristics', error);
-        }
-        mapDiscoveredCharacteristics(device.uuid, characteristics);
-      });
+      return new Promise((resolve, reject) => {
+        // log.debug('discoverSomeServicesAndCharacteristics promise', serviceUUIDs, characteristicUUIDs, device);
+        
+        // just discover defined services and characteristics
+        log.warn('before device.discoverSomeServicesAndCharacteristics', device);
+        device.discoverSomeServicesAndCharacteristics(serviceUUIDs, characteristicUUIDs, (error, services, characteristics) => {
+          // return new Promise(function(resolve, reject) {
+            log.debug('device.discoverSomeServicesAndCharacteristics promise');
+            if (error) {
+              log.error('discoverSomeServicesAndCharacteristics', error);
+              reject(error);
+            }
+            log.debug('about to resolve discoverSomeServicesAndCharacteristics', {deviceUUID: device.uuid, characteristics: characteristics});
+            resolve({deviceUUID: device.uuid, characteristics: characteristics});
+            // mapDiscoveredCharacteristics(device.uuid, characteristics);
+          });
+        });
+      
+        log.warn('after device.discoverSomeServicesAndCharacteristics');
+      // });
+      
     }
+    
+    function handleDiscoveredServicesAndCharacteristics(error, services, characteristics) {
+      console.warn('handleDiscoveredServicesAndCharacteristics');
+      
+    }
+    
 
     function discoverAllServicesAndCharacteristics(device) {
       log.debug('discoverAllServicesAndCharacteristics...');
@@ -437,39 +487,63 @@ import {Bulb} from './bulb';
       }
     }
 
-    function mapDiscoveredCharacteristics(deviceUUID, characteristics) {
-      let device = bulbStore.getDiscoveredDeviceByUUID(deviceUUID);
+    function mapDiscoveredCharacteristics(data) {
+      let deviceUUID = data.deviceUUID;
+      let characteristics = data.characteristics;
+      
+      return new Promise((resolve, reject) => {
+        log.debug('mapDiscoveredCharacteristics', deviceUUID, characteristics);
+        let device = bulbStore.getDiscoveredDeviceByUUID(deviceUUID);
 
-      device.characteristics = {};
-      characteristics.map(characteristic => {
-        device = addCharacteristicToDevice(device, characteristic);
+        device.characteristics = {};
+        characteristics.map(characteristic => {
+          device = addCharacteristicToDevice(device, characteristic);
+        });
+        
+        resolve(device);
       });
+      
+      
 
       // log.info('mapDiscoveredCharacteristics device', device);
 
-      if (device.characteristics.color && device.characteristics.effect && device.characteristics.name && device.characteristics.battery) {
-        let all = [
-          readCharacteristic('color', device.characteristics.color),
-          readCharacteristic('effect', device.characteristics.effect),
-          readCharacteristic('name', device.characteristics.name),
-          readCharacteristic('battery', device.characteristics.battery)
-        ];
+      
+      
+    }
+    
+    function readCharacteristics(device) {
+      log.info('readCharacteristics');
+      return new Promise((resolve, reject) => {
+        if (device.characteristics.color && device.characteristics.effect && device.characteristics.name && device.characteristics.battery) {
+          let all = [
+            readCharacteristic('color', device.characteristics.color),
+            readCharacteristic('effect', device.characteristics.effect),
+            readCharacteristic('name', device.characteristics.name),
+            readCharacteristic('battery', device.characteristics.battery)
+          ];
+          
+          
 
-        Promise.all(all).then(values => {
-          let device = bulbStore.getDiscoveredDeviceByUUID(deviceUUID);
-          // log.info('mapDiscoveredCharacteristics: have required characteristics', deviceUUID);
-          // send notification of values to ui
-          bulbStore.setDiscoveredDevice(device);
+          Promise.all(all).then(values => {
+            // let device = bulbStore.getDiscoveredDeviceByUUID(device.uuid);
+            // log.info('mapDiscoveredCharacteristics: have required characteristics', device.uuid);
+            // send notification of values to ui
+            bulbStore.setDiscoveredDevice(device);
 
-          device = bulbStore.serializeCharacteristics(deviceUUID, values);
-          // log.info('+_+_+_+_+_+_+_+_+_+ mapDiscoveredCharacteristics: ', device.uuid, 'device serialized', device);
-          webContents.send(C.IPC_DEVICE_DISCOVERED, device);
-        }, error => {
-          log.error('Promise.all failed ', error);
-        }).catch(error => {
-          log.error('Promise.all catch ', error);
-        });
-      }
+            device = bulbStore.serializeCharacteristics(device.uuid, values);
+            // log.info('+_+_+_+_+_+_+_+_+_+ mapDiscoveredCharacteristics: ', device.uuid, 'device serialized', device);
+            // webContents.send(C.IPC_DEVICE_DISCOVERED, device);
+            resolve(device);
+          }, error => {
+            log.error('Promise.all failed ', error);
+          }).catch(error => {
+            log.error('Promise.all catch ', error);
+          });
+        } else {
+          reject('Do not have al characteristics');
+        }
+      });
+      
     }
 
     function addCharacteristicToDevice(device, characteristic) {

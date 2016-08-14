@@ -42,7 +42,7 @@ gulp.task('lint:main', () => {
       '!main/dist/*.js', 
       '!node_modules/**'
     ])
-    .pipe(debug({title: 'linting main file...'}))
+    // .pipe(debug({title: 'linting main file...'}))
     .pipe(eslint())
     .pipe(eslint.format());
 });
@@ -53,14 +53,14 @@ gulp.task('lint:renderer', () => {
       '!renderer/jspm_packages/**', 
       '!node_modules/**'
     ])
-    .pipe(debug({title: 'linting browser file...'}))
+    // .pipe(debug({title: 'linting browser file...'}))
     .pipe(eslint())
     .pipe(eslint.format());
 });
 
 gulp.task('transpile:main', ['lint:main'], () => {
   return gulp.src('main/src/*.es6.js')
-    .pipe(debug({title: 'transpile main file...'}))
+    // .pipe(debug({title: 'transpile main file...'}))
     .pipe(babel())
     .pipe(rename(function (path) {
       path.basename = path.basename.replace('.es6', '');
@@ -74,9 +74,9 @@ gulp.task('styles', () => {
     outputStyle: 'expanded'
   };
   return gulp.src(['renderer/styles/*.scss', 'renderer/app/**/*.scss'])
-    .pipe(debug({title: 'transpile renderer file...'}))
+    // .pipe(debug({title: 'transpile renderer file...'}))
     .pipe(sourcemaps.init())  // Process the original sources
-    .pipe(debug({title: 'css renderer sourcemap...'}))
+    // .pipe(debug({title: 'css renderer sourcemap...'}))
       .pipe(sass(sassOptions).on('error', sass.logError))
     .pipe(sourcemaps.write('./renderer/styles/maps')) // Add the map to modified source.
     .pipe(concat('app.css'))

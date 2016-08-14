@@ -53,8 +53,10 @@ export const IPC_CRASH = 'crash';
 
 // NOBLE
 export const NOBLE_DISCOVER = 'discover';
+export const NOBLE_STATE_CHANGE = 'sateChange';
 export const NOBLE_SCAN_START = 'scanStart';
 export const NOBLE_SCAN_STOP = 'scanStop';
+export const NOBLE_DISCONNECT = 'disconnect';
 export const NOBLE_WARNING = 'warning';
 
 /**
