@@ -29,9 +29,9 @@ import {
 } from './device-store';
 
 // local module for handling bulb actions
-import {
+import
   Bulb
-} from './bulb';
+ from './bulb';
 
 (function() {
   'use strict';
@@ -63,6 +63,8 @@ import {
   let colorChar = null;
   let effectChar = null;
   let nameChar = null;
+  
+  let bulb = null;
 
 
   process.on(C.PROCESS_UNCAUGHT_EXCEPTION, onProcessUncaughtException);
@@ -138,6 +140,8 @@ import {
     }
 
     let webContents = win.webContents;
+    
+    bulb = new Bulb(webContents);
 
     webContents.openDevTools({
       mode: 'undocked'
@@ -194,7 +198,12 @@ import {
 
     function onIpcDeviceConnect(event, deviceUUID) {
       log.info('onDeviceConnect...');
-      connectAndReadCharacteristics(deviceUUID);
+      
+      
+      
+      let device = bulb.connectAndReadCharacteristics(deviceUUID, webContents);
+      
+      
     }
 
     function onIpcDeviceDisconnect(event, deviceUUID) {
@@ -212,7 +221,7 @@ import {
           log.debug(`Calling connect for device ${deviceUUID}`);
           all.push(connect(deviceUUID));
         });
-        log.debug('*************** ghroupConnect All promises', all);
+        log.debug('*************** groupConnect All promises', all);
 
         Promise.all(all)
           .then(values => {
@@ -327,7 +336,7 @@ import {
       log.info('onNobleDiscovered...');
       // check for Mipow devices
       if (typeof device.advertisement.manufacturerData !== 'undefined' && device.advertisement.manufacturerData.toString('hex') === config.get('Bulb.MipowManufacturerData')) {
-        device = Bulb.discovered(device);
+        device = bulb.discovered(device);
         // send notification to renderer that a device has been discovered
         webContents.send(C.IPC_DEVICE_DISCOVERED, bulbStore.serializeDevice(device));
       } else {
@@ -350,215 +359,9 @@ import {
       }
     }
     
-    function connectAndReadCharacteristics(deviceUUID) {
-      connect(deviceUUID)
-        .then(discoverSomeServicesAndCharacteristics)
-        .then(mapDiscoveredCharacteristics)
-        .then(readCharacteristics)
-        .then((device) => {
-          log.debug('Sending device connected message for device:', device);
-          let deviceToSend = bulbStore.serializeDevice(device);
-          bulbStore.setCachedDevice(deviceToSend);
-          webContents.send(C.IPC_DEVICE_CONNECTED, deviceToSend);
-        })
-        .catch((error) => {
-          log.error('Connection catch error:', error);
-          webContents.send(C.IPC_ERROR, error);
-        });
-    }
+    
 
-    function connect(uuid, inGroup = false) {
-      noble.stopScanning();
-      webContents.send(C.IPC_SCANNING_STOP);
-
-      return new Promise((resolve, reject) => {
-        log.info('connect: to uuid', uuid);
-
-        let device = bulbStore.getDiscoveredDeviceByUUID(uuid);
-        // log.info('connect device:', device);
-        if (device) {
-          if (device.state == C.CONNECTED) {
-            // @TODO need to send data about device is it is already connected
-            log.info(`connect: device ${device.uuid} already connected`);
-          } else if (typeof device.connect === 'function') {
-            device.connect(error => {
-              if (error) {
-                reject(error);
-              } else {
-                // store the device as discovered
-                bulbStore.setDiscoveredDevice(device);
-                // update the local storage copy ??? is this needed?
-                bulbStore.setCachedDevice(device);
-
-                // timout needed for device to respond after connect
-                setTimeout(() => {
-                  resolve(device);
-                }, C.NOBLE_DISCOVER_TIMEOUT);
-              }
-            });
-          } else {
-            reject(`Device ${ device.name } [${ uuid }] not connectable.`);
-          }
-        } else {
-          reject(`Device unknown not connectable.`);
-        }
-      });
-
-    }
-
-    function discoverServicesAndCharacteristics(device) {
-      log.debug('discoverServicesAndCharacteristics()', device);
-      discoverSomeServicesAndCharacteristics(device);
-    }
-
-    function discoverSomeServicesAndCharacteristics(device) {
-      log.info('discoverSomeServicesAndCharacteristics...');
-
-      let serviceUUIDs = getConfigServiceUUIDs('CANDLE');
-      let characteristicUUIDs = getConfigCharacteristicUUIDs('CANDLE');
-      return new Promise((resolve, reject) => {
-        // just discover defined services and characteristics
-        device.discoverSomeServicesAndCharacteristics(serviceUUIDs, characteristicUUIDs, (error, services, characteristics) => {
-          if (error) {
-            reject(error);
-          }
-          resolve({
-            deviceUUID: device.uuid,
-            characteristics: characteristics
-          });
-        });
-      });
-    }
-
-    function mapDiscoveredService(deviceUUID, services) {
-      services.map(service => {
-        log.info('mapDiscoveredService: service', service.deviceUUID, service.name);
-      });
-    }
-
-    function mapDiscoveredCharacteristics(data) {
-      let deviceUUID = data.deviceUUID;
-      let characteristics = data.characteristics;
-
-      return new Promise((resolve, reject) => {
-        let device = bulbStore.getDiscoveredDeviceByUUID(deviceUUID);
-        device.characteristics = {};
-        characteristics.map(characteristic => {
-          device = addCharacteristicToDevice(device, characteristic);
-        });
-
-        resolve(device);
-      });
-    }
-
-    function readCharacteristics(device) {
-      log.info('readCharacteristics');
-      return new Promise((resolve, reject) => {
-        if (device.characteristics.color && device.characteristics.effect && device.characteristics.name && device.characteristics.battery) {
-          let all = [
-            readCharacteristic('color', device.characteristics.color),
-            readCharacteristic('effect', device.characteristics.effect),
-            readCharacteristic('name', device.characteristics.name),
-            readCharacteristic('battery', device.characteristics.battery)
-          ];
-
-          Promise.all(all)
-            .then(values => {
-              // let device = bulbStore.getDiscoveredDeviceByUUID(device.uuid);
-              // log.info('mapDiscoveredCharacteristics: have required characteristics', device.uuid);
-              // send notification of values to ui
-              bulbStore.setDiscoveredDevice(device);
-
-              device = bulbStore.serializeCharacteristics(device.uuid, values);
-              // log.info('+_+_+_+_+_+_+_+_+_+ mapDiscoveredCharacteristics: ', device.uuid, 'device serialized', device);
-              // webContents.send(C.IPC_DEVICE_DISCOVERED, device);
-              resolve(device);
-            }, error => {
-              log.error('Promise.all failed ', error);
-            })
-            .catch(error => {
-              log.error('Promise.all catch ', error);
-            });
-        } else {
-          reject('Do not have al characteristics');
-        }
-      });
-
-    }
-
-    function addCharacteristicToDevice(device, characteristic) {
-      // @TODO handle color
-      let typeConfig = config.get('Bulb.Types.CANDLE');
-
-      switch (characteristic.uuid) {
-        case typeConfig.color.characteristicUUID:
-          device.characteristics.color = characteristic;
-          break;
-        case typeConfig.effects.characteristicUUID:
-          device.characteristics.effect = characteristic;
-          break;
-        case typeConfig.name.characteristicUUID:
-          device.characteristics.name = characteristic;
-          break;
-        case typeConfig.battery.characteristicUUID:
-          device.characteristics.battery = characteristic;
-          break;
-      }
-      return device;
-    }
-
-    function readCharacteristic(type, characteristic) {
-      log.debug('readCharacteristic...', type);
-      return new Promise((resolve, reject) => {
-        characteristic.read((error, data) => {
-          if (error) {
-            log.error('Could not read characteristic', characteristic.uuid, error);
-            reject('Could not read characteristic', error);
-          }
-          resolve({
-            type: type,
-            characteristic: characteristic,
-            data: data
-          });
-        });
-      });
-    }
-
-    function writeCharacteristic(value, type, uuid) {
-      log.debug('writeCharacteristic: ...', value, type, uuid);
-      let device = bulbStore.getDiscoveredDeviceByUUID(uuid);
-      let wChar = device.characteristics[type];
-      log.info(`writeCharacteristic: Writing ${ type } Characteristic with value`, value);
-
-      return new Promise((resolve, reject) => {
-        log.info('writeCharacteristic: Promise', wChar);
-        wChar.write(getWriteValueBuffer(type, value), true, error => {
-          if (error) {
-            let errorMessage = `Could not write characteristic ${ type } with value ${ value }. Error: ${ error }`;
-            log.error(errorMessage);
-            reject(errorMessage);
-          }
-          log.info(`writeCharacteristic: wrote characteristic ${ type } with value`, value);
-          resolve(true);
-        });
-      });
-    }
-
-    function getWriteValueBuffer(type, value) {
-      let buffer = null;
-      switch (type) {
-        case 'color':
-          buffer = new Buffer([value.saturation, value.red, value.green, value.blue]);
-          break;
-        case 'effect':
-          buffer = new Buffer([value.saturation, value.red, value.green, value.blue, value.mode, '00', value.speed, '00']);
-          break;
-        case 'name':
-          buffer = new Buffer(value);
-          break;
-      }
-      return buffer;
-    }
+    
 
     function colorCharacteristicChange(data, isNotification) {
       log.info('change', data, isNotification);
@@ -607,25 +410,5 @@ import {
     }
   }
 
-  // utility functions
-  function getConfigCharacteristicUUIDs(type) {
-    return getUUIDfromConfig(type, 'characteristic');
-  }
-
-  function getConfigServiceUUIDs(type) {
-    return getUUIDfromConfig(type, 'service');
-  }
-
-  function getUUIDfromConfig(type, property) {
-    let types = config.get(`Bulb.Types.${type}`);
-    let uuids = [];
-    for (let name in types) {
-      let typeUUID = types[name][`${property}UUID`];
-      if (uuids.indexOf(typeUUID) === -1) {
-        uuids.push(typeUUID);
-      }
-    }
-    uuids.sort();
-    return uuids;
-  }
+  
 })();
