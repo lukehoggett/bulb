@@ -31,11 +31,10 @@ import {bulbStore} from './device-store';
       log.info('onNobleDiscovered: Discovered Playbulb device with UUID', device.uuid);
       log.info('onNobleDiscovered: device.advertisement.serviceUuids', device.advertisement.serviceUuids);
       // on discovery check if device is in stored devices, if not update stored
-      // if (!bulbStore.hasCachedDevice(device.uuid)) {
-      // save discovered device to persistent storage
-      bulbStore.setCachedDevice(device);
-
-      // }
+      if (!bulbStore.hasCachedDevice(device.uuid)) {
+        // save discovered device to persistent storage
+        bulbStore.setCachedDevice(device);
+      }
 
       // add properties to the device
       device.discovered = true; // we don't save discovered so need to add it here
@@ -58,7 +57,7 @@ import {bulbStore} from './device-store';
         .then((device) => {
           log.debug('Sending device connected message for device:', device);
           let deviceToSend = bulbStore.serializeDevice(device);
-          bulbStore.setCachedDevice(deviceToSend);
+          // bulbStore.setCachedDevice(deviceToSend);
           this.webContents.send(C.IPC_DEVICE_CONNECTED, deviceToSend);
         })
         .catch((error) => {
@@ -85,9 +84,8 @@ import {bulbStore} from './device-store';
                 log.debug('connect device state 0', device.state);
                 // store the device as discovered
                 bulbStore.setDiscoveredDevice(device);
-                // update the local storage copy ??? is this needed?
-                bulbStore.setCachedDevice(device);
-log.debug('connect device state', device.state);
+                log.debug('connect device state 1', device.state);
+log.debug('connect device state 2', device.state);
                 // timout needed for device to respond after connect
                 setTimeout(() => {
                   resolve(device);

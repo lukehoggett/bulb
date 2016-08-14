@@ -198,12 +198,7 @@ import
 
     function onIpcDeviceConnect(event, deviceUUID) {
       log.info('onDeviceConnect...');
-      
-      
-      
-      let device = bulb.connectAndReadCharacteristics(deviceUUID, webContents);
-      
-      
+      bulb.connectAndReadCharacteristics(deviceUUID, webContents);
     }
 
     function onIpcDeviceDisconnect(event, deviceUUID) {

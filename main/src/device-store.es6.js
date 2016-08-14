@@ -118,6 +118,7 @@ import storage from 'node-persist';
 
     setCachedDevice(device) {
       device.state = C.DISCONNECTED;
+      log.debug('bulbStore setCachedDevice');
       let serializedDevice = this.serializeDevice(device);
       deviceCache.setItem(serializedDevice.uuid, serializedDevice, error => {
         if (error) {
@@ -183,6 +184,7 @@ import storage from 'node-persist';
      * @return {[type]} [description]
      */
     serializeDevice(device) {
+      // log.debug('bulbStore serialize device', device);
       return {
         id: device.id,
         name: device.advertisement.localName,
