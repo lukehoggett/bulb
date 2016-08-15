@@ -97,10 +97,11 @@ class BulbCharacteristicController {
   }
 
   deviceSelected(event, uuid) {
-    this.$log.log('CharCtrl device_selcted', uuid);
+    this.$log.log('CharCtrl deviceSelected()', uuid);
     this.togglePane(this.DEVICE_EDIT_TYPE);
     
     this.device = this.bulbService.get(uuid);
+    this.$log.info(this.device);
     let characteristics = this.device.characteristics;
     this.$log.info('characteristic panel device', characteristics);
 

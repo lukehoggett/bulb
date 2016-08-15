@@ -57,7 +57,6 @@ import {bulbStore} from './device-store';
         .then((device) => {
           log.debug('Sending device connected message for device:', device);
           let deviceToSend = bulbStore.serializeDevice(device);
-          // bulbStore.setCachedDevice(deviceToSend);
           this.webContents.send(C.IPC_DEVICE_CONNECTED, deviceToSend);
         })
         .catch((error) => {
@@ -139,12 +138,48 @@ log.debug('connect device state 2', device.state);
       return new Promise((resolve, reject) => {
         let device = bulbStore.getDiscoveredDeviceByUUID(deviceUUID);
         device.characteristics = {};
-        characteristics.map(characteristic => {
-          device = this.addCharacteristicToDevice(device, characteristic);
+        
+        let devicePromises = [];
+        characteristics.forEach((characteristic) => {
+          devicePromises.push(this.addCharacteristicToDevice(device, characteristic));
         });
-log.debug('mapDiscoveredCharacteristics device state', device.state);
+        
+        Promise.all(devicePromises)
+        .then((values) => {
+          log.info('devicePromises', values);
+        }, error => {
+          log.error('devicePromises', error);
+        })
+        .catch(error => {
+          log.error('catch devicePromises', error);
+        });
+        // characteristics.map(characteristic => {
+        //   device = this.addCharacteristicToDevice(device, characteristic);
+        // });
+log.debug('mapDiscoveredCharacteristics device ', device.state);
         resolve(device);
       });
+    }
+    
+    addCharacteristicToDevice(device, characteristic) {
+      // @TODO handle color
+      let typeConfig = config.get('Bulb.Types.CANDLE');
+
+      switch (characteristic.uuid) {
+        case typeConfig.color.characteristicUUID:
+          device.characteristics.color = characteristic;
+          break;
+        case typeConfig.effects.characteristicUUID:
+          device.characteristics.effect = characteristic;
+          break;
+        case typeConfig.name.characteristicUUID:
+          device.characteristics.name = characteristic;
+          break;
+        case typeConfig.battery.characteristicUUID:
+          device.characteristics.battery = characteristic;
+          break;
+      }
+      return device;
     }
 
     readCharacteristics(device) {
@@ -182,26 +217,7 @@ log.debug('readCharacteristics device state', device.state);
 
     }
 
-    addCharacteristicToDevice(device, characteristic) {
-      // @TODO handle color
-      let typeConfig = config.get('Bulb.Types.CANDLE');
-
-      switch (characteristic.uuid) {
-        case typeConfig.color.characteristicUUID:
-          device.characteristics.color = characteristic;
-          break;
-        case typeConfig.effects.characteristicUUID:
-          device.characteristics.effect = characteristic;
-          break;
-        case typeConfig.name.characteristicUUID:
-          device.characteristics.name = characteristic;
-          break;
-        case typeConfig.battery.characteristicUUID:
-          device.characteristics.battery = characteristic;
-          break;
-      }
-      return device;
-    }
+    
 
     readCharacteristic(type, characteristic) {
       log.debug('readCharacteristic...', type);
