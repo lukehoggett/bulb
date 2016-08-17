@@ -131,6 +131,7 @@ import
     function onWindowClosed() {
       log.info('onWindowClosed...');
       noble.stopScanning();
+      disconnectAll();
       win = null;
       app.quit();
     }
@@ -327,16 +328,20 @@ import
     });
 
 
-    function onNobleDiscovered(device) {
+    function onNobleDiscovered(peripheral) {
       log.info('onNobleDiscovered...');
-      // check for Mipow devices
-      if (typeof device.advertisement.manufacturerData !== 'undefined' && device.advertisement.manufacturerData.toString('hex') === config.get('Bulb.MipowManufacturerData')) {
-        device = bulb.discovered(device);
+      // check for Mipow peripherals
+      
+      bulb.discovered(peripheral)
+      .then((device) => {
         // send notification to renderer that a device has been discovered
         webContents.send(C.IPC_DEVICE_DISCOVERED, bulbStore.serializeDevice(device));
-      } else {
-        log.info('onNobleDiscovered: Ignoring non bulb device');
-      }
+      })
+      .catch((error) => {
+        log.error('Discover error:', error);
+      });
+        
+      
     }
 
 
@@ -373,7 +378,7 @@ import
   });
 
   function disconnect(device) {
-    // log.info('disconnect()', device);
+    log.info('disconnect()', device.state);
     // if uuid, look up device
     if (typeof device == 'string') {
       device = bulbStore.getDiscoveredDeviceByUUID(device);
@@ -384,7 +389,7 @@ import
       if (error) {
         log.error('Disconnection error:', error);
       }
-      // log.info('Disconnected', device.uuid);
+      log.info('Disconnected', device.uuid, device.state);
       device.connected = false;
       // send disconnect event to the render process
       if (win !== null) {
@@ -395,9 +400,8 @@ import
   }
 
   function disconnectAll() {
-    // log.info('disconnectAll');
+    log.info('disconnectAll');
     let discoveredDevices = bulbStore.getDiscoveredDevices();
-    // log.info('disconnect devices', discoveredDevices);
     for (let uuid in discoveredDevices) {
       if (typeof discoveredDevices[uuid].disconnect === 'function') {
         disconnect(discoveredDevices[uuid]);

@@ -120,6 +120,7 @@ import storage from 'node-persist';
       device.state = C.DISCONNECTED;
       log.debug('bulbStore setCachedDevice');
       let serializedDevice = this.serializeDevice(device);
+      log.debug('setCachedDevice device', device);
       deviceCache.setItem(serializedDevice.uuid, serializedDevice, error => {
         if (error) {
           log.error('Cache error: on set', error);
@@ -175,42 +176,64 @@ import storage from 'node-persist';
       log.info('bulbCache deleteCachedGroup group', group);
     }
 
+    serializeDevice(device) {
+      return {
+        uuid: device.uuid,
+        peripheral: this.serializePeripheral(device.peripheral),
+        type: device.type,
+        characteristics: this.serializeCharacteristics(device.characteristics)
+      };
+    }
     /**
-     * Prepare a Noble device for serialization to send to a renderer process.
+     * Prepare a Noble peripheral for serialization to send to a renderer process.
      Copies out all the attributes the renderer might need.  Seems to be
      necessary as Noble's objects don't serialize well and lose attributes when
      pass around with the ipc class.
-     log.info('Serializing device', device);
+     log.info('Serializing peripheral', peripheral);
      * @return {[type]} [description]
      */
-    serializeDevice(device) {
-      // log.debug('bulbStore serialize device', device);
+    serializePeripheral(peripheral) {
+      // log.debug('bulbStore serialize peripheral', peripheral);
       return {
-        id: device.id,
-        name: device.advertisement.localName,
-        address: device.address,
-        state: device.state, // should we store whether it is connected
-        advertisement: device.advertisement,
-        // rssi: device.rssi,
-        uuid: device.uuid,
-        addressType: device.addressType,
-        connectable: device.connectable,
-        discovered: device.discovered || false,
+        id: peripheral.id,
+        name: peripheral.advertisement.localName,
+        address: peripheral.address,
+        state: peripheral.state, // should we store whether it is connected
+        advertisement: peripheral.advertisement,
+        uuid: peripheral.uuid,
+        addressType: peripheral.addressType,
+        connectable: peripheral.connectable,
+        discovered: peripheral.discovered || false,
         lastSeen: Date.now()
       };
     }
 
-    serializeCharacteristics(deviceUUID, characteristicValues) {
+    serializeCharacteristics(characteristics) {
+      // @TODO fix this
+      return characteristics;
+      
+      
       let device = this.serializeDevice(this.getDiscoveredDeviceByUUID(deviceUUID));
       let charList = {};
-      characteristicValues.forEach(c => {
-        charList[c.type] = {
-          uuid: c.characteristic.uuid,
-          name: c.characteristic.name,
-          type: c.characteristic.type,
-          value: c.data
-        };
-      });
+      log.debug('characteristicValues', characteristicValues);
+      
+      for (let charateristic of characteristicValues) {
+        log.debug(characteristicValues[charateristic]);
+        // charList[c.type] = {
+        //   uuid: c.characteristic.uuid,
+        //   name: c.characteristic.name,
+        //   type: c.characteristic.type,
+        //   value: c.data
+        // };
+      }
+      // characteristicValues.forEach(c => {
+      //   charList[c.type] = {
+      //     uuid: c.characteristic.uuid,
+      //     name: c.characteristic.name,
+      //     type: c.characteristic.type,
+      //     value: c.data
+      //   };
+      // });
       device.characteristics = charList;
       return device;
     }
