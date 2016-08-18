@@ -47,7 +47,7 @@
   },
   "jspm": {
     "directories": {
-      "baseURL": "browser"
+      "baseURL": "renderer"
     },
     "dependencies": {
       "angular": "github:angular/bower-angular@^1.4.7",
