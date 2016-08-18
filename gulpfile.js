@@ -53,7 +53,7 @@ gulp.task('lint:renderer', () => {
       '!renderer/jspm_packages/**', 
       '!node_modules/**'
     ])
-    // .pipe(debug({title: 'linting browser file...'}))
+    // .pipe(debug({title: 'linting renderer file...'}))
     .pipe(eslint())
     .pipe(eslint.format());
 });
@@ -86,12 +86,12 @@ gulp.task('styles', () => {
 
 
 
-// gulp.task('minify:browser', () => {
+// gulp.task('minify:renderer', () => {
 //   return gulp.src(['renderer/app/**/*.js'])
-//     .pipe(debug({title: 'minify browser file...'}))
+//     .pipe(debug({title: 'minify renderer file...'}))
 //     // .pipe(sourcemaps.init())
 //       .pipe(uglify())
-//       .pipe(debug({title: 'uglify browser file...'}))
+//       .pipe(debug({title: 'uglify renderer file...'}))
 //       .pipe(rename({ extname: '.min.js' }))
 //     // .pipe(sourcemaps.write())
 //     .pipe(gulp.dest('renderer/app'));
@@ -107,13 +107,13 @@ gulp.task('styles', () => {
 // });
 
 gulp.task('serve', ['transpile:main'], () => {
-  // Start browser process
+  // Start renderer process
   electronServer.start(() => {
     // console.info(arguments);
   });
   
   // console.info('Electron connect', electronServer);
-  // Restart browser process
+  // Restart renderer process
   gulp.watch(['main/src/*.js'], electronServer.restart());
 
   // Reload renderer process
