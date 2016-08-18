@@ -18,7 +18,7 @@ System.config({
     "angular": "github:angular/bower-angular@1.5.8",
     "angular-animate": "github:angular/bower-angular-animate@1.5.8",
     "angular-localforage": "npm:angular-localforage@1.3.1",
-    "angular-material": "github:angular/bower-material@master",
+    "angular-material": "github:angular/bower-material@1.1.0",
     "angular-material-icons": "npm:angular-material-icons@0.7.1",
     "angular-order-object-by": "bower:angular-order-object-by@1.3.0",
     "angular-route": "github:angular/bower-angular-route@1.5.8",
@@ -44,17 +44,13 @@ System.config({
     "github:angular/bower-angular-aria@1.5.8": {
       "angular": "github:angular/bower-angular@1.5.8"
     },
-    "github:angular/bower-angular-messages@1.5.8": {
-      "angular": "github:angular/bower-angular@1.5.8"
-    },
     "github:angular/bower-angular-route@1.5.8": {
       "angular": "github:angular/bower-angular@1.5.8"
     },
-    "github:angular/bower-material@master": {
+    "github:angular/bower-material@1.1.0": {
       "angular": "github:angular/bower-angular@1.5.8",
       "angular-animate": "github:angular/bower-angular-animate@1.5.8",
       "angular-aria": "github:angular/bower-angular-aria@1.5.8",
-      "angular-messages": "github:angular/bower-angular-messages@1.5.8",
       "css": "github:systemjs/plugin-css@0.1.26"
     },
     "github:jspm/nodelibs-assert@0.1.0": {
