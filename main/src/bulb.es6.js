@@ -134,6 +134,10 @@ import {bulbStore} from './device-store';
           if (error) {
             reject(error);
           }
+          log.info('discoverSomeServicesAndCharacteristics', {
+            deviceUUID: device.uuid,
+            characteristics: characteristics
+          });
           resolve({
             deviceUUID: device.uuid,
             characteristics: characteristics

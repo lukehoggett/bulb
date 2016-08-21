@@ -33,26 +33,26 @@
                 </md-icon>
             </div>
             <div class="controls" layout="row" layout-align="start center">
-                <md-button ng-click="$ctrl.bulb.toggleConnection(device.peripheral)" class="md-accent md-icon-button" aria-label="{{device.peripheral.state == $ctrl.C.CONNECTED ? 'Disconnect' : 'Connect'}}">
+                <md-button ng-click="$ctrl.bulb.toggleConnection(device.peripheral)" class="md-accent md-hue-3 md-icon-button" aria-label="{{device.peripheral.state == $ctrl.C.CONNECTED ? 'Disconnect' : 'Connect'}}">
                     <md-icon ng-if="device.peripheral.state == $ctrl.C.CONNECTED" aria-label="Disconnect">close</md-icon>
                     <md-icon ng-if="device.peripheral.state == $ctrl.C.DISCONNECTED" aria-label="Connect">check</md-icon>
                     <md-tooltip md-direction="top">
                         {{device.peripheral.state == $ctrl.C.CONNECTED ? 'Disconnect' : 'Connect'}}
                     </md-tooltip>
                 </md-button>
-                <md-button ng-click="$ctrl.selectDevice(device)" class="md-accent md-icon-button" aria-label="Edit Characteristics" ng-disabled="$ctrl.isEditDisabled(device)">
+                <md-button ng-click="$ctrl.selectDevice(device)" class="md-accent md-hue-3 md-icon-button" aria-label="Edit Characteristics" ng-disabled="$ctrl.isEditDisabled(device)">
                     
                     <md-icon aria-label="Edit Characteristics">edit</md-icon>
                     <md-tooltip md-direction="top">Edit Characteristics</md-tooltip>
                 </md-button>
                 <md-menu>
-                    <md-button md-menu-origin class="md-accent md-icon-button" aria-label="More Actions" ng-click="$ctrl.openMoreMenu($mdOpenMenu, $event)">
+                    <md-button md-menu-origin class="md-accent md-hue-3 md-icon-button" aria-label="More Actions" ng-click="$ctrl.openMoreMenu($mdOpenMenu, $event)">
                         <md-icon aria-label="More Actions">more_vert</md-icon>
                         <!-- <md-tooltip md-direction="top">More Actions</md-tooltip> -->
                     </md-button>
                     <md-menu-content width="4">
                         <md-menu-item>
-                            <md-button ng-click="$ctrl.addToGroup(device)" class="md-accent" aria-label="Add to Group" ng-disabled="false">
+                            <md-button ng-click="$ctrl.addToGroup(device)" class="md-accent md-hue-3" aria-label="Add to Group" ng-disabled="false">
                                 <md-icon md-menu-align-target aria-label="Add To Group">group_add</md-icon>Add to Group
                                 <!-- <md-tooltip md-direction="top">
                                     Get Characteristics
@@ -60,7 +60,7 @@
                             </md-button>
                         </md-menu-item>
                         <md-menu-item>
-                            <md-button ng-click="$ctrl.getCharacterisics(device)" class="md-accent" aria-label="Get Characteristics" ng-disabled="device.peripheral.state == $ctrl.C.CONNECTED ? false : true">
+                            <md-button ng-click="$ctrl.getCharacterisics(device)" class="md-accent md-hue-3" aria-label="Get Characteristics" ng-disabled="device.peripheral.state == $ctrl.C.CONNECTED ? false : true">
                                 <md-icon aria-label="Get Characteristics">system_update_alt</md-icon>Get Characteristics
                                 <!-- <md-tooltip md-direction="top">
                                     Get Characteristics
