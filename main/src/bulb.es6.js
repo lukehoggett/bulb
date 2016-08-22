@@ -37,7 +37,7 @@ import {bulbStore} from './device-store';
 
           // this is needed to add the noble extra object stuff that can't be stored in the persistent storage
           bulbStore.setDiscoveredDevice(device);
-          log.debug('bulb.discovered resolve with', device);
+          log.debug('bulb.discovered resolving');
           resolve(device);
           
         } else {
@@ -77,7 +77,7 @@ import {bulbStore} from './device-store';
           log.debug('Sending device connected message for device:', device, device.characteristics);
           let deviceToSend = bulbStore.serializeCharacteristics(device.uuid, device.characteristics);
           log.debug('Sending device connected message for deviceToSend:', deviceToSend);
-          this.webContents.send(C.IPC_DEVICE_CONNECTED, deviceToSend);
+          this.webContents.send(C.IPC_DEVICE_CONNECTED, device);
         })
         .catch((error) => {
           log.error('Connection catch error:', error);
@@ -124,7 +124,7 @@ import {bulbStore} from './device-store';
     }
 
     discoverSomeServicesAndCharacteristics(device) {
-      log.info('discoverSomeServicesAndCharacteristics...', device, device.peripheral.state);
+      log.info('discoverSomeServicesAndCharacteristics...');
 
       let serviceUUIDs = this.getConfigServiceUUIDs('CANDLE');
       let characteristicUUIDs = this.getConfigCharacteristicUUIDs('CANDLE');
@@ -134,100 +134,98 @@ import {bulbStore} from './device-store';
           if (error) {
             reject(error);
           }
-          log.info('discoverSomeServicesAndCharacteristics', {
-            deviceUUID: device.uuid,
-            characteristics: characteristics
-          });
-          resolve({
-            deviceUUID: device.uuid,
-            characteristics: characteristics
-          });
+          device.characteristics = characteristics;
+          resolve(device);
         });
-      });
-    }
-
-    mapDiscoveredService(deviceUUID, services) {
-      services.map(service => {
-        log.info('mapDiscoveredService: service', service.deviceUUID, service.name);
       });
     }
 
     readCharacteristics(device) {
       log.info('readCharacteristics...', device);
+  
       
-      if (device.characteristics.color && device.characteristics.effect && device.characteristics.name && device.characteristics.battery) {
+      let haveCharacteristicColor = false;
+      let haveCharacteristicEffect = false;
+      let haveCharacteristicName = false;
+      let haveCharacteristicBattery = false;
+      
+      let typeConfig = config.get('Bulb.Types.CANDLE');
+      let deviceCharacteristics = {}; 
+      device.characteristics.forEach((characteristic, index) => {
+        
+        switch (characteristic.uuid) {
+          case typeConfig.color.characteristicUUID:
+            haveCharacteristicColor = true;
+            deviceCharacteristics.color = characteristic;
+            break;
+          case typeConfig.effects.characteristicUUID:
+            haveCharacteristicEffect = true;
+            deviceCharacteristics.effect = characteristic;
+            break;
+          case typeConfig.name.characteristicUUID:
+            haveCharacteristicName = true;
+            deviceCharacteristics.name = characteristic;
+            break;
+          case typeConfig.battery.characteristicUUID:
+            haveCharacteristicBattery = true;
+            deviceCharacteristics.battery = characteristic;
+            break;
+          }
+      });  
+      
+      if (haveCharacteristicColor && haveCharacteristicEffect && haveCharacteristicName && haveCharacteristicBattery) {
+        device.characteristics = deviceCharacteristics;
         log.debug('device.characteristics', device.characteristics, Object.keys(device.characteristics));
-        return Promise.all(Object.keys(device.characteristics).map((characteristicKey, name) => {
-          let readPromise = this.readCharacteristic(characteristicKey, device.characteristics[characteristicKey]);
-          log.debug('read promise', readPromise);
-          return readPromise;
-        }));
-      } else {
+        let readPromises = [];
+        Object.keys(device.characteristics).map((characteristicKey, name) => {
+          readPromises.push(this.readCharacteristic(characteristicKey, device.characteristics[characteristicKey]));
+        });
+        return new Promise((resolve, reject) => {
+          log.debug('readPromises', readPromises);
+          Promise.all(readPromises)
+          .then((promiseAllResult) => {
+            log.debug('promiseAllResult', promiseAllResult);
+            device.characteristics = promiseAllResult;
+            resolve(device);
+          });
+
+        });
+              } else {
         log.warn('Do not have all characteristics');
         // reject('Do not have all characteristics');
       }
-      
-//       return new Promise((resolve, reject) => {
-//         if (device.characteristics.color && device.characteristics.effect && device.characteristics.name && device.characteristics.battery) {
-//           let all = [
-//             this.readCharacteristic('color', device.characteristics.color),
-//             this.readCharacteristic('effect', device.characteristics.effect),
-//             this.readCharacteristic('name', device.characteristics.name),
-//             this.readCharacteristic('battery', device.characteristics.battery)
-//           ];
-// 
-//           return Promise.all(device.characteristics.map((characteristic, name) => {
-//             this.readCharacteristic(name, characteristic);
-//           }));
-// //             .then(values => {
-// //               // let device = bulbStore.getDiscoveredDeviceByUUID(device.uuid);
-// //               // log.info('mapDiscoveredCharacteristics: have required characteristics', device.uuid);
-// //               // send notification of values to ui
-// //               bulbStore.setDiscoveredDevice(device);
-// // log.debug('readCharacteristics device state', device.state);
-// //               // device = bulbStore.serializeCharacteristics(device.uuid, values);
-// //               log.info('+_+_+_+_+_+_+_+_+_+ mapDiscoveredCharacteristics: ', device.uuid, 'device serialized', device);
-// //               resolve(device);
-// //             }, error => {
-// //               log.error('Promise.all failed ', error);
-// //             })
-// //             .catch(error => {
-// //               log.error('Promise.all catch ', error);
-// //             });
-// //           Promise.all(all)
-// //             .then(values => {
-// //               // let device = bulbStore.getDiscoveredDeviceByUUID(device.uuid);
-// //               // log.info('mapDiscoveredCharacteristics: have required characteristics', device.uuid);
-// //               // send notification of values to ui
-// //               bulbStore.setDiscoveredDevice(device);
-// // log.debug('readCharacteristics device state', device.state);
-// //               // device = bulbStore.serializeCharacteristics(device.uuid, values);
-// //               log.info('+_+_+_+_+_+_+_+_+_+ mapDiscoveredCharacteristics: ', device.uuid, 'device serialized', device);
-// //               resolve(device);
-// //             }, error => {
-// //               log.error('Promise.all failed ', error);
-// //             })
-// //             .catch(error => {
-// //               log.error('Promise.all catch ', error);
-// //             });
-//         } else {
-//           reject('Do not have all characteristics');
-//         }
-//       });
+  
 
     }
     
-    mapDiscoveredCharacteristics(data) {
-      log.debug('mapDiscoveredCharacteristics', data);
-
-      let device = bulbStore.getDiscoveredDeviceByUUID(data.deviceUUID);
-      device.characteristics = {};
-      
-      return Promise.all(data.characteristics.map(characteristic => {
-        log.debug('Promise all mapDiscoveredService');
-        return this.addCharacteristicToDevice(device, characteristic);
-      }));
+    mapDiscoveredService(deviceUUID, services) {
+      services.map(service => {
+        log.info('mapDiscoveredService: service', service.deviceUUID, service.name);
+      });
     }
+    
+    mapDiscoveredCharacteristics(device) {
+      log.debug('mapDiscoveredCharacteristics....', device);
+      let mappedCharacteristics = {};
+      return new Promise((resolve, reject) => {
+        device.characteristics.forEach((characteristic) => {
+          mappedCharacteristics[characteristic.type] = {};
+          mappedCharacteristics[characteristic.type].characteristic = characteristic.characteristic;
+          mappedCharacteristics[characteristic.type].data = characteristic.data;
+        });
+        log.debug('mapDiscoveredCharacteristics', mappedCharacteristics);
+        device.characteristics = mappedCharacteristics;
+        resolve(device);
+      });
+      
+      
+      // return Promise.all(device.characteristics.map(characteristic => {
+      //   log.debug('Promise all mapDiscoveredService');
+      //   return this.addCharacteristicToDevice(device, characteristic);
+      // }));
+    }
+    
+    
     
     addCharacteristicToDevice(device, characteristic) {
       // @TODO handle color

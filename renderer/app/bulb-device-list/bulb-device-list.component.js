@@ -124,7 +124,6 @@ class BulbDeviceListController {
   }
   
   isEditDisabled(device) {
-    this.$log.info('isEDITABLE', device);
     return !(device.peripheral.state === this.C.CONNECTED) && (device.characteristics.length === 0);
   }
 }

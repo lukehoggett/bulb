@@ -1,7 +1,6 @@
 <div id="device-list">
     <md-list class="list">
         <md-list-item ng-repeat="device in $ctrl.bulb.devices | orderObjectBy: 'discovered' : true" class="list noright" layout-align="start center">
-            {{device.peripheral.state}} {{$ctrl.C.DISCONNECTED}}
             <p>
                 <span ng-if="device.peripheral.state == $ctrl.C.DISCONNECTED">{{device.peripheral.name}}</span>
                 <md-input-container ng-if="device.peripheral.state == $ctrl.C.CONNECTED">
