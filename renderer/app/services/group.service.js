@@ -71,15 +71,16 @@ class GroupService {
   }
   
   toggleConnection(group) {
-    this.$log.info(`BulbService: Handling connection to device `, group);
+    this.$log.info(`BulbService: Handling group connection to device `, group);
     let device = null;
     
     // remove undiscovered devices before requesting connection/disconnection from main, cloning group and its children
     let groupDevicesClone = Array.from(group.devices);
     let groupClone = Object.assign({}, group);
     groupClone.devices = groupDevicesClone;
+    this.$log.debug('groupConeDevices', groupDevicesClone, groupClone);
     angular.forEach(groupClone.devices, (deviceUUID, index) => {
-      if (!this.bulbService.get(deviceUUID).discovered) {
+      if (!this.bulbService.get(deviceUUID).peripheral.discovered) {
         groupClone.devices.splice(index, index + 1);
       }
     });

@@ -215,7 +215,7 @@ import
         let all = [];
         group.devices.forEach((deviceUUID) => {
           log.debug(`Calling connect for device ${deviceUUID}`);
-          all.push(connect(deviceUUID));
+          all.push(bulb.connectAndReadCharacteristics(deviceUUID));
         });
         log.debug('*************** groupConnect All promises', all);
 
