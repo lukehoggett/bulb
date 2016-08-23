@@ -18,7 +18,7 @@
                 <span ng-repeat="deviceUUID in group.devices" class="group-devices md-caption">
                     <md-icon ng-if="$first" aria-label="Device icon">lightbulb_outline</md-icon>
                     <span ng-if="!$first">,</span>
-                    <span class="device-name", ng-class="$ctrl.bulb.get(deviceUUID).state == $ctrl.C.CONNECTED ? 'green' : 'red'">{{$ctrl.bulb.get(deviceUUID).name}}</span>
+                    <span class="device-name", ng-class="$ctrl.bulb.get(deviceUUID).peripheral.state == $ctrl.C.CONNECTED ? 'green' : 'red'">{{$ctrl.bulb.get(deviceUUID).peripheral.name}}</span>
                 </span>
             </div>
             <div class="controls" layout="row" layout-align="start center">
@@ -40,10 +40,10 @@
                             <span flex>Select device to add</span>
                         </md-menu-item>
                         <md-menu-divider></md-menu-divider>
-                        <md-menu-item ng-repeat="(uuid, device) in $ctrl.bulb.devices" ng-if="$ctrl.isDeviceInMenu(device, group)">
+                        <md-menu-item ng-repeat="(uuid, device) in $ctrl.bulb.getAll()" ng-if="$ctrl.isDeviceInMenu(device, group)">
                             <span flex>
-                                <md-checkbox ng-checked="$ctrl.isDeviceInGroup(group, device)" aria-label="{{device.name}}"                 ng-click="$ctrl.toggleDeviceToGroup(device, group, selected)">
-                                    {{device.name}}
+                                <md-checkbox ng-checked="$ctrl.isDeviceInGroup(group, device.peripheral)" aria-label="{{device.peripheral.name}}"                 ng-click="$ctrl.toggleDeviceToGroup(device.peripheral, group, selected)">
+                                    {{device.peripheral.name}}
                                 </md-checkbox>
                             </span>
                         </md-menu-item>
