@@ -12,8 +12,11 @@ export function bulbHeaderComponent() {
   return component;
 }
 
+const ipc = require('electron').ipcRenderer;
+
 class BulbHeaderController {
-  constructor($rootScope, $mdSidenav, $log, bulbService) {
+  constructor($rootScope, $mdSidenav, $log, bulbService, C) {
+    this.C = C;
     this.$log = $log;
     this.$mdSidenav = $mdSidenav;
     this.bulbService = bulbService;

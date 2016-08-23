@@ -251,7 +251,7 @@ import
       // get the characteristic
       let device = deviceCache.getByUUID(deviceUUID);
       log.info('device.characteristic.set device', device);
-      writeCharacteristic(value, type, deviceUUID)
+      bulb.writeCharacteristic(value, type, deviceUUID)
         .catch(error => {
           log.error('Write catch error from set characteristic event', error);
         });

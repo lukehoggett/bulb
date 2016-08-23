@@ -101,24 +101,23 @@ class BulbCharacteristicController {
     this.togglePane(this.DEVICE_EDIT_TYPE);
     
     this.device = this.bulbService.get(uuid);
-    this.$log.info(this.device);
-    let characteristics = this.device.characteristics;
-    this.$log.info('characteristic panel device', characteristics);
-
+    
+    let colorCharacteristic = this.device.characteristics.color;
+    let effectCharacteristic = this.device.characteristics.effect;
     this.color = {
-      saturation: characteristics.color.value[0],
-      red: characteristics.color.value[1],
-      green: characteristics.color.value[2],
-      blue: characteristics.color.value[3]
+      saturation: colorCharacteristic.data[0],
+      red: colorCharacteristic.data[1],
+      green: colorCharacteristic.data[2],
+      blue: colorCharacteristic.data[3]
     };
 
     this.effect = {
-      saturation: characteristics.effect.value[0],
-      red: characteristics.effect.value[1],
-      green: characteristics.effect.value[2],
-      blue: characteristics.effect.value[3],
-      mode: characteristics.effect.value[4],
-      speed: characteristics.effect.value[6]
+      saturation: effectCharacteristic.data[0],
+      red: effectCharacteristic.data[1],
+      green: effectCharacteristic.data[2],
+      blue: effectCharacteristic.data[3],
+      mode: effectCharacteristic.data[4],
+      speed: effectCharacteristic.data[6]
     };
     this.$log.info('DeviceSelected color', this.color);
     this.$log.info('DeviceSelected effect', this.effect);
@@ -152,7 +151,7 @@ class BulbCharacteristicController {
   }
 
   detectType() {
-    let currentEffectValues = Array.from(this.device.characteristics.effect.value);
+    let currentEffectValues = Array.from(this.device.characteristics.effect.data);
     let match = (this.EFFECTS_OFF_VALUES.length === currentEffectValues.length) && this.EFFECTS_OFF_VALUES.every((value, index) => {
       return value == currentEffectValues[index];
     });
