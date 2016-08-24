@@ -1,13 +1,11 @@
 // external libraries
 import angular from 'angular';
-// import ngRoute from 'angular-route';
-import {uiRouter} from 'angular-ui-router';
-
-import {ngMaterial} from 'angular-material';
-import {ngAnimate} from 'angular-animate';
-import {ngMdIcons} from 'angular-material-icons';
-import {ngOrderObjectBy} from 'angular-order-object-by';
-import {mdColorPicker} from 'md-color-picker';
+import 'angular-ui-router';
+import 'angular-material';
+import 'angular-animate';
+import 'angular-material-icons';
+import 'angular-order-object-by';
+import 'md-color-picker';
 
 // constants
 import * as C from '../../main/dist/constants';
@@ -44,8 +42,6 @@ import {
 import {
   GroupService
 } from './services/group.service';
-
-const _templateBase = './app/';
 
 bulbApp();
 bulbHeader();

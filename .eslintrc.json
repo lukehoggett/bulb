@@ -4,6 +4,9 @@
     "spread": true,
     "restParams": true
   },
+  "plugins": [
+    "angular"
+  ],
   "env": {
     "browser": true,
     "es6": true,
@@ -11,13 +14,7 @@
   },
   "globals": {
     "angular": true,
-    "module": true,
-    "tinycolor": true,
-    "ngMaterial": true,
-    "ngAnimate": true,
-    "ngMdIcons": true,
-    "ngOrderObjectBy": true,
-    "mdColorPicker": true
+    "module": true
   },
   "rules": {
     "accessor-pairs": 2,
