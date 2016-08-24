@@ -19,8 +19,8 @@ class BulbAppController {
   constructor($mdToast, $log, C) {
     this.C = C;
     this.toast = $mdToast;
-    this.$log = $log; 
-    
+    this.$log = $log;
+
     ipc.on(this.C.IPC_ERROR, (event, message) => {
       this.$log.info('Error:', message);
       this.showErrorToast(message);
@@ -36,15 +36,12 @@ class BulbAppController {
     );
   }
 
-
-
   navSelect(item) {
-    if (item.id == 1) {
+    if (item.id === 1) {
       this.showDevices();
-    } else if (item.id == 2) {
+    } else if (item.id === 2) {
 
     }
   }
-
 
 }

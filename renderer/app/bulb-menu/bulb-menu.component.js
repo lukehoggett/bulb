@@ -14,7 +14,6 @@ export function bulbMenuComponent() {
 
 class BulbMenuController {
   constructor($rootScope, $state, $log) {
-    
     this.menuItems = [{
       id: 1,
       name: 'device',

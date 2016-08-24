@@ -25,7 +25,6 @@ class BulbService {
     ipc.on(this.C.IPC_SCANNING_STOP, (event) => this.onScanningStop(event));
     ipc.on(this.C.IPC_DEVICE_CONNECTED, (event, device) => this.onConnected(event, device));
     ipc.on(this.C.IPC_DEVICE_DISCONNECTED, (event, device) => this.onDisconnected(event, device));
-
   }
 
   getCachedDevices() {
@@ -58,10 +57,9 @@ class BulbService {
     this.scanning = false;
   }
 
-
   toggleConnection(device) {
     this.$log.info(`BulbService: Handling connection to device ${device.name} [${device.uuid}] with state ${device.state}`);
-    if (device.state == this.C.DISCONNECTED) {
+    if (device.state === this.C.DISCONNECTED) {
       this.connect(device);
     } else {
       this.disconnect(device);
@@ -134,7 +132,6 @@ class BulbService {
     this.devices[device.uuid] = device;
     this.$timeout(() => {}, 0);
   }
-
 
   onConnected(event, device) {
     this.$log.log('BulbService: connected', device, device.uuid);

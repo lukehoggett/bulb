@@ -4,22 +4,21 @@ const ipc = require('electron').ipcRenderer;
 const uuid = require('uuid');
 
 class GroupService {
-  
+
   constructor($timeout, bulbService, $log, C) {
     'ngInject';
     this.$timeout = $timeout;
     this.bulbService = bulbService;
     this.$log = $log;
     this.C = C;
-    
+
     this.groups = {};
-    
+
     // request any cached groups from the main process
     this.getCachedGroups();
 
     // listening to messages from the main
     ipc.on(C.IPC_GROUP_GET_CACHED_REPLY, (event, group, uuid) => this.onGroupGetCachedReply(event, group, uuid));
-
   }
 
   getAll() {
@@ -30,7 +29,7 @@ class GroupService {
     // this.$log.info('GroupService() get', uuid, this.groups, this.groups[uuid]);
     return this.groups[uuid];
   }
-  
+
   getDeviceGroupName(device) {
     let deviceGroupName = '';
     angular.forEach(this.getAll(), (group) => {
@@ -40,7 +39,7 @@ class GroupService {
     });
     return deviceGroupName;
   }
-  
+
   add() {
     // this.$log.info('GroupService: add:');
     let group = {};
@@ -69,11 +68,10 @@ class GroupService {
     // update persistent storage
     ipc.send(this.C.IPC_GROUP_DELETE_CACHED, group);
   }
-  
+
   toggleConnection(group) {
     this.$log.info(`BulbService: Handling group connection to device `, group);
-    let device = null;
-    
+
     // remove undiscovered devices before requesting connection/disconnection from main, cloning group and its children
     let groupDevicesClone = Array.from(group.devices);
     let groupClone = Object.assign({}, group);
@@ -84,7 +82,7 @@ class GroupService {
         groupClone.devices.splice(index, index + 1);
       }
     });
-    
+
     let channel = '';
     switch (groupClone.state) {
       case this.C.DISCONNECTED:
@@ -92,7 +90,7 @@ class GroupService {
         break;
       case this.C.CONNECTED:
         channel = this.C.IPC_GROUP_DISCONNECT;
-        break;  
+        break;
     }
     ipc.send(channel, groupClone);
   }

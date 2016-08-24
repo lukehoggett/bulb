@@ -6,5 +6,5 @@ export function bulbGroupList() {
   return angular
     .module('bulb.group-list', [])
     .directive('bulbGroupList', bulbGroupListComponent)
-    .config(bulbGroupListRoute);;
+    .config(bulbGroupListRoute);
 }

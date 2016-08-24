@@ -1,18 +1,18 @@
 // external libraries
 import angular from 'angular';
 // import ngRoute from 'angular-route';
-import uiRouter from 'angular-ui-router';
+import {uiRouter} from 'angular-ui-router';
 
-import ngMaterial from 'angular-material';
-import ngAnimate from 'angular-animate';
-import ngMdIcons from 'angular-material-icons';
-import ngOrderObjectBy from 'angular-order-object-by';
-import mdColorPicker from 'md-color-picker';
+import {ngMaterial} from 'angular-material';
+import {ngAnimate} from 'angular-animate';
+import {ngMdIcons} from 'angular-material-icons';
+import {ngOrderObjectBy} from 'angular-order-object-by';
+import {mdColorPicker} from 'md-color-picker';
 
 // constants
 import * as C from '../../main/dist/constants';
 
-// routes 
+// routes
 import {
   routerConfig
 } from './index.route';
@@ -55,19 +55,19 @@ bulbDeviceList();
 bulbGroupList();
 
 angular.module('bulb', [
-    'ui.router',
-    'ngMdIcons',
-    'ngMaterial',
-    'ngAnimate',
-    'ngOrderObjectBy',
-    'mdColorPicker',
-    'bulb.app',
-    'bulb.header',
-    'bulb.menu',
-    'bulb.characteristic',
-    'bulb.device-list',
-    'bulb.group-list'
-  ])
+  'ui.router',
+  'ngMdIcons',
+  'ngMaterial',
+  'ngAnimate',
+  'ngOrderObjectBy',
+  'mdColorPicker',
+  'bulb.app',
+  'bulb.header',
+  'bulb.menu',
+  'bulb.characteristic',
+  'bulb.device-list',
+  'bulb.group-list'
+])
   .constant('C', C)
   .service('bulbService', BulbService)
   .service('groupService', GroupService)
@@ -98,8 +98,8 @@ function config($mdThemingProvider) {
     'contrastDefaultColor': 'light',
     'contrastDarkColors': '50 100 200 A100 A200'
   });
-  
-$mdThemingProvider.definePalette('accent', {
+
+  $mdThemingProvider.definePalette('accent', {
     '50': '#fbfdfc',
     '100': '#c8e2d8',
     '200': '#a4cfbd',
@@ -117,8 +117,8 @@ $mdThemingProvider.definePalette('accent', {
     'contrastDefaultColor': 'light',
     'contrastDarkColors': '50 100 200 300 400 500 A100 A200 A400'
   });
-  
-$mdThemingProvider.definePalette('mcgpalette2', {
+
+  $mdThemingProvider.definePalette('mcgpalette2', {
     '50': '#fdfdf1',
     '100': '#f4f5ad',
     '200': '#edee7b',
@@ -136,8 +136,8 @@ $mdThemingProvider.definePalette('mcgpalette2', {
     'contrastDefaultColor': 'light',
     'contrastDarkColors': '50 100 200 300 400 500 600 700 A100 A200 A400 A700'
   });
-  
-$mdThemingProvider.definePalette('background', {
+
+  $mdThemingProvider.definePalette('background', {
     '50': '#fffefd',
     '100': '#f7e4b9',
     '200': '#f1d186',
@@ -159,6 +159,6 @@ $mdThemingProvider.definePalette('background', {
   $mdThemingProvider.theme('bulb')
   .primaryPalette('primary')
   .accentPalette('accent');
-  
+
   $mdThemingProvider.setDefaultTheme('bulb');
 }

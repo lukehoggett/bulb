@@ -21,7 +21,7 @@ class BulbHeaderController {
     this.$mdSidenav = $mdSidenav;
     this.bulbService = bulbService;
   }
-  
+
   toggleMenu() {
     this.$log.log('Toggle Menu', this.$mdSidenav);
     this.$mdSidenav('menu').toggle();
@@ -35,7 +35,7 @@ class BulbHeaderController {
       this.bulbService.startScan();
     }
   }
-  
+
   doCrash() {
     this.$log.log('Crash Reporting');
     ipc.send(this.C.IPC_CRASH, 'Something bad happened...');

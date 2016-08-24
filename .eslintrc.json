@@ -9,6 +9,16 @@
     "es6": true,
     "node": true
   },
+  "globals": {
+    "angular": true,
+    "module": true,
+    "tinycolor": true,
+    "ngMaterial": true,
+    "ngAnimate": true,
+    "ngMdIcons": true,
+    "ngOrderObjectBy": true,
+    "mdColorPicker": true
+  },
   "rules": {
     "accessor-pairs": 2,
     "arrow-spacing": [

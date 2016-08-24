@@ -24,8 +24,6 @@ class BulbGroupListController {
     this.originatorEvent;
   }
 
-
-
   createGroup() {
     this.groupService.add();
   }
@@ -44,12 +42,11 @@ class BulbGroupListController {
   }
 
   toggleDeviceToGroup(device, group) {
-
     if (group.devices.indexOf(device.uuid) !== -1) {
       // removing
       this.groupService.groups[group.uuid].devices.splice(this.groupService.groups.devices, 1);
     } else {
-      //adding
+      // adding
       this.groupService.groups[group.uuid].devices.push(device.uuid);
     }
     // update main proces storage

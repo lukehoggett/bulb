@@ -13,8 +13,6 @@ export function bulbDeviceListComponent() {
 }
 
 
-const ipc = require('electron').ipcRenderer;
-
 class BulbDeviceListController {
 
   constructor($rootScope, $mdDialog, bulbService, groupService, $log, C) {
@@ -49,7 +47,7 @@ class BulbDeviceListController {
     this.originatorEvent = $event;
     $mdOpenMenu($event);
   }
-  
+
   addToGroupClick(device) {
     this.$log.info('list: addToGroup', device);
   }
@@ -117,12 +115,12 @@ class BulbDeviceListController {
       locals: {
         items: []
       },
-      controller: DeviceListCtrl
+      controller: BulbDeviceListController
     });
 
     this.originatorEvent = null;
   }
-  
+
   isEditDisabled(device) {
     return !(device.peripheral.state === this.C.CONNECTED) && (device.characteristics.length === 0);
   }

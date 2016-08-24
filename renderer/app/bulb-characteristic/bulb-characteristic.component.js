@@ -12,7 +12,6 @@ export function bulbCharacteristicComponent() {
   return component;
 }
 
-
 class BulbCharacteristicController {
 
   constructor($scope, $mdSidenav, bulbService, groupService, $log) {
@@ -20,7 +19,7 @@ class BulbCharacteristicController {
     this.$scope = $scope;
     this.bulbService = bulbService;
     this.groupService = groupService;
-    this.$log = $log; 
+    this.$log = $log;
 
     this.TYPE_COLOR = 'color';
     this.TYPE_EFFECT = 'effect';
@@ -31,7 +30,7 @@ class BulbCharacteristicController {
 
     this.device = null;
     this.group = null;
-    
+
     this.editType = this.DEVICE_EDIT_TYPE;
 
     this.type = '';
@@ -93,15 +92,14 @@ class BulbCharacteristicController {
 
     this.$scope.$on('device_selected', this.deviceSelected.bind(this));
     this.$scope.$on('group_selected', this.groupSelected.bind(this));
-
   }
 
   deviceSelected(event, uuid) {
     this.$log.log('CharCtrl deviceSelected()', uuid);
     this.togglePane(this.DEVICE_EDIT_TYPE);
-    
+
     this.device = this.bulbService.get(uuid);
-    
+
     let colorCharacteristic = this.device.characteristics.color;
     let effectCharacteristic = this.device.characteristics.effect;
     this.color = {
@@ -123,14 +121,14 @@ class BulbCharacteristicController {
     this.$log.info('DeviceSelected effect', this.effect);
     this.detectType();
   }
-  
+
   groupSelected(event, uuid) {
     this.$log.log('CharCtrl groupSelected', uuid);
     this.togglePane(this.GROUP_EDIT_TYPE);
-    
+
     this.group = this.groupService.get(uuid);
     this.$log.log('CharCtrl this.group', this.group);
-    
+
     this.color = {
       saturation: 255,
       red: 255,
@@ -138,11 +136,9 @@ class BulbCharacteristicController {
       blue: 128
     };
     return;
-    this.device = this.bulbService.get(uuid);
-    let characteristics = this.device.characteristics;
-    this.$log.info('characteristic panel device', characteristics);
-
-    
+    // this.device = this.bulbService.get(uuid);
+    // let characteristics = this.device.characteristics;
+    // this.$log.info('characteristic panel device', characteristics);
   }
 
   togglePane(source) {
@@ -153,7 +149,7 @@ class BulbCharacteristicController {
   detectType() {
     let currentEffectValues = Array.from(this.device.characteristics.effect.data);
     let match = (this.EFFECTS_OFF_VALUES.length === currentEffectValues.length) && this.EFFECTS_OFF_VALUES.every((value, index) => {
-      return value == currentEffectValues[index];
+      return value === currentEffectValues[index];
     });
     if (match) {
       this.type = this.TYPE_COLOR;
@@ -195,12 +191,12 @@ class BulbCharacteristicController {
       };
       value = this.color;
     }
-    
+
     // send new values to the event process
     this.$log.log('Save characteristic', characteristic);
     this.$log.log('Save value', value);
     this.$log.log('Save type', this.type);
-    
+
     switch (this.editType) {
       case this.DEVICE_EDIT_TYPE:
         this.$log.info('device edit');
@@ -215,7 +211,7 @@ class BulbCharacteristicController {
         });
         break;
       default:
-        
-    } 
+
+    }
   }
 }

@@ -6,5 +6,5 @@ export function bulbDeviceList() {
   return angular
     .module('bulb.device-list', [])
     .directive('bulbDeviceList', bulbDeviceListComponent)
-    .config(bulbDeviceListRoute);;
+    .config(bulbDeviceListRoute);
 }
