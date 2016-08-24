@@ -116,8 +116,9 @@ import storage from 'node-persist';
     setCachedDevice(device) {
       device.state = C.DISCONNECTED;
       log.debug('bulbStore setCachedDevice');
-      let serializedDevice = this.serializeDevice(device);
       log.debug('setCachedDevice device', device);
+      let serializedDevice = this.serializeDevice(device);
+      log.debug('setCachedDevice serializedDevice', serializedDevice);
       deviceCache.setItem(serializedDevice.uuid, serializedDevice, error => {
         if (error) {
           log.error('Cache error: on set', error);
@@ -174,6 +175,7 @@ import storage from 'node-persist';
     }
 
     serializeDevice(device) {
+      log.debug('serializeDevice', device);
       return {
         uuid: device.uuid,
         peripheral: this.serializePeripheral(device.peripheral),
@@ -207,7 +209,15 @@ import storage from 'node-persist';
 
     serializeCharacteristics(characteristics) {
       // @TODO fix this
-      return characteristics;
+      log.debug('serializeCharacteristics', characteristics, Object.keys(characteristics));
+      let serializedCharacteristics = {};
+
+      Object.keys(characteristics)
+        .map((characteristicType, index) => {
+          serializedCharacteristics[characteristicType] = this.serializeCharacteristic(characteristics[characteristicType]);
+        });
+      log.debug('serializedCharacteristics', serializedCharacteristics);
+      return serializedCharacteristics;
 
       // let device = this.serializeDevice(this.getDiscoveredDeviceByUUID(deviceUUID));
       // let charList = {};
@@ -232,6 +242,19 @@ import storage from 'node-persist';
       // // });
       // device.characteristics = charList;
       // return device;
+    }
+
+    serializeCharacteristic(characteristic) {
+      log.debug('characteristic', characteristic);
+
+      return {
+        charateristic: {
+          uuid: characteristic.characteristic.uuid,
+          name: characteristic.characteristic.name,
+          type: characteristic.characteristic.type
+        },
+        data: characteristic.data
+      };
     }
   }
 

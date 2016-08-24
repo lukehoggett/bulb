@@ -227,18 +227,24 @@ export default class Bulb {
   }
 
   writeCharacteristic(value, type, uuid) {
-    log.debug('writeCharacteristic: ...', value, type, uuid);
+    log.debug('writeCharacteristic: ...');
     let device = bulbStore.getDiscoveredDeviceByUUID(uuid);
+    log.debug('writeCharacteristic: device', device);
     let wChar = device.characteristics[type].characteristic;
     log.info(`writeCharacteristic: Writing ${type} Characteristic with value`, value);
     return new Promise((resolve, reject) => {
-      wChar.write(this.getWriteValueBuffer(type, value), true, error => {
+      let writeValueBuffer = this.getWriteValueBuffer(type, value);
+      wChar.write(writeValueBuffer, true, error => {
         if (error) {
           let errorMessage = `Could not write characteristic ${type} with value ${value}. Error: ${error}`;
           log.error(errorMessage);
           reject(errorMessage);
         }
-        resolve(true);
+
+        // update device with value set
+        device.characteristics[type].data = this.getWriteValueBuffer(type, value);
+        log.debug('write resove device', device);
+        resolve(device);
       });
     });
   }

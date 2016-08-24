@@ -78,15 +78,30 @@ class BulbCharacteristicController {
       type: 1,
       label: 'Color',
       icon: 'brush',
-      default: 'rgb(0,255,0)',
-      openOnInput: true,
-      clearButton: true,
-      alphaChannel: true,
-      rgb: true,
+      default: '#f00',
+      // mdColorHistory: false,
+      // mdColorClearButton: false,
+      // mdColorOpenOnInput: true,
+      // mdColorPreview: true,
+      // mdColorAlphaChannel: true,
+      // mdColorSpectrum: false,
+      // mdColorSliders: false,
+      // mdColorMaterialPalette: false,
+      // mdColorRgb: true,
+      // mdColorHsl: false,
+      // mdColorHex: false/*,
+      // mdColorDefaultTab: 'spectrum' */
       history: false,
-      hex: false,
+      clearButton: false,
+      openOnInput: true,
+      preview: true,
+      alphaChannel: true,
+      spectrum: false,
+      sliders: false,
+      materialPalette: false,
+      rgb: true,
       hsl: false,
-      defaultTab: 'sliders'
+      hex: false
     };
     // this.colorPicker
 

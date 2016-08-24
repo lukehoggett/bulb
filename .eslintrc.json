@@ -14,7 +14,8 @@
   },
   "globals": {
     "angular": true,
-    "module": true
+    "module": true,
+    "tinycolor": true
   },
   "rules": {
     "accessor-pairs": 2,

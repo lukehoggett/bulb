@@ -241,6 +241,13 @@ import
       let device = deviceCache.getByUUID(deviceUUID);
       log.info('device.characteristic.set device', device);
       bulb.writeCharacteristic(value, type, deviceUUID)
+        .then((device) => {
+          log.debug('device.characteristics', device.characteristics);
+          // @TODO move this to own function for clean chaining
+
+          // save to cache
+          bulbStore.setCachedDevice(device);
+        })
         .catch(error => {
           log.error('Write catch error from set characteristic event', error);
         });

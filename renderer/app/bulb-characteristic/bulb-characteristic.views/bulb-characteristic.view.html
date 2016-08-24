@@ -11,7 +11,10 @@
             </md-radio-group>
         </duv>
         <div class="picker-container" ng-if="$ctrl.type == $ctrl.TYPE_COLOR">
-            <div md-color-picker="$ctrl.colorPicker.options" ng-model="$ctrl.colorPicker.color"></div>
+            <!-- <md-color-picker ng-model="$ctrl.colorPicker.color" md-color-default="#ff00ff"><md-color-picker> -->
+            <div 
+            md-color-picker="$ctrl.colorPicker.options"
+            ng-model="$ctrl.colorPicker.color"></div>
         </div>
         <md-divider></md-divider>
 
