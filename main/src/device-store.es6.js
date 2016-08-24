@@ -47,10 +47,8 @@ import storage from 'node-persist';
       log.info('BulbCache: getDevicesFromCache');
       let haveCached = Object.keys(devices).length !== 0 && devices.constructor === Object;
       if (!haveCached) {
-
         let deviceKeys = deviceCache.keys();
         deviceKeys.forEach((uuid, index) => {
-
           let device = deviceCache.getItem(uuid, (error, device) => {
             if (error) {
               log.error(error);
@@ -70,13 +68,12 @@ import storage from 'node-persist';
     getGroupsFromCache() {
       let groupKeys = groupCache.keys();
       groupKeys.forEach((uuid, index) => {
-
         let group = groupCache.getItem(uuid, (error, group) => {
           if (error) {
             log.error(error);
           }
         });
-        
+
         group.state = C.DISCONNECTED;
 
         // log.info('getGroupsFromCache group', group, uuid);
@@ -164,7 +161,7 @@ import storage from 'node-persist';
 
     setDiscoveredDevices(devices) {
       devices.forEach((device) => {
-        tis.setDiscoveredDevice(device);
+        this.setDiscoveredDevice(device);
       });
     }
 
@@ -211,37 +208,34 @@ import storage from 'node-persist';
     serializeCharacteristics(characteristics) {
       // @TODO fix this
       return characteristics;
-      
-      
-      let device = this.serializeDevice(this.getDiscoveredDeviceByUUID(deviceUUID));
-      let charList = {};
-      log.debug('characteristicValues', characteristicValues);
-      
-      for (let charateristic of characteristicValues) {
-        log.debug(characteristicValues[charateristic]);
-        // charList[c.type] = {
-        //   uuid: c.characteristic.uuid,
-        //   name: c.characteristic.name,
-        //   type: c.characteristic.type,
-        //   value: c.data
-        // };
-      }
-      // characteristicValues.forEach(c => {
-      //   charList[c.type] = {
-      //     uuid: c.characteristic.uuid,
-      //     name: c.characteristic.name,
-      //     type: c.characteristic.type,
-      //     value: c.data
-      //   };
-      // });
-      device.characteristics = charList;
-      return device;
+
+      // let device = this.serializeDevice(this.getDiscoveredDeviceByUUID(deviceUUID));
+      // let charList = {};
+      // log.debug('characteristicValues', characteristicValues);
+      //
+      // for (let charateristic of characteristicValues) {
+      //   log.debug(characteristicValues[charateristic]);
+      //   // charList[c.type] = {
+      //   //   uuid: c.characteristic.uuid,
+      //   //   name: c.characteristic.name,
+      //   //   type: c.characteristic.type,
+      //   //   value: c.data
+      //   // };
+      // }
+      // // characteristicValues.forEach(c => {
+      // //   charList[c.type] = {
+      // //     uuid: c.characteristic.uuid,
+      // //     name: c.characteristic.name,
+      // //     type: c.characteristic.type,
+      // //     value: c.data
+      // //   };
+      // // });
+      // device.characteristics = charList;
+      // return device;
     }
   }
 
   exports.bulbStore = new BulbStore();
-
-
 
   // load all currently stored devices
   let getAll = function() {
@@ -249,7 +243,6 @@ import storage from 'node-persist';
     log.info('device-deviceCache: getAll');
     let haveCached = Object.keys(devices).length !== 0 && devices.constructor === Object;
     if (!haveCached) {
-
       let deviceKeys = deviceCache.keys();
       deviceKeys.forEach((uuid, index) => {
         let device = deviceCache.getItem(uuid, (error, device) => {
@@ -288,5 +281,4 @@ import storage from 'node-persist';
   exports.getAll = getAll;
   exports.getByUUID = getByUUID;
   exports.set = set;
-
 })();

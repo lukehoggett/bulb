@@ -7,9 +7,7 @@ import {
 } from './logger';
 import noble from 'noble';
 import deviceCache from './device-store';
-import {
-  bulbStore
-} from './device-store';
+const bulbStore = deviceCache.bulbStore;
 
 'use strict';
 
@@ -21,16 +19,13 @@ export default class Bulb {
 
   discovered(peripheral) {
     let playbulbType = this.getPlaybulbType(peripheral);
-
     return new Promise((resolve, reject) => {
-
       if (this.isPlaybulb(peripheral)) {
         let device = {};
         device.uuid = peripheral.uuid;
         device.peripheral = peripheral;
         device.type = playbulbType;
         device.characteristics = [];
-
 
         // on discovery check if device is in stored devices, if not update stored
         if (!bulbStore.hasCachedDevice(device.uuid)) {
@@ -45,13 +40,11 @@ export default class Bulb {
         bulbStore.setDiscoveredDevice(device);
         log.debug('bulb.discovered resolving');
         resolve(device);
-
       } else {
         // @TODO confirm behaviour is ok for no playbulbs, and that they are being ignored
         log.info('bulb.discovered: Ignoring non bulb device');
         reject('bulb.discovered: Ignoring non bulb device');
       }
-
     });
   }
 
@@ -60,18 +53,19 @@ export default class Bulb {
   }
 
   getPlaybulbType(peripheral) {
+    let type;
     switch (peripheral.advertisement.serviceUuids[0]) {
       case config.get('Bulb.AdvertisedServiceUUIDs.CANDLE'):
-        return config.get('Bulb.Types.CANDLE');
+        type = config.get('Bulb.Types.CANDLE');
         break;
       case config.get('Bulb.AdvertisedServiceUUIDs.COLOR'):
-        return config.get('Bulb.Types.COLOR');
+        type = config.get('Bulb.Types.COLOR');
         break;
     }
+    return type;
   }
 
   connectAndReadCharacteristics(deviceUUID) {
-
     noble.stopScanning();
     this.webContents.send(C.IPC_SCANNING_STOP);
 
@@ -90,13 +84,12 @@ export default class Bulb {
   }
 
   connect(uuid, inGroup = false) {
-
     return new Promise((resolve, reject) => {
       log.info('connect: uuid', uuid);
 
       let device = bulbStore.getDiscoveredDeviceByUUID(uuid);
       if (device) {
-        if (device.peripheral.state == C.CONNECTED) {
+        if (device.peripheral.state === C.CONNECTED) {
           // @TODO need to send data about device if it is already connected?
           log.info(`connect: device ${device.uuid} already connected`);
         } else if (typeof device.peripheral.connect === 'function') {
@@ -114,13 +107,12 @@ export default class Bulb {
             }
           });
         } else {
-          reject(`Device ${ device.peripheral.name } [${ uuid }] not connectable.`);
+          reject(`Device ${device.peripheral.name} [${uuid}] not connectable.`);
         }
       } else {
         reject(`Device unknown not connectable.`);
       }
     });
-
   }
 
   discoverServicesAndCharacteristics(device) {
@@ -148,7 +140,6 @@ export default class Bulb {
   readCharacteristics(device) {
     log.info('readCharacteristics...');
 
-
     let haveCharacteristicColor = false;
     let haveCharacteristicEffect = false;
     let haveCharacteristicName = false;
@@ -157,7 +148,6 @@ export default class Bulb {
     let typeConfig = config.get('Bulb.Types.CANDLE');
     let deviceCharacteristics = {};
     device.characteristics.forEach((characteristic, index) => {
-
       switch (characteristic.uuid) {
         case typeConfig.color.characteristicUUID:
           haveCharacteristicColor = true;
@@ -178,7 +168,6 @@ export default class Bulb {
       }
     });
 
-
     return new Promise((resolve, reject) => {
       if (haveCharacteristicColor && haveCharacteristicEffect && haveCharacteristicName && haveCharacteristicBattery) {
         device.characteristics = deviceCharacteristics;
@@ -193,14 +182,11 @@ export default class Bulb {
             device.characteristics = promiseAllResult;
             resolve(device);
           });
-
       } else {
         log.warn('Do not have all characteristics');
         reject('Do not have all characteristics');
       }
     });
-
-
   }
 
   mapDiscoveredService(deviceUUID, services) {
@@ -244,11 +230,11 @@ export default class Bulb {
     log.debug('writeCharacteristic: ...', value, type, uuid);
     let device = bulbStore.getDiscoveredDeviceByUUID(uuid);
     let wChar = device.characteristics[type].characteristic;
-    log.info(`writeCharacteristic: Writing ${ type } Characteristic with value`, value);
+    log.info(`writeCharacteristic: Writing ${type} Characteristic with value`, value);
     return new Promise((resolve, reject) => {
       wChar.write(this.getWriteValueBuffer(type, value), true, error => {
         if (error) {
-          let errorMessage = `Could not write characteristic ${ type } with value ${ value }. Error: ${ error }`;
+          let errorMessage = `Could not write characteristic ${type} with value ${value}. Error: ${error}`;
           log.error(errorMessage);
           reject(errorMessage);
         }

@@ -1,2 +1,2 @@
-import config  from 'config';
+import config from 'config';
 exports.config = config;

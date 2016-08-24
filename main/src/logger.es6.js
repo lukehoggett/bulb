@@ -8,8 +8,7 @@ import {
 // configure bunyan logging
 let log = bunyan.createLogger({
   name: config.get('Logging.name'),
-  level: 'trace',
-  
+  level: 'trace'
 });
 
 log.level();

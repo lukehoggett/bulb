@@ -74,4 +74,4 @@ export const DISPLAYSIZE_FULL = 'full';
 
 // DEVICE && GROUP
 export const CONNECTED = 'connected';
-export const DISCONNECTED = 'disconnected'; 
+export const DISCONNECTED = 'disconnected';

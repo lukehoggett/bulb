@@ -9,24 +9,23 @@ import {
 
 // Modules for electron
 import electron from 'electron';
-import {
-  app,
-  BrowserWindow,
-  ipcMain
-} from 'electron';
+const app = electron.app;
+const BrowserWindow = electron.BrowserWindow;
+const ipcMain = electron.ipcMain;
 
 // bluetooth module
 import noble from 'noble';
 // util module
-import util from 'util';
+// import util from 'util';
 // cli arg parser
 import yargs from 'yargs';
 
 // local module for device storage and retrieval from persistent storage
 import deviceCache from './device-store';
-import {
-  bulbStore
-} from './device-store';
+const bulbStore = deviceCache.bulbStore;
+// import {
+//   bulbStore
+// } from './device-store';
 
 // local module for handling bulb actions
 import
@@ -60,12 +59,7 @@ import
 
   let win;
 
-  let colorChar = null;
-  let effectChar = null;
-  let nameChar = null;
-  
   let bulb = null;
-
 
   process.on(C.PROCESS_UNCAUGHT_EXCEPTION, onProcessUncaughtException);
 
@@ -73,19 +67,16 @@ import
     log.error('onProcessUncaughtException', arguments);
   }
 
-
   // handle quitting
   app.on(C.APP_WINDOW_ALL_CLOSED, onAppWindowAllClosed);
   app.on(C.APP_QUIT, onAppQuit);
 
   function onAppWindowAllClosed() {
     // force app termination on OSX when win has been closed
-    if (process.platform == 'darwin') {
+    if (process.platform === 'darwin') {
       app.quit();
     }
   }
-
-
 
   function onAppQuit() {
     disconnectAll();
@@ -141,7 +132,7 @@ import
     }
 
     let webContents = win.webContents;
-    
+
     bulb = new Bulb(webContents);
 
     webContents.openDevTools({
@@ -163,7 +154,6 @@ import
     function onWebContentsCrashed() {
       log.error('onWebContentsCrashed', arguments);
     }
-
 
     // adding ipcMain listeners
     ipcMain.on(C.IPC_SCAN_START, onIpcScanStart);
@@ -228,7 +218,6 @@ import
           .catch(error => {
             log.error('GroupConnect Promise.all catch ', error);
           });
-
       } else {
         log.debug('less than once device in group');
         log.warn(`Group ${group.name} has no devices`);
@@ -243,7 +232,7 @@ import
       log.info('onDeviceGetCharacteristics...');
       let device = deviceCache.getByUUID(deviceUUID);
       log.info('service and characteristic discovery from get');
-      discoverServicesAndCharacteristics(device);
+      bulb.discoverServicesAndCharacteristics(device);
     }
 
     function onIpcDeviceSetCharacteristic(event, deviceUUID, value, type) {
@@ -281,9 +270,6 @@ import
       bulbStore.setCachedDevice(device);
     }
 
-
-
-
     function onIpcGroupSetCached(event, group) {
       log.info('onIpcGroupSetCached...', group);
       bulbStore.setCachedGroup(group);
@@ -300,9 +286,7 @@ import
           // log.info('onIpcGroupGetCached sending', group);
           event.sender.send(C.IPC_GROUP_GET_CACHED_REPLY, group);
         });
-
     }
-
 
     // noble event listeners
     noble.on(C.NOBLE_DISCOVER, onNobleDiscovered);
@@ -327,11 +311,10 @@ import
       log.warn('noble on warning', message);
     });
 
-
     function onNobleDiscovered(peripheral) {
       log.info('onNobleDiscovered...');
       // check for Mipow peripherals
-      
+
       bulb.discovered(peripheral)
       .then((device) => {
         // send notification to renderer that a device has been discovered
@@ -340,10 +323,7 @@ import
       .catch((error) => {
         log.error('Discover error:', error);
       });
-        
-      
     }
-
 
     function startScanning() {
       log.debug('startScanning...');
@@ -358,29 +338,12 @@ import
         // process.exit(1);
       }
     }
-    
-    
-
-    
-
-    function colorCharacteristicChange(data, isNotification) {
-      log.info('change', data, isNotification);
-    }
-
-    function effectsCharacteristicChange(data, isNotification) {
-      log.info('change', data, isNotification);
-    }
-
-    function nameCharacteristicChange(data, isNotification) {
-      log.info('change', data, isNotification);
-    }
-
   });
 
   function disconnect(device) {
     log.info('disconnect()', device.state);
     // if uuid, look up device
-    if (typeof device == 'string') {
+    if (typeof device === 'string') {
       device = bulbStore.getDiscoveredDeviceByUUID(device);
     }
 
@@ -395,7 +358,6 @@ import
       if (win !== null) {
         win.webContents.send(C.IPC_DEVICE_DISCONNECTED, device);
       }
-
     });
   }
 
@@ -408,6 +370,4 @@ import
       }
     }
   }
-
-  
 })();
