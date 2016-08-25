@@ -325,6 +325,7 @@ import
       bulb.discovered(peripheral)
       .then((device) => {
         // send notification to renderer that a device has been discovered
+        log.debug('onNobleDiscovered serializedDevice', bulbStore.serializeDevice(device));
         webContents.send(C.IPC_DEVICE_DISCOVERED, bulbStore.serializeDevice(device));
       })
       .catch((error) => {

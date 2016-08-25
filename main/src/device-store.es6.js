@@ -214,6 +214,7 @@ import storage from 'node-persist';
 
       Object.keys(characteristics)
         .map((characteristicType, index) => {
+          log.debug('characteristicType', characteristicType);
           serializedCharacteristics[characteristicType] = this.serializeCharacteristic(characteristics[characteristicType]);
         });
       log.debug('serializedCharacteristics', serializedCharacteristics);
@@ -223,8 +224,8 @@ import storage from 'node-persist';
       // let charList = {};
       // log.debug('characteristicValues', characteristicValues);
       //
-      // for (let charateristic of characteristicValues) {
-      //   log.debug(characteristicValues[charateristic]);
+      // for (let characteristic of characteristicValues) {
+      //   log.debug(characteristicValues[characteristic]);
       //   // charList[c.type] = {
       //   //   uuid: c.characteristic.uuid,
       //   //   name: c.characteristic.name,
@@ -248,7 +249,7 @@ import storage from 'node-persist';
       log.debug('characteristic', characteristic);
 
       return {
-        charateristic: {
+        characteristic: {
           uuid: characteristic.characteristic.uuid,
           name: characteristic.characteristic.name,
           type: characteristic.characteristic.type

@@ -21,11 +21,14 @@ export default class Bulb {
     let playbulbType = this.getPlaybulbType(peripheral);
     return new Promise((resolve, reject) => {
       if (this.isPlaybulb(peripheral)) {
+        // look up cached device and merge discovered device characteristics
+        let cachedDevice = bulbStore.getCachedDeviceByUUID(peripheral.uuid);
+        log.debug('discovered cachedDevice', cachedDevice);
         let device = {};
         device.uuid = peripheral.uuid;
         device.peripheral = peripheral;
         device.type = playbulbType;
-        device.characteristics = [];
+        device.characteristics = (cachedDevice ? cachedDevice.characteristics : {});
 
         // on discovery check if device is in stored devices, if not update stored
         if (!bulbStore.hasCachedDevice(device.uuid)) {
@@ -38,7 +41,7 @@ export default class Bulb {
 
         // this is needed to add the noble extra object stuff that can't be stored in the persistent storage
         bulbStore.setDiscoveredDevice(device);
-        log.debug('bulb.discovered resolving');
+        log.debug('bulb.discovered resolving', device);
         resolve(device);
       } else {
         // @TODO confirm behaviour is ok for no playbulbs, and that they are being ignored
@@ -76,7 +79,7 @@ export default class Bulb {
       .then((device) => {
         let serializedDevice = bulbStore.serializeDevice(device);
         this.webContents.send(C.IPC_DEVICE_CONNECTED, serializedDevice);
-        // bulbStore.setCachedDevice(device);
+        bulbStore.setCachedDevice(device);
       })
       .catch((error) => {
         log.error('Connection catch error:', error);
