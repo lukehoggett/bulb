@@ -187,6 +187,18 @@ class BulbService {
     return this.isEffectOrColor(device.characteristics) === this.C.TYPE_COLOR;
   }
 
+  isDiscovered(uuid) {
+    return this.get(uuid).peripheral.discovered;
+  }
+
+  isConnected(uuid) {
+    return this.get(uuid).peripheral.state === this.C.CONNECTED;
+  }
+
+  getLastSeen(uuid) {
+    return this.get(uuid).peripheral.lastSeen;
+  }
+
 }
 
 export {

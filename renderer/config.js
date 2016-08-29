@@ -1,5 +1,5 @@
 System.config({
-  baseURL: "/home/luke/Dropbox/projects/electron/bulb/node_modules/jspm/lib/config/",
+  baseURL: __dirname + "/",
   defaultJSExtensions: true,
   transpiler: "babel",
   babelOptions: {
