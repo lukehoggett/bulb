@@ -20,6 +20,7 @@ import noble from 'noble';
 // cli arg parser
 import yargs from 'yargs';
 
+import BulbSerializer from './bulb-serializer';
 // local module for device storage and retrieval from persistent storage
 import deviceCache from './device-store';
 const bulbStore = deviceCache.bulbStore;
@@ -324,9 +325,10 @@ import
 
       bulb.discovered(peripheral)
       .then((device) => {
+        log.debug(BulbSerializer);
         // send notification to renderer that a device has been discovered
-        log.debug('onNobleDiscovered serializedDevice', bulbStore.serializeDevice(device));
-        webContents.send(C.IPC_DEVICE_DISCOVERED, bulbStore.serializeDevice(device));
+        log.debug('onNobleDiscovered serializedDevice', BulbSerializer.serializeDevice(device));
+        webContents.send(C.IPC_DEVICE_DISCOVERED, BulbSerializer.serializeDevice(device));
       })
       .catch((error) => {
         log.error('Discover error:', error);

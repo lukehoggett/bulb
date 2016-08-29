@@ -1,3 +1,5 @@
+'use strict';
+
 import * as C from './constants';
 import {
   config
@@ -6,10 +8,9 @@ import {
   log
 } from './logger';
 import noble from 'noble';
+import BulbSerializer from './bulb-serializer';
 import deviceCache from './device-store';
 const bulbStore = deviceCache.bulbStore;
-
-'use strict';
 
 export default class Bulb {
 
@@ -77,7 +78,7 @@ export default class Bulb {
       .then(this.readCharacteristics.bind(this))
       .then(this.mapDiscoveredCharacteristics.bind(this))
       .then((device) => {
-        let serializedDevice = bulbStore.serializeDevice(device);
+        let serializedDevice = BulbSerializer.serializeDevice(device);
         this.webContents.send(C.IPC_DEVICE_CONNECTED, serializedDevice);
         bulbStore.setCachedDevice(device);
       })
