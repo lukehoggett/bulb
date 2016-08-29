@@ -46,6 +46,7 @@ npm run sm|md|lg|full
 
 ## Caveats
 
+Trying to set Linux capabilities 
 ```sh
 sudo setcap cap_net_raw+eip $(eval readlink -f `which node`)
 ```
@@ -56,7 +57,7 @@ Whenever you ran 'jspm init' correct line 2 of browser/config.js to: (unless you
 baseURL: __dirname + "/",
 ```
 
-Every time npm i is run need to run `./node_modules/.bin/electron-rebuild` from the app/ dir
+When `npm i` is run may need to run `./node_modules/.bin/electron-rebuild` from the app/ dir
 
 
 
@@ -66,12 +67,13 @@ Every time npm i is run need to run `./node_modules/.bin/electron-rebuild` from 
 ## Todo
 - [x] convert css to sass
 - [x] process sass in gulp
-- [ ] promisify pingback from renderer
+- [/] promisify
 - [x] handle group connection 
-- [ ] store device color or effect state in cache
+- [x] store device color or effect state in cache
 - [ ] store group color or effect state in cache
 - [ ] get gulp tasks running electron
 - [ ] effect and color previews in device and group lists
 - [x] refactor to Angular 1.5+ components
-- [ ] refactor to Angular 2 with TypeScript
 - [ ] add timers
+- [ ] building packages for distribution
+- [ ] refactor to Angular 2 with TypeScript
