@@ -164,6 +164,7 @@ class BulbService {
   }
 
   isEffectOrColor(characteristics) {
+    this.$log.debug('isEffectOrColor');
     let result = this.C.TYPE_EFFECT;
     if (characteristics.effect && characteristics.effect.data) {
       let currentEffectValues = Array.from(characteristics.effect.data);

@@ -12,6 +12,8 @@
                 <span class="device-group">
                     <span ng-if="$ctrl.groupService.getDeviceGroupName(device) !== ''" class="md-caption" md-colors="{color: 'accent-200'}">{{$ctrl.groupService.getDeviceGroupName(device)}}</span>
                     <span class="device-uuid md-caption md-hue-2" md-colors="{color: 'primary-200'}">{{device.peripheral.uuid}}</span>
+                    <span class="display-type md-caption md-hue-2" md-colors="{color: 'primary-200'}">{{$ctrl.bulb.isEffectOrColor(device.characteristics)}}</span>
+                    <span class="bulb-type md-caption md-hue-2" md-colors="{color: 'primary-200'}">{{$ctrl.bulb.getBulbType(device)}}</span>
                 </span>
                 <span ng-if="device.characteristics.battery.data[0]" class="md-caption" md-colors="{color: 'primary-200'}">{{device.characteristics.battery.data[0]}}%</span>
                 <md-icon ng-if="device.characteristics.battery.data[0]">

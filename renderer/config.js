@@ -1,5 +1,5 @@
 System.config({
-  baseURL: __dirname + "/",
+  baseURL: "/home/luke/Dropbox/projects/electron/bulb/node_modules/jspm/lib/config/",
   defaultJSExtensions: true,
   transpiler: "babel",
   babelOptions: {
@@ -29,6 +29,7 @@ System.config({
     "core-js": "npm:core-js@1.2.7",
     "defunctzombie/node-uuid": "github:defunctzombie/node-uuid@2.0.2",
     "md-color-picker": "github:brianpkelley/md-color-picker@develop",
+    "mdi": "npm:mdi@1.7.22",
     "mozilla/localForage": "github:localForage/localForage@1.4.2",
     "ocombe/angular-localForage": "github:ocombe/angular-localForage@1.3.1",
     "tinycolor2": "npm:tinycolor2@1.4.1",
