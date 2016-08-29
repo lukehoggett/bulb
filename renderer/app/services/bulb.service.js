@@ -117,6 +117,13 @@ class BulbService {
   // IPC listeners
   onDeviceGetCachedReply(event, device) {
     this.$log.log('BulbService: onDeviceGetCachedReply...', device);
+
+    // @TODO move - here for testing
+    // dummy call
+    this.$log.debug('isEffectOrColor', this.isEffectOrColor(device.characteristics));
+    this.$log.debug('getBulbType', this.getBulbType(device));
+    this.$log.debug('isEffect', this.isEffect(device));
+    this.$log.debug('isColor', this.isColor(device));
     this.devices[device.uuid] = device;
   }
 
@@ -142,6 +149,41 @@ class BulbService {
   onDisconnected(event, device) {
     this.$log.info('BulbService: disconnected event');
     this.devices[device.uuid] = device;
+  }
+
+  getBulbType(device) {
+    let type = null;
+    if (device.type) {
+      if (device.type.color.serviceUUID === this.C.SERVICE_UUID_CANDLE) {
+        type = this.C.NAME_CANDLE;
+      } else if (device.type.color.serviceUUID === this.C.SERVICE_UUID_COLOR) {
+        type = this.C.NAME_COLOR;
+      }
+    }
+    return type;
+  }
+
+  isEffectOrColor(characteristics) {
+    let result = this.C.TYPE_EFFECT;
+    if (characteristics.effect && characteristics.effect.data) {
+      let currentEffectValues = Array.from(characteristics.effect.data);
+      let effectsOff = (this.C.EFFECTS_OFF_VALUES.length === currentEffectValues.length) && this.C.EFFECTS_OFF_VALUES.every((value, index) => {
+        return value === currentEffectValues[index];
+      });
+
+      if (effectsOff) {
+        result = this.C.TYPE_COLOR;
+      }
+      return result;
+    }
+  }
+
+  isEffect(device) {
+    return this.isEffectOrColor(device.characteristics) === this.C.TYPE_EFFECT;
+  }
+
+  isColor(device) {
+    return this.isEffectOrColor(device.characteristics) === this.C.TYPE_COLOR;
   }
 
 }

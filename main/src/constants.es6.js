@@ -75,3 +75,18 @@ export const DISPLAYSIZE_FULL = 'full';
 // DEVICE && GROUP
 export const CONNECTED = 'connected';
 export const DISCONNECTED = 'disconnected';
+
+// peripheral service UUIDs
+export const SERVICE_UUID_COLOR = 'ff00';
+export const SERVICE_UUID_CANDLE = 'ff02';
+
+// peripheral names
+export const NAME_COLOR = 'color';
+export const NAME_CANDLE = 'candle';
+
+// effect or color types
+export const TYPE_COLOR = 'color';
+export const TYPE_EFFECT = 'effect';
+
+// value of characteristic when effects are off
+export const EFFECTS_OFF_VALUES = [0, 0, 0, 0, 255, 0, 1, 0];
