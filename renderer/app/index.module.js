@@ -38,14 +38,14 @@ import {
 // services
 import {
   BulbDeviceService
-} from './components/services/bulb-device/bulb-device.service';
+} from './core/services/bulb-device/bulb-device.service';
 import {
   BulbGroupService
-} from './components/services/bulb-group/bulb-group.service';
+} from './core/services/bulb-group/bulb-group.service';
 
 import {
   BulbPreview
-} from './components/directives/bulb-preview/bulb-preview.directive';
+} from './core/directives/bulb-preview/bulb-preview.directive';
 
 bulbApp();
 bulbHeader();

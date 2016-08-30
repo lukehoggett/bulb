@@ -13,7 +13,7 @@ export function BulbPreview() {
     restrict: 'EA',
     controller: BulbPreviewController,
     controllerAs: '$ctrl',
-    templateUrl: 'app/components/directives/bulb-preview/bulb-preview.views/bulb-preview.view.html',
+    templateUrl: 'app/core/directives/bulb-preview/bulb-preview.views/bulb-preview.view.html',
     bindToController: true
   };
 
