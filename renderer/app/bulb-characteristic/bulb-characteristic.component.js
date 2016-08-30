@@ -14,11 +14,11 @@ export function bulbCharacteristicComponent() {
 
 class BulbCharacteristicController {
 
-  constructor($scope, $mdSidenav, bulbService, groupService, $log) {
+  constructor($scope, $mdSidenav, bulbDeviceService, bulbGroupService, $log) {
     this.mdSidenav = $mdSidenav;
     this.$scope = $scope;
-    this.bulbService = bulbService;
-    this.groupService = groupService;
+    this.bulbDeviceService = bulbDeviceService;
+    this.bulbGroupService = bulbGroupService;
     this.$log = $log;
 
     this.TYPE_COLOR = 'color';
@@ -113,7 +113,7 @@ class BulbCharacteristicController {
     this.$log.log('CharCtrl deviceSelected()', uuid);
     this.togglePane(this.DEVICE_EDIT_TYPE);
 
-    this.device = this.bulbService.get(uuid);
+    this.device = this.bulbDeviceService.get(uuid);
 
     let colorCharacteristic = this.device.characteristics.color;
     let effectCharacteristic = this.device.characteristics.effect;
@@ -141,7 +141,7 @@ class BulbCharacteristicController {
     this.$log.log('CharCtrl groupSelected', uuid);
     this.togglePane(this.GROUP_EDIT_TYPE);
 
-    this.group = this.groupService.get(uuid);
+    this.group = this.bulbGroupService.get(uuid);
     this.$log.log('CharCtrl this.group', this.group);
 
     this.color = {
@@ -151,7 +151,7 @@ class BulbCharacteristicController {
       blue: 128
     };
     return;
-    // this.device = this.bulbService.get(uuid);
+    // this.device = this.bulbDeviceService.get(uuid);
     // let characteristics = this.device.characteristics;
     // this.$log.info('characteristic panel device', characteristics);
   }
@@ -215,13 +215,13 @@ class BulbCharacteristicController {
     switch (this.editType) {
       case this.DEVICE_EDIT_TYPE:
         this.$log.info('device edit');
-        this.bulbService.setCharacteristic(this.device.uuid, value, this.type);
+        this.bulbDeviceService.setCharacteristic(this.device.uuid, value, this.type);
         break;
       case this.GROUP_EDIT_TYPE:
         this.$log.info('group edit');
         angular.forEach(this.group.devices, (deviceUUID) => {
-          if (this.bulbService.get(deviceUUID).state === this.C.CONNECTED) {
-            this.bulbService.setCharacteristic(deviceUUID, value, this.type);
+          if (this.bulbDeviceService.get(deviceUUID).state === this.C.CONNECTED) {
+            this.bulbDeviceService.setCharacteristic(deviceUUID, value, this.type);
           }
         });
         break;

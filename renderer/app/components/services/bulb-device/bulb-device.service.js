@@ -3,7 +3,7 @@
 const ipc = require('electron')
   .ipcRenderer;
 
-class BulbService {
+class BulbDeviceService {
   constructor($rootScope, $timeout, $log, C) {
     this.$rootScope = $rootScope;
     this.$timeout = $timeout;
@@ -202,5 +202,5 @@ class BulbService {
 }
 
 export {
-  BulbService
+  BulbDeviceService
 };

@@ -37,11 +37,15 @@ import {
 
 // services
 import {
-  BulbService
-} from './services/bulb.service';
+  BulbDeviceService
+} from './components/services/bulb-device/bulb-device.service';
 import {
-  GroupService
-} from './services/group.service';
+  BulbGroupService
+} from './components/services/bulb-group/bulb-group.service';
+
+import {
+  BulbPreview
+} from './components/directives/bulb-preview/bulb-preview.directive';
 
 bulbApp();
 bulbHeader();
@@ -65,8 +69,9 @@ angular.module('bulb', [
   'bulb.group-list'
 ])
   .constant('C', C)
-  .service('bulbService', BulbService)
-  .service('groupService', GroupService)
+  .service('bulbDeviceService', BulbDeviceService)
+  .service('bulbGroupService', BulbGroupService)
+  .directive('bulbPreview', BulbPreview)
   .config(config)
   .config(routerConfig);
 

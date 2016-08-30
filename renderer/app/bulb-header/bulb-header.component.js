@@ -15,11 +15,11 @@ export function bulbHeaderComponent() {
 const ipc = require('electron').ipcRenderer;
 
 class BulbHeaderController {
-  constructor($rootScope, $mdSidenav, $log, bulbService, C) {
+  constructor($rootScope, $mdSidenav, $log, bulbDeviceService, C) {
     this.C = C;
     this.$log = $log;
     this.$mdSidenav = $mdSidenav;
-    this.bulbService = bulbService;
+    this.bulbDeviceService = bulbDeviceService;
   }
 
   toggleMenu() {
@@ -28,11 +28,11 @@ class BulbHeaderController {
   }
 
   toggleScan() {
-    // this.$log.log('header.controller isScanning', this.bulbService.isScanning());
-    if (this.bulbService.isScanning()) {
-      this.bulbService.stopScan();
+    // this.$log.log('header.controller isScanning', this.bulbDeviceService.isScanning());
+    if (this.bulbDeviceService.isScanning()) {
+      this.bulbDeviceService.stopScan();
     } else {
-      this.bulbService.startScan();
+      this.bulbDeviceService.startScan();
     }
   }
 

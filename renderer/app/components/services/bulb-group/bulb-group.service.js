@@ -3,12 +3,12 @@
 const ipc = require('electron').ipcRenderer;
 const uuid = require('uuid');
 
-class GroupService {
+class BulbGroupService {
 
-  constructor($timeout, bulbService, $log, C) {
+  constructor($timeout, bulbDeviceService, $log, C) {
     'ngInject';
     this.$timeout = $timeout;
-    this.bulbService = bulbService;
+    this.bulbDeviceService = bulbDeviceService;
     this.$log = $log;
     this.C = C;
 
@@ -78,7 +78,7 @@ class GroupService {
     groupClone.devices = groupDevicesClone;
     this.$log.debug('groupConeDevices', groupDevicesClone, groupClone);
     angular.forEach(groupClone.devices, (deviceUUID, index) => {
-      if (!this.bulbService.get(deviceUUID).peripheral.discovered) {
+      if (!this.bulbDeviceService.get(deviceUUID).peripheral.discovered) {
         groupClone.devices.splice(index, index + 1);
       }
     });
@@ -108,5 +108,5 @@ class GroupService {
 }
 
 export {
-  GroupService
+  BulbGroupService
 };

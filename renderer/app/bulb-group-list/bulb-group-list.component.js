@@ -14,22 +14,22 @@ export function bulbGroupListComponent() {
 
 class BulbGroupListController {
 
-  constructor($rootScope, groupService, bulbService, $log, C) {
+  constructor($rootScope, bulbGroupService, bulbDeviceService, $log, C) {
     this.C = C;
     this.$rootScope = $rootScope;
-    this.bulb = bulbService;
-    this.groupService = groupService;
+    this.bulbDeviceService = bulbDeviceService;
+    this.bulbGroupService = bulbGroupService;
     this.$log = $log;
 
     this.originatorEvent;
   }
 
   createGroup() {
-    this.groupService.add();
+    this.bulbGroupService.add();
   }
 
   updateGroupName(group) {
-    this.groupService.update(group);
+    this.bulbGroupService.update(group);
   }
 
   deleteGroup(group) {
@@ -44,13 +44,13 @@ class BulbGroupListController {
   toggleDeviceToGroup(device, group) {
     if (group.devices.indexOf(device.uuid) !== -1) {
       // removing
-      this.groupService.groups[group.uuid].devices.splice(this.groupService.groups.devices, 1);
+      this.bulbGroupService.groups[group.uuid].devices.splice(this.bulbGroupService.groups.devices, 1);
     } else {
       // adding
-      this.groupService.groups[group.uuid].devices.push(device.uuid);
+      this.bulbGroupService.groups[group.uuid].devices.push(device.uuid);
     }
     // update main proces storage
-    this.groupService.update(this.groupService.groups[group.uuid]);
+    this.bulbGroupService.update(this.bulbGroupService.groups[group.uuid]);
   }
 
   selectGroup(group) {
@@ -67,7 +67,7 @@ class BulbGroupListController {
     let result = true;
     if (group.devices.indexOf(device.uuid) === -1) {
       // device isn't selected for current group so chjeck if it is selected in another group
-      angular.forEach(this.groupService.groups, (_group) => {
+      angular.forEach(this.bulbGroupService.groups, (_group) => {
         if (_group.uuid !== group.uuid) { // ignore current group
           if (_group.devices.indexOf(device.uuid) !== -1) {
             result = false;

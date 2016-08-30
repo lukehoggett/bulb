@@ -15,12 +15,11 @@ export function bulbDeviceListComponent() {
 
 class BulbDeviceListController {
 
-  constructor($rootScope, $mdDialog, bulbService, groupService, $log, C) {
+  constructor($rootScope, $mdDialog, bulbDeviceService, $log, C) {
     this.$rootScope = $rootScope;
     this.C = C;
     this.$mdDialog = $mdDialog;
-    this.bulb = bulbService;
-    this.groupService = groupService;
+    this.bulbDeviceService = bulbDeviceService;
     this.$log = $log;
 
     this.originatorEvent;
@@ -33,13 +32,13 @@ class BulbDeviceListController {
 
   getCharacterisics(device) {
     this.$log.log('list get characteristics', device);
-    this.bulb.getCharacteristics(device.uuid);
+    this.bulbDeviceService.getCharacteristics(device.uuid);
   }
 
   updateDeviceName(uuid) {
-    this.$log.log('updateDeviceName', uuid, this.bulb.devices[uuid]);
+    this.$log.log('updateDeviceName', uuid, this.bulbDeviceService.devices[uuid]);
     // send update command to main process
-    this.bulb.setCharacteristic(uuid, this.bulb.devices[uuid].name, 'name');
+    this.bulbDeviceService.setCharacteristic(uuid, this.bulbDeviceService.devices[uuid].name, 'name');
   }
 
   openMoreMenu($mdOpenMenu, $event) {
