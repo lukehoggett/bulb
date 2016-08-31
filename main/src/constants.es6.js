@@ -89,4 +89,4 @@ export const TYPE_COLOR = 'color';
 export const TYPE_EFFECT = 'effect';
 
 // value of characteristic when effects are off
-export const EFFECTS_OFF_VALUES = [0, 0, 0, 0, 255, 0, 1, 0];
+export const EFFECTS_OFF_VALUES = [0, 0, 0, 0, 255, 0, 10, 0];
