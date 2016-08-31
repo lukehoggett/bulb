@@ -7,14 +7,11 @@
                     <input ng-model="device.peripheral.name" ng-model-options="{ updateOn: 'mousedown blur' }" ng-change="$ctrl.bulbDeviceService.setCharacteristic(device.peripheral.uuid, device.peripheral.name, 'name')" aria-label="device name"/>
                 </md-input-container>
             </p>
-            
             <div>
-                <bulb-preview data-ng-model="$ctrl.bulbDeviceService.characteristics"><bulb-preview/>
+                <bulb-preview data-bulb-preview-characteristics="$ctrl.bulbDeviceService.get(device.uuid).characteristics"><bulb-preview/>
             </div>
             <div class="status" layout="row" layout-align="start center">
-                
                 <span class="device-group">
-                    
                     <span class="last-seen md-caption md-hue-2" md-colors="{color: 'primary-200'}">{{$ctrl.bulbDeviceService.getLastSeen(device.uuid) | date: 'medium'}}</span>
                     <span ng-if="$ctrl.bulbGroupService.getDeviceGroupName(device) !== ''" class="md-caption" md-colors="{color: 'accent-200'}">{{$ctrl.bulbGroupService.getDeviceGroupName(device)}}</span>
                     <span class="device-uuid md-caption md-hue-2" md-colors="{color: 'primary-200'}">{{device.peripheral.uuid}}</span>

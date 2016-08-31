@@ -71,7 +71,7 @@ angular.module('bulb', [
   .constant('C', C)
   .service('bulbDeviceService', BulbDeviceService)
   .service('bulbGroupService', BulbGroupService)
-  .directive('bulbPreview', BulbPreview)
+  .directive('bulbPreview', () => { return new BulbPreview(); })
   .config(config)
   .config(routerConfig);
 

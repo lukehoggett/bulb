@@ -120,10 +120,10 @@ class BulbDeviceService {
 
     // @TODO move - here for testing
     // dummy call
-    this.$log.debug('isEffectOrColor', this.isEffectOrColor(device.characteristics));
-    this.$log.debug('getBulbType', this.getBulbType(device));
-    this.$log.debug('isEffect', this.isEffect(device));
-    this.$log.debug('isColor', this.isColor(device));
+    // this.$log.debug('isEffectOrColor', this.isEffectOrColor(device.characteristics));
+    // this.$log.debug('getBulbType', this.getBulbType(device));
+    // this.$log.debug('isEffect', this.isEffect(device));
+    // this.$log.debug('isColor', this.isColor(device));
     this.devices[device.uuid] = device;
   }
 
@@ -164,7 +164,6 @@ class BulbDeviceService {
   }
 
   isEffectOrColor(characteristics) {
-    this.$log.debug('isEffectOrColor');
     let result = this.C.TYPE_EFFECT;
     if (characteristics.effect && characteristics.effect.data) {
       let currentEffectValues = Array.from(characteristics.effect.data);
