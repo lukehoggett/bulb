@@ -16,6 +16,7 @@ export class BulbPreview {
     this.controllerAs = '$ctrl';
     this.templateUrl = 'app/core/directives/bulb-preview/bulb-preview.views/bulb-preview.view.html';
     this.bindToController = true;
+    this.transclude = true;
   }
 
   link(scope, element, attributes) {
@@ -40,22 +41,48 @@ export class BulbPreview {
 //   new BulbPreview();
 // };
 class BulbPreviewController {
-  constructor($scope, $log) {
+  constructor($scope, $log, bulbDeviceService) {
     'ngInject';
-    console.info(this, $log);
+    this.color = 'rgba(0,0,0,0)';
+    this.style = '';
     this.$log = $log;
+    this.bulbDeviceService = bulbDeviceService;
     this.$log.debug('BulbPreviewController bulbPreviewCharacteristics', this.characteristics);
   }
 
-  getColor() {
-    let color = [
-      this.characteristics.color.data.data[1],
-      this.characteristics.color.data.data[2],
-      this.characteristics.color.data.data[3],
-      // (255 - this.characteristics.color.data.data[0])
-      100
-    ].join(', ');
-    this.$log.debug(`rgba(${color})`);
-    return `rgba(${color})`;
+  getStyle() {
+    this.$log.debug('getStyle', this.characteristics);
+    if (this.isColor()) {
+      this.$log.debug('color');
+      if (this.characteristics.color.data) {
+        let colorArray = this.characteristics.color.data;
+        let color = [
+          colorArray[1],
+          colorArray[2],
+          colorArray[3],
+          ((255 - colorArray[0]) / 255).toFixed(2)
+        ].join(', ');
+        this.color = `rgba(${color})`;
+      }
+      this.style = {
+        'background-color': this.color
+      };
+    } else if (this.isEffect()) {
+      this.$log.debug('effect');
+    } else {
+      this.$log.debug('No characteristics discovered');
+      this.$log.warn('No characteristics discovered');
+    }
+
+    this.$log.debug(this.style);
+    return this.style;
+  }
+
+  isColor() {
+    return this.bulbDeviceService.isColor(this.characteristics);
+  }
+
+  isEffect() {
+    return this.bulbDeviceService.isEffect(this.characteristics);
   }
 }

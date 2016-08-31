@@ -166,9 +166,8 @@ class BulbDeviceService {
   isEffectOrColor(characteristics) {
     let result = this.C.TYPE_EFFECT;
     if (characteristics.effect && characteristics.effect.data) {
-      let currentEffectValues = Array.from(characteristics.effect.data);
-      let effectsOff = (this.C.EFFECTS_OFF_VALUES.length === currentEffectValues.length) && this.C.EFFECTS_OFF_VALUES.every((value, index) => {
-        return value === currentEffectValues[index];
+      let effectsOff = (this.C.EFFECTS_OFF_VALUES.length === characteristics.effect.data.length) && this.C.EFFECTS_OFF_VALUES.every((value, index) => {
+        return value === characteristics.effect.data[index];
       });
 
       if (effectsOff) {
@@ -178,12 +177,12 @@ class BulbDeviceService {
     }
   }
 
-  isEffect(device) {
-    return this.isEffectOrColor(device.characteristics) === this.C.TYPE_EFFECT;
+  isEffect(characteristics) {
+    return this.isEffectOrColor(characteristics) === this.C.TYPE_EFFECT;
   }
 
-  isColor(device) {
-    return this.isEffectOrColor(device.characteristics) === this.C.TYPE_COLOR;
+  isColor(characteristics) {
+    return this.isEffectOrColor(characteristics) === this.C.TYPE_COLOR;
   }
 
   isDiscovered(uuid) {
