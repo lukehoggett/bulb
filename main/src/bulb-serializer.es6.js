@@ -80,7 +80,7 @@ export default class BulbSerializer {
   }
 
   static serializeCharacteristic(characteristic) {
-    log.debug('characteristic', characteristic);
+    log.debug('characteristic DATA', characteristic.data, Array.from(characteristic.data));
 
     return {
       characteristic: {
@@ -88,7 +88,7 @@ export default class BulbSerializer {
         name: characteristic.characteristic.name,
         type: characteristic.characteristic.type
       },
-      data: characteristic.data
+      data: Array.from(characteristic.data)
     };
   }
 }
