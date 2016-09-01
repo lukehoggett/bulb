@@ -9,7 +9,7 @@ export default class BulbSerializer {
   // }
 
   static serializeDevice(device) {
-    log.debug('serializeDevice', device);
+    // log.debug('serializeDevice', device);
     return {
       uuid: device.uuid,
       peripheral: this.serializePeripheral(device.peripheral),
@@ -43,15 +43,15 @@ export default class BulbSerializer {
 
   static serializeCharacteristics(characteristics) {
     // @TODO fix this
-    log.debug('serializeCharacteristics', characteristics, Object.keys(characteristics));
+    // log.debug('serializeCharacteristics', characteristics, Object.keys(characteristics));
     let serializedCharacteristics = {};
 
     Object.keys(characteristics)
       .map((characteristicType, index) => {
-        log.debug('characteristicType', characteristicType);
+        // log.debug('characteristicType', characteristicType);
         serializedCharacteristics[characteristicType] = this.serializeCharacteristic(characteristics[characteristicType]);
       });
-    log.debug('serializedCharacteristics', serializedCharacteristics);
+    // log.debug('serializedCharacteristics', serializedCharacteristics);
     return serializedCharacteristics;
 
     // let device = this.serializeDevice(this.getDiscoveredDeviceByUUID(deviceUUID));
@@ -59,7 +59,7 @@ export default class BulbSerializer {
     // log.debug('characteristicValues', characteristicValues);
     //
     // for (let characteristic of characteristicValues) {
-    //   log.debug(characteristicValues[characteristic]);
+      // log.debug(characteristicValues[characteristic]);
     //   // charList[c.type] = {
     //   //   uuid: c.characteristic.uuid,
     //   //   name: c.characteristic.name,
@@ -80,7 +80,7 @@ export default class BulbSerializer {
   }
 
   static serializeCharacteristic(characteristic) {
-    log.debug('characteristic DATA', characteristic.data, Array.from(characteristic.data));
+    // log.debug('characteristic DATA', characteristic.data, Array.from(characteristic.data));
 
     return {
       characteristic: {

@@ -47,11 +47,11 @@ class BulbPreviewController {
     this.style = '';
     this.$log = $log;
     this.bulbDeviceService = bulbDeviceService;
-    this.$log.debug('BulbPreviewController bulbPreviewCharacteristics', this.characteristics);
+    // this.$log.debug('BulbPreviewController bulbPreviewCharacteristics', this.characteristics);
   }
 
   getStyle() {
-    this.$log.debug('getStyle', this.characteristics);
+    this.$log.debug('getStyle', this.characteristics, this.isColor());
     if (this.isColor()) {
       this.$log.debug('color');
       if (this.characteristics.color.data) {
@@ -68,9 +68,9 @@ class BulbPreviewController {
         'background-color': this.color
       };
     } else if (this.isEffect()) {
-      this.$log.debug('effect');
+      // this.$log.debug('effect');
     } else {
-      this.$log.debug('No characteristics discovered');
+      // this.$log.debug('No characteristics discovered');
       this.$log.warn('No characteristics discovered');
     }
 

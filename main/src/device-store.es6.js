@@ -115,10 +115,10 @@ import storage from 'node-persist';
 
     setCachedDevice(device) {
       device.state = C.DISCONNECTED;
-      log.debug('bulbStore setCachedDevice');
-      log.debug('setCachedDevice device', device);
+      // log.debug('bulbStore setCachedDevice');
+      // log.debug('setCachedDevice device', device);
       let serializedDevice = BulbSerializer.serializeDevice(device);
-      log.debug('setCachedDevice serializedDevice', serializedDevice);
+      // log.debug('setCachedDevice serializedDevice', serializedDevice);
       deviceCache.setItem(serializedDevice.uuid, serializedDevice, error => {
         if (error) {
           log.error('Cache error: on set', error);

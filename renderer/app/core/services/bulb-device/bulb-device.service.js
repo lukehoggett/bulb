@@ -165,6 +165,7 @@ class BulbDeviceService {
 
   isEffectOrColor(characteristics) {
     let result = this.C.TYPE_EFFECT;
+    this.$log.debug('isEffectOrColor', characteristics);
     if (characteristics.effect && characteristics.effect.data) {
       let effectsOff = (this.C.EFFECTS_OFF_VALUES.length === characteristics.effect.data.length) && this.C.EFFECTS_OFF_VALUES.every((value, index) => {
         return value === characteristics.effect.data[index];

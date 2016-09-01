@@ -80,6 +80,7 @@ export default class Bulb {
       .then((device) => {
         let serializedDevice = BulbSerializer.serializeDevice(device);
         this.webContents.send(C.IPC_DEVICE_CONNECTED, serializedDevice);
+        log.info('connectAndReadCharacteristics', '*************', device, '*************', serializedDevice);
         bulbStore.setCachedDevice(device);
       })
       .catch((error) => {
