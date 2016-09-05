@@ -12,6 +12,10 @@ import BulbSerializer from './bulb-serializer';
 import deviceCache from './device-store';
 const bulbStore = deviceCache.bulbStore;
 
+import
+  BulbMessaging
+from './bulb-messaging';
+
 export default class Bulb {
 
   constructor(webContents) {

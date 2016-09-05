@@ -22,6 +22,13 @@ export const WEBCONTENTS_DID_FINISH_LOAD = 'did-finish-load';
 export const WEBCONTENTS_CRASHED = 'crashed';
 
 // IPC from renderer
+// refactor
+export const IPC_RENDERER_GET = 'get';
+export const IPC_RENDERER_POST = 'post';
+export const IPC_RENDERER_PATCH = 'patch';
+export const IPC_RENDERER_DELETE = 'delete';
+
+// original
 export const IPC_SCAN_START = 'scan.start';
 export const IPC_SCAN_STOP = 'scan.stop';
 export const IPC_DEVICE_CONNECT = 'device.connect';
@@ -39,6 +46,12 @@ export const IPC_GROUP_DELETE_CACHED = 'group.delete.cached';
 export const IPC_GROUP_GET_CACHED = 'group.get.cached';
 
 // IPC from main
+// refactor
+export const IPC_MAIN_GET = 'get';
+export const IPC_MAIN_POST = 'post';
+export const IPC_MAIN_PATCH = 'patch';
+export const IPC_MAIN_DELETE = 'delete';
+// original
 export const IPC_SCANNING_START = 'scanning.start';
 export const IPC_SCANNING_STOP = 'scanning.stop';
 export const IPC_DEVICE_GET_CACHED_REPLY = 'device.get.cached.reply';

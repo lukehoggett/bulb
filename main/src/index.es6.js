@@ -33,6 +33,10 @@ import
   Bulb
  from './bulb';
 
+import
+  BulbMessaging
+from './bulb-messaging';
+
 (function() {
   'use strict';
 
@@ -61,6 +65,7 @@ import
   let win;
 
   let bulb = null;
+  let bulbMessaging = null;
 
   process.on(C.PROCESS_UNCAUGHT_EXCEPTION, onProcessUncaughtException);
 
@@ -135,6 +140,7 @@ import
     let webContents = win.webContents;
 
     bulb = new Bulb(webContents);
+    bulbMessaging = new BulbMessaging(webContents);
 
     webContents.openDevTools({
       mode: 'undocked'

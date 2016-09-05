@@ -19,6 +19,9 @@ class BulbDeviceService {
     this.getCachedDevices();
 
     // listening to messages from the main
+    // refactor
+    ipc.on(this.C.IPC_MAIN_POST, (event, message, data) => this.onPost(message, data));
+    // original
     ipc.on(this.C.IPC_DEVICE_GET_CACHED_REPLY, (event, device, uuid) => this.onDeviceGetCachedReply(event, device, uuid));
     ipc.on(this.C.IPC_DEVICE_DISCOVERED, (event, device) => this.onDiscovered(event, device));
     ipc.on(this.C.IPC_SCANNING_START, (event) => this.onScanningStart(event));
@@ -27,7 +30,12 @@ class BulbDeviceService {
     ipc.on(this.C.IPC_DEVICE_DISCONNECTED, (event, device) => this.onDisconnected(event, device));
   }
 
+  onPost(message, data) {
+    this.$log.debug('BulbDeviceService onPost', message, data);
+  }
+
   getCachedDevices() {
+    ipc.send(this.C.IPC_RENDERER_GET, {type: 'device.cached'});
     ipc.send(this.C.IPC_DEVICE_GET_CACHED);
   }
 
