@@ -36,15 +36,15 @@ export default class BulbMessaging {
   onGet(event, request) {
     log.debug('BulbMessaging onGet', 'event', event, 'request', request, 'this', this);
 
-    switch (request.type) {
+    switch (request.message) {
       case 'device.cached':
         log.debug('BulbMessaging onGet device.cached');
         bulbStore.getCachedDevices()
           .forEach((device, uuid) => {
             // log.info('onDeviceGetCached sending ', device, uuid);
             event.sender.send(C.IPC_DEVICE_GET_CACHED_REPLY, device);
-            log.debug('sending', C.IPC_MAIN_POST, {type: 'device.cache', action: 'POST', data: device});
-            this.send(event, C.IPC_MAIN_POST, {type: 'device.cache', action: 'POST', data: device});
+            log.debug('sending', C.IPC_MAIN_GET, {message: 'device.cache', action: 'GET', data: device});
+            this.send(event, C.IPC_MAIN_GET, {message: 'device.cache', action: 'GET', data: device});
           });
         break;
       default:

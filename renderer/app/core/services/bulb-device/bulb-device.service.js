@@ -20,6 +20,7 @@ class BulbDeviceService {
 
     // listening to messages from the main
     // refactor
+    ipc.on(this.C.IPC_MAIN_GET, (event, message, data) => this.onGet(message, data));
     ipc.on(this.C.IPC_MAIN_POST, (event, message, data) => this.onPost(message, data));
     // original
     ipc.on(this.C.IPC_DEVICE_GET_CACHED_REPLY, (event, device, uuid) => this.onDeviceGetCachedReply(event, device, uuid));
@@ -30,12 +31,16 @@ class BulbDeviceService {
     ipc.on(this.C.IPC_DEVICE_DISCONNECTED, (event, device) => this.onDisconnected(event, device));
   }
 
+  onGet(message, data) {
+    this.$log.debug('BulbDeviceService onPost', message, data);
+  }
+
   onPost(message, data) {
     this.$log.debug('BulbDeviceService onPost', message, data);
   }
 
   getCachedDevices() {
-    ipc.send(this.C.IPC_RENDERER_GET, {type: 'device.cached'});
+    ipc.send(this.C.IPC_RENDERER_GET, {message: 'device.cached'});
     ipc.send(this.C.IPC_DEVICE_GET_CACHED);
   }
 
@@ -173,7 +178,7 @@ class BulbDeviceService {
 
   isEffectOrColor(characteristics) {
     let result = this.C.TYPE_EFFECT;
-    this.$log.debug('isEffectOrColor', characteristics);
+    // this.$log.debug('isEffectOrColor', characteristics);
     if (characteristics.effect && characteristics.effect.data) {
       let effectsOff = (this.C.EFFECTS_OFF_VALUES.length === characteristics.effect.data.length) && this.C.EFFECTS_OFF_VALUES.every((value, index) => {
         return value === characteristics.effect.data[index];

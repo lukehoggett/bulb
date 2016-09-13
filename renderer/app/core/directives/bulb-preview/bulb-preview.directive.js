@@ -51,7 +51,7 @@ class BulbPreviewController {
   }
 
   getStyle() {
-    this.$log.debug('getStyle', this.characteristics, this.isColor());
+    // this.$log.debug('getStyle', this.characteristics, this.isColor());
     if (this.isColor()) {
       this.$log.debug('color');
       if (this.characteristics.color.data) {
