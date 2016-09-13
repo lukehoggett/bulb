@@ -23,19 +23,20 @@ import yargs from 'yargs';
 import BulbSerializer from './bulb-serializer';
 // local module for device storage and retrieval from persistent storage
 import deviceCache from './device-store';
-const bulbStore = deviceCache.bulbStore;
-// import {
-//   bulbStore
-// } from './device-store';
+// const bulbStore = deviceCache.bulbStore;
+import {
+  bulbStore
+} from './device-store';
+log.debug('BulbStore', bulbStore);
 
 // local module for handling bulb actions
 import
   Bulb
  from './bulb';
 
-import
-  BulbMessaging
-from './bulb-messaging';
+// import
+//   BulbMessaging
+// from './bulb-messaging';
 
 (function() {
   'use strict';
@@ -65,7 +66,7 @@ from './bulb-messaging';
   let win;
 
   let bulb = null;
-  let bulbMessaging = null;
+  // let bulbMessaging = null;
 
   process.on(C.PROCESS_UNCAUGHT_EXCEPTION, onProcessUncaughtException);
 
@@ -140,7 +141,7 @@ from './bulb-messaging';
     let webContents = win.webContents;
 
     bulb = new Bulb(webContents);
-    bulbMessaging = new BulbMessaging(webContents);
+    // bulbMessaging = new BulbMessaging(webContents);
 
     webContents.openDevTools({
       mode: 'undocked'
@@ -271,10 +272,10 @@ from './bulb-messaging';
     }
 
     function onIpcDeviceGetCached(event) {
-      log.info('onDeviceGetCached...');
+      log.info('onDeviceGetCached...', bulbStore.getCachedDevices());
       bulbStore.getCachedDevices()
         .forEach((device, uuid) => {
-          // log.info('onDeviceGetCached sending ', device, uuid);
+          log.info('onDeviceGetCached sending ', device, uuid);
           event.sender.send(C.IPC_DEVICE_GET_CACHED_REPLY, device);
         });
     }

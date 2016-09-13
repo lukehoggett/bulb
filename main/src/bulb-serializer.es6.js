@@ -1,8 +1,8 @@
 'use strict';
 
-import {
-  log
-} from './logger';
+// import {
+//   log
+// } from './logger';
 
 export default class BulbSerializer {
   // constructor() {

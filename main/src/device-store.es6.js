@@ -3,6 +3,7 @@ import * as C from './constants';
 import BulbSerializer from './bulb-serializer';
 import storage from 'node-persist';
 
+log.debug('device.store file');
 (function() {
   'use strict';
 
@@ -37,6 +38,7 @@ import storage from 'node-persist';
 
   class BulbStore {
     constructor() {
+      log.debug('BulbStore constructor');
       // read from persistent storage
       this.getDevicesFromCache();
       this.getGroupsFromCache();
@@ -48,8 +50,11 @@ import storage from 'node-persist';
       let haveCached = Object.keys(devices).length !== 0 && devices.constructor === Object;
       if (!haveCached) {
         let deviceKeys = deviceCache.keys();
+        log.debug('getDevicesFromCache deviceKeys', deviceKeys);
         deviceKeys.forEach((uuid, index) => {
-          let device = deviceCache.getItem(uuid, (error, device) => {
+          log.debug('getDevicesFromCache uuid index', uuid, index);
+          let device = deviceCache.getItemSync(uuid, (error, device) => {
+            log.debug('getDevicesFromCache device', device);
             if (error) {
               log.error(error);
             }
@@ -61,23 +66,22 @@ import storage from 'node-persist';
           serializedDevices.set(uuid, device);
         });
       }
-      // log.info('getDevicesFromCache serializedDevices', serializedDevices);
+      log.info('getDevicesFromCache serializedDevices', serializedDevices);
       return serializedDevices;
     }
 
     getGroupsFromCache() {
       let groupKeys = groupCache.keys();
       groupKeys.forEach((uuid, index) => {
-        let group = groupCache.getItem(uuid, (error, group) => {
+        let group = groupCache.getItemSync(uuid, (error, group) => {
           if (error) {
             log.error(error);
+          } else {
+            // log.info('getGroupsFromCache group', group, uuid);
+            group.state = C.DISCONNECTED;
+            serializedGroups.set(uuid, group);
           }
         });
-
-        group.state = C.DISCONNECTED;
-
-        // log.info('getGroupsFromCache group', group, uuid);
-        serializedGroups.set(uuid, group);
       });
 
       return serializedGroups;
@@ -118,7 +122,7 @@ import storage from 'node-persist';
       // log.debug('bulbStore setCachedDevice');
       // log.debug('setCachedDevice device', device);
       let serializedDevice = BulbSerializer.serializeDevice(device);
-      // log.debug('setCachedDevice serializedDevice', serializedDevice);
+      log.debug('########################### setCachedDevice serializedDevice', serializedDevice);
       deviceCache.setItem(serializedDevice.uuid, serializedDevice, error => {
         if (error) {
           log.error('Cache error: on set', error);
@@ -176,8 +180,6 @@ import storage from 'node-persist';
 
   }
 
-  exports.bulbStore = new BulbStore();
-
   // load all currently stored devices
   let getAll = function() {
     // @TODO implement caching in local variable, or not as needed
@@ -218,6 +220,7 @@ import storage from 'node-persist';
     });
   };
 
+  exports.bulbStore = new BulbStore();
   exports.deviceCache = deviceCache;
   exports.getAll = getAll;
   exports.getByUUID = getByUUID;

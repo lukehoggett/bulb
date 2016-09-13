@@ -34,7 +34,7 @@ export default class BulbMessaging {
   }
 
   onGet(event, request) {
-    log.debug('BulbMessaging onGet', 'event', event, 'request', request, 'this', this);
+    log.debug('BulbMessaging onGet', 'request', request, 'this', this);
 
     switch (request.message) {
       case 'device.cached':
