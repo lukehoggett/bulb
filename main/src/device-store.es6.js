@@ -3,6 +3,17 @@ import * as C from './constants';
 import BulbSerializer from './bulb-serializer';
 import storage from 'node-persist';
 
+/**
+ * Two types of storage
+ * - node-persist for the file system; and
+ * - immutable js for the run time
+ *
+ * Should have two classes to handle this:
+ * - BulbStore; and
+ * - BulbData
+ *
+ * Both need to be singletons so all files are refering to the same data
+ */
 log.debug('device.store file');
 (function() {
   'use strict';

@@ -22,13 +22,20 @@ import yargs from 'yargs';
 
 import BulbSerializer from './bulb-serializer';
 // local module for device storage and retrieval from persistent storage
-import deviceCache from './device-store';
+// import deviceCache from './device-store';
 // const bulbStore = deviceCache.bulbStore;
-import {
-  bulbStore
-} from './device-store';
-log.debug('BulbStore', bulbStore);
+// import {
+//   bulbStore
+// } from './device-store';
+// log.debug('BulbStore', bulbStore);
 
+import bulbStore from './bulb-store';
+// let newStore = new BulbStore();
+log.debug('***************** bulb-store', bulbStore, '############# bulb-store get', bulbStore.getDevicesFromStore());
+// log.debug('new BulbStore()', newStore, newStore.getDevicesFromStore(), newStore.getGroupsFromStore());
+import BulbData from './bulb-data';
+
+process.exit(1);
 // local module for handling bulb actions
 import
   Bulb
