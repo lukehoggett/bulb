@@ -30,8 +30,9 @@ import BulbSerializer from './bulb-serializer';
 // log.debug('BulbStore', bulbStore);
 
 import bulbStore from './bulb-store';
+bulbStore.getStoredDevices();
 // let newStore = new BulbStore();
-log.debug('***************** bulb-store', bulbStore, '############# bulb-store get', bulbStore.getDevicesFromStore());
+// log.debug('***************** bulb-store', bulbStore, '############# bulb-store get', bulbStore.getDevicesFromStore());
 // log.debug('new BulbStore()', newStore, newStore.getDevicesFromStore(), newStore.getGroupsFromStore());
 import BulbData from './bulb-data';
 

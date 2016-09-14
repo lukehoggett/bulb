@@ -2,6 +2,7 @@ import {log} from './logger';
 import * as C from './constants';
 import BulbSerializer from './bulb-serializer';
 import storage from 'node-persist';
+import Immutable from 'immutable';
 
 let storeInstance = null;
 class BulbStore {
@@ -50,43 +51,32 @@ class BulbStore {
   }
 
   getStoredDevices() {
-    let devices = new Map();
-    // @TODO implement caching in local variable, or not as needed
-    // log.info('BulbCache: getDevicesFromCache');
-    let haveCached = Object.keys(devices).length !== 0 && devices.constructor === Object;
-    if (!haveCached) {
-      let deviceKeys = this.deviceStorage.keys();
-      // log.debug('getDevicesFromCache deviceKeys', deviceKeys);
-      deviceKeys.forEach((uuid, index) => {
-        // log.debug('getDevicesFromCache uuid index', uuid, index);
-        let device = this.getStoredDevice(uuid);
-
-        device.power = false;
-        device.state = C.DISCONNECTED;
-        // log.info('getDevicesFromCache device', device, uuid);
-        devices.set(uuid, device);
-      });
-    }
-    // log.info('getDevicesFromCache device', devices);
+    let devices = Immutable.Map();
+    let deviceKeys = this.deviceStorage.keys();
+    deviceKeys.forEach((uuid, index) => {
+      devices = devices.set(uuid, this.getStoredDevice(uuid));
+    });
     return devices;
   }
 
   getStoredDevice(uuid) {
     let device = this.deviceStorage.getItemSync(uuid, (error, device) => {
-      // log.debug('getDevicesFromCache device', device);
       if (error) {
         log.error(error);
+      } else {
+        device.power = false;
+        device.state = C.DISCONNECTED;
       }
     });
+    device = Immutable.fromJS(device);
     return device;
   }
 
   getStoredGroups() {
-    let groups = new Map();
+    let groups = Immutable.Map();
     let groupKeys = this.groupStorage.keys();
     groupKeys.forEach((uuid, index) => {
-      let group = this.getStoredGroup(uuid);
-      groups.set(uuid, group);
+      groups = groups.set(uuid, this.getStoredGroup(uuid));
     });
     return groups;
   }
@@ -99,25 +89,26 @@ class BulbStore {
         group.state = C.DISCONNECTED;
       }
     });
+    group = Immutable.fromJS(group);
     return group;
   }
 
   setStoredDevice(device) {
     device.state = C.DISCONNECTED;
     let serializedDevice = BulbSerializer.serializeDevice(device);
-    log.debug('########################### setStoredDevice serializedDevice', serializedDevice);
     this.deviceStorage.setItem(serializedDevice.uuid, serializedDevice, error => {
       if (error) {
-        log.error('Storgae error: on set', error);
+        log.error('Device Storage error', error);
       }
     });
-    return this.getStoredDevices();
+    return this.getStoredDevices(serializedDevice.uuid);
   }
 
   setStoredDevices(devices) {
     devices.forEach((device) => {
       this.setStoredDevice(device);
     });
+    return this.getStoredDevices();
   }
 
   setStoredGroup(group) {
@@ -125,16 +116,17 @@ class BulbStore {
     // remove properties not needed to be stored
     this.groupStorage.setItem(group.uuid, group, error => {
       if (error) {
-        log.error('Cache error: on set', error);
+        log.error('Group Storage error', error);
       }
     });
-    this.getStoredGroups();
+    return this.getStoredGroup(group.uuid);
   }
 
   setStoredGroups(groups) {
     groups.forEach((group) => {
       this.setStoredGroup(group);
     });
+    return this.getStoredGroups();
   }
 }
 
