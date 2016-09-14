@@ -11,6 +11,7 @@ class BulbStore {
     }
     this.deviceStorage = null;
     this.groupStorage = null;
+    this.cwd = process.cwd();
     let defaultConfig = this.getStorageConfig();
     this.initDeviceStorage(defaultConfig);
     this.initGroupStorage(defaultConfig);
@@ -34,7 +35,7 @@ class BulbStore {
 
   initDeviceStorage(config) {
     let deviceConfig = Object.assign({
-      dir: `${process.cwd()}/data/device-storage`
+      dir: `${this.cwd}${C.DATA_DEVICE_DIR}`
     }, config);
     this.deviceStorage = storage.create(deviceConfig);
     this.deviceStorage.initSync();
@@ -42,7 +43,7 @@ class BulbStore {
 
   initGroupStorage(config) {
     let groupConfig = Object.assign({
-      dir: `${process.cwd()}/data/group-storage`
+      dir: `${this.cwd}${C.DATA_GROUP_DIR}}`
     }, config);
     this.groupStorage = storage.create(groupConfig);
     this.groupStorage.initSync();
