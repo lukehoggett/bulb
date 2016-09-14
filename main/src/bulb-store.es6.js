@@ -4,6 +4,12 @@ import BulbSerializer from './bulb-serializer';
 import storage from 'node-persist';
 import Immutable from 'immutable';
 
+/**
+ * @TODO
+ * - fix setters to accept immutable data
+ * - allow config to be dynamic
+ * - remove duplication between device and groups logic for getStored(s) and initStorage
+ */
 let storeInstance = null;
 class BulbStore {
   constructor() {
@@ -13,7 +19,7 @@ class BulbStore {
     this.deviceStorage = null;
     this.groupStorage = null;
     this.cwd = process.cwd();
-    let defaultConfig = this.getStorageConfig();
+    let defaultConfig = this.getConfig();
     this.initDeviceStorage(defaultConfig);
     this.initGroupStorage(defaultConfig);
 
@@ -21,7 +27,7 @@ class BulbStore {
     return storeInstance;
   }
 
-  getStorageConfig() {
+  getConfig() {
     let storageConfig = {
       stringify: JSON.stringify,
       parse: JSON.parse,
