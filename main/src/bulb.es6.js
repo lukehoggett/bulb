@@ -9,9 +9,9 @@ import {
 } from './logger';
 import noble from 'noble';
 import BulbSerializer from './bulb-serializer';
-import deviceCache from './device-store';
-const bulbStore = deviceCache.bulbStore;
-
+import bulbStore from './bulb-store';
+import bulbData from './bulb-data';
+log.debug('bulbData', bulbData);
 // import
 //   BulbMessaging
 // from './bulb-messaging';
@@ -26,26 +26,29 @@ export default class Bulb {
     let playbulbType = this.getPlaybulbType(peripheral);
     return new Promise((resolve, reject) => {
       if (this.isPlaybulb(peripheral)) {
-        // look up cached device and merge discovered device characteristics
-        let cachedDevice = bulbStore.getCachedDeviceByUUID(peripheral.uuid);
-        log.debug('discovered cachedDevice', cachedDevice);
+        // need to create save the discovered device before we can save to persitant store
         let device = {};
         device.uuid = peripheral.uuid;
         device.peripheral = peripheral;
         device.type = playbulbType;
-        device.characteristics = (cachedDevice ? cachedDevice.characteristics : {});
+        device.characteristics = (storedDevice ? storedDevice.characteristics : {});
+        device = bulbData.set(device);
 
         // on discovery check if device is in stored devices, if not update stored
-        if (!bulbStore.hasCachedDevice(device.uuid)) {
+        // look up cached device and merge discovered device characteristics
+        let storedDevice = bulbStore.getStoredDevice(peripheral.uuid);
+        log.debug('discovered storedDevice', storedDevice);
+        if (!storedDevice) {
+          log.debug('Bulb.discovered()', 'Device not in store: setting stored device');
           // save discovered device to persistent storage
-          bulbStore.setCachedDevice(device);
+          bulbStore.setStoredDevice(device);
         }
 
         // add properties to the device
         device.peripheral.discovered = true; // we don't save discovered so need to add it here
 
         // this is needed to add the noble extra object stuff that can't be stored in the persistent storage
-        bulbStore.setDiscoveredDevice(device);
+        // bulbData.setDiscoveredDevice(device);
         log.debug('bulb.discovered resolving', device);
         resolve(device);
       } else {
@@ -60,17 +63,36 @@ export default class Bulb {
     return typeof peripheral.advertisement.manufacturerData !== 'undefined' && peripheral.advertisement.manufacturerData.toString('hex') === config.get('Bulb.MipowManufacturerData');
   }
 
+  /**
+   * Determines the PLaybulb type from the peripherals unique servie UUID advertisement
+   */
   getPlaybulbType(peripheral) {
     let type;
     switch (peripheral.advertisement.serviceUuids[0]) {
       case config.get('Bulb.AdvertisedServiceUUIDs.CANDLE'):
-        type = config.get('Bulb.Types.CANDLE');
+        type = C.NAME_CANDLE;
         break;
       case config.get('Bulb.AdvertisedServiceUUIDs.COLOR'):
-        type = config.get('Bulb.Types.COLOR');
+        type = C.NAME_COLOR;
         break;
     }
     return type;
+  }
+
+  /**
+   * Determines the PLaybulb type descriptors from the PLaybulb name
+   */
+  getPlaybulbTypeDescriptors(name) {
+    let typeDescriptors;
+    switch (name) {
+      case C.NAME_CANDLE:
+        typeDescriptors = config.get('Bulb.Types.CANDLE');
+        break;
+      case C.NAME_COLOR:
+        typeDescriptors = config.get('Bulb.Types.COLOR');
+        break;
+    }
+    return typeDescriptors;
   }
 
   connectAndReadCharacteristics(deviceUUID) {
@@ -85,7 +107,7 @@ export default class Bulb {
         let serializedDevice = BulbSerializer.serializeDevice(device);
         this.webContents.send(C.IPC_DEVICE_CONNECTED, serializedDevice);
         log.info('connectAndReadCharacteristics', '*************', device, '*************', serializedDevice);
-        bulbStore.setCachedDevice(device);
+        bulbStore.setStoredDevice(device);
       })
       .catch((error) => {
         log.error('Connection catch error:', error);

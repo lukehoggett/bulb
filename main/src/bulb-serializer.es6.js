@@ -1,20 +1,20 @@
 'use strict';
 
-// import {
-//   log
-// } from './logger';
+import {
+  log
+} from './logger';
 
 export default class BulbSerializer {
   // constructor() {
   // }
 
   static serializeDevice(device) {
-    // log.debug('serializeDevice', device);
+    log.debug('BulbSerializer.serializeDevice()', device);
     return {
-      uuid: device.uuid,
-      peripheral: this.serializePeripheral(device.peripheral),
-      type: device.type,
-      characteristics: this.serializeCharacteristics(device.characteristics)
+      uuid: device.data.get('uuid'),
+      peripheral: this.serializePeripheral(device.data.get('peripheral')),
+      type: device.data.get('type'),
+      characteristics: this.serializeCharacteristics(device.data.get('characteristics'))
     };
   }
   /**
@@ -26,7 +26,7 @@ export default class BulbSerializer {
    * @return {[type]} [description]
    */
   static serializePeripheral(peripheral) {
-    // log.debug('bulbStore serialize peripheral', peripheral);
+    log.debug('BulbSerializer.serializePeripheral()', peripheral);
     return {
       id: peripheral.id,
       name: peripheral.advertisement.localName,
@@ -45,38 +45,13 @@ export default class BulbSerializer {
     // @TODO fix this
     // log.debug('serializeCharacteristics', characteristics, Object.keys(characteristics));
     let serializedCharacteristics = {};
-
-    Object.keys(characteristics)
-      .map((characteristicType, index) => {
-        // log.debug('characteristicType', characteristicType);
-        serializedCharacteristics[characteristicType] = this.serializeCharacteristic(characteristics[characteristicType]);
-      });
-    // log.debug('serializedCharacteristics', serializedCharacteristics);
+    if (characteristics) {
+      Object.keys(characteristics)
+        .map((characteristicType, index) => {
+          serializedCharacteristics[characteristicType] = this.serializeCharacteristic(characteristics[characteristicType]);
+        });
+    }
     return serializedCharacteristics;
-
-    // let device = this.serializeDevice(this.getDiscoveredDeviceByUUID(deviceUUID));
-    // let charList = {};
-    // log.debug('characteristicValues', characteristicValues);
-    //
-    // for (let characteristic of characteristicValues) {
-      // log.debug(characteristicValues[characteristic]);
-    //   // charList[c.type] = {
-    //   //   uuid: c.characteristic.uuid,
-    //   //   name: c.characteristic.name,
-    //   //   type: c.characteristic.type,
-    //   //   value: c.data
-    //   // };
-    // }
-    // // characteristicValues.forEach(c => {
-    // //   charList[c.type] = {
-    // //     uuid: c.characteristic.uuid,
-    // //     name: c.characteristic.name,
-    // //     type: c.characteristic.type,
-    // //     value: c.data
-    // //   };
-    // // });
-    // device.characteristics = charList;
-    // return device;
   }
 
   static serializeCharacteristic(characteristic) {

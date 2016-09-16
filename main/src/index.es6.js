@@ -30,13 +30,8 @@ import BulbSerializer from './bulb-serializer';
 // log.debug('BulbStore', bulbStore);
 
 import bulbStore from './bulb-store';
-bulbStore.getStoredDevices();
-// let newStore = new BulbStore();
-// log.debug('***************** bulb-store', bulbStore, '############# bulb-store get', bulbStore.getDevicesFromStore());
-// log.debug('new BulbStore()', newStore, newStore.getDevicesFromStore(), newStore.getGroupsFromStore());
-import BulbData from './bulb-data';
+import bulbData from './bulb-data';
 
-process.exit(1);
 // local module for handling bulb actions
 import
   Bulb
@@ -179,15 +174,15 @@ import
     ipcMain.on(C.IPC_DEVICE_CHARACTERISTICS_GET, onIpcDeviceGetCharacteristics);
     ipcMain.on(C.IPC_DEVICE_CHARACTERISTIC_SET, onIpcDeviceSetCharacteristic);
     ipcMain.on(C.IPC_DEVICE_GET, onIpcDeviceGet);
-    ipcMain.on(C.IPC_DEVICE_GET_CACHED, onIpcDeviceGetCached);
-    ipcMain.on(C.IPC_DEVICE_SET_CACHED, onIpcDeviceSetCached);
+    ipcMain.on(C.IPC_DEVICE_GET_CACHED, onIpcDeviceGetStored);
+    ipcMain.on(C.IPC_DEVICE_SET_CACHED, onIpcDeviceSetStored);
     ipcMain.on(C.IPC_DEV_TOOLS_OPEN, onIpcDevToolsOpen);
 
     ipcMain.on(C.IPC_GROUP_CONNECT, onIpcGroupConnect);
     ipcMain.on(C.IPC_GROUP_DISCONNECT, onIpcGroupDisconnect);
-    ipcMain.on(C.IPC_GROUP_SET_CACHED, onIpcGroupSetCached);
-    ipcMain.on(C.IPC_GROUP_DELETE_CACHED, onIpcGroupDeleteCached);
-    ipcMain.on(C.IPC_GROUP_GET_CACHED, onIpcGroupGetCached);
+    ipcMain.on(C.IPC_GROUP_SET_CACHED, onIpcGroupSetStored);
+    ipcMain.on(C.IPC_GROUP_DELETE_CACHED, onIpcGroupDeleteStored);
+    ipcMain.on(C.IPC_GROUP_GET_CACHED, onIpcGroupGetStored);
     // ipcMain.on(C.IPC_GROUP_GET_CACHED_REPLY, onIpc);
 
     // ipcMain listener functions
@@ -262,7 +257,7 @@ import
           // @TODO move this to own function for clean chaining
 
           // save to cache
-          bulbStore.setCachedDevice(device);
+          bulbStore.setStoredDevice(device);
         })
         .catch(error => {
           log.error('Write catch error from set characteristic event', error);
@@ -279,34 +274,34 @@ import
       win.openDevTools();
     }
 
-    function onIpcDeviceGetCached(event) {
-      log.info('onDeviceGetCached...', bulbStore.getCachedDevices());
-      bulbStore.getCachedDevices()
+    function onIpcDeviceGetStored(event) {
+      log.info('onDeviceGetCached...');
+      bulbStore.getStoredDevices()
         .forEach((device, uuid) => {
           log.info('onDeviceGetCached sending ', device, uuid);
           event.sender.send(C.IPC_DEVICE_GET_CACHED_REPLY, device);
         });
     }
 
-    function onIpcDeviceSetCached(event, device) {
-      log.info('onIpcDeviceSetCached...', device);
-      bulbStore.setCachedDevice(device);
+    function onIpcDeviceSetStored(event, device) {
+      log.info('onIpcDeviceSetStored...', device);
+      bulbStore.setStoredDevice(device);
     }
 
-    function onIpcGroupSetCached(event, group) {
-      log.info('onIpcGroupSetCached...', group);
-      bulbStore.setCachedGroup(group);
+    function onIpcGroupSetStored(event, group) {
+      log.info('onIpcGroupSetStored...', group);
+      bulbStore.setStoredGroup(group);
     }
 
-    function onIpcGroupDeleteCached(event, group) {
-      bulbStore.deleteCachedGroup(group);
+    function onIpcGroupDeleteStored(event, group) {
+      bulbStore.deleteStoredGroup(group);
     }
 
-    function onIpcGroupGetCached(event) {
-      // log.info('onIpcGroupGetCached...', bulbStore.getCachedGroups());
-      bulbStore.getCachedGroups()
+    function onIpcGroupGetStored(event) {
+      // log.info('onIpcGroupGetStored...', bulbStore.getCachedGroups());
+      bulbStore.getStoredGroups()
         .forEach((group, uuid) => {
-          // log.info('onIpcGroupGetCached sending', group);
+          // log.info('onIpcGroupGetStored sending', group);
           event.sender.send(C.IPC_GROUP_GET_CACHED_REPLY, group);
         });
     }
@@ -340,7 +335,6 @@ import
 
       bulb.discovered(peripheral)
       .then((device) => {
-        log.debug(BulbSerializer);
         // send notification to renderer that a device has been discovered
         log.debug('onNobleDiscovered serializedDevice', BulbSerializer.serializeDevice(device));
         webContents.send(C.IPC_DEVICE_DISCOVERED, BulbSerializer.serializeDevice(device));

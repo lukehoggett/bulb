@@ -23,7 +23,6 @@ class BulbStore {
     this.initDeviceStorage(defaultConfig);
     this.initGroupStorage(defaultConfig);
 
-    log.debug('BulbStore.constructor() storeInstance', storeInstance);
     return storeInstance;
   }
 
@@ -50,56 +49,93 @@ class BulbStore {
 
   initGroupStorage(config) {
     let groupConfig = Object.assign({
-      dir: `${this.cwd}${C.DATA_GROUP_DIR}}`
+      dir: `${this.cwd}${C.DATA_GROUP_DIR}`
     }, config);
     this.groupStorage = storage.create(groupConfig);
     this.groupStorage.initSync();
   }
 
-  getStoredDevices() {
-    let devices = Immutable.Map();
-    let deviceKeys = this.deviceStorage.keys();
-    deviceKeys.forEach((uuid, index) => {
-      devices = devices.set(uuid, this.getStoredDevice(uuid));
+  get(storageType, uuid) {
+    let data = storageType.getItemSync(uuid, (error, data) => {
+      if (error) {
+        log.error(error);
+      }
     });
-    return devices;
+    data = Immutable.fromJS(data);
+    return data;
+  }
+
+  getAll(storageType) {
+    let data = Immutable.Map();
+    let keys = storageType.keys();
+    keys.forEach((uuid, index) => {
+      data = data.set(uuid, this.get(storageType, uuid));
+    });
+    log.debug('getAll()', data);
+    return data;
+  }
+
+  getStoredDevices() {
+    return this.getAll(this.deviceStorage);
   }
 
   getStoredDevice(uuid) {
-    let device = this.deviceStorage.getItemSync(uuid, (error, device) => {
-      if (error) {
-        log.error(error);
-      } else {
-        device.power = false;
-        device.state = C.DISCONNECTED;
-      }
-    });
-    device = Immutable.fromJS(device);
-    return device;
+    return this.get(this.deviceStorage, uuid);
+
+    // move setting of properties to set time so they are never ssaved wrong
+
+    // let device = this.deviceStorage.getItemSync(uuid, (error, device) => {
+    //   if (error) {
+    //     log.error(error);
+    //   } else {
+    //     device.power = false;
+    //     device.state = C.DISCONNECTED;
+    //   }
+    // });
+    // device = Immutable.fromJS(device);
+    // return device;
   }
 
   getStoredGroups() {
-    let groups = Immutable.Map();
-    let groupKeys = this.groupStorage.keys();
-    groupKeys.forEach((uuid, index) => {
-      groups = groups.set(uuid, this.getStoredGroup(uuid));
-    });
-    return groups;
+    return this.getAll(this.groupStorage);
   }
 
   getStoredGroup(uuid) {
-    let group = this.groupStorage.getItemSync(uuid, (error, group) => {
+    return this.get(this.groupStorage, uuid);
+
+    // move setting of properties to set time so they are never ssaved wrong
+
+    // let group = this.groupStorage.getItemSync(uuid, (error, group) => {
+    //   if (error) {
+    //     log.error(error);
+    //   } else {
+    //     group.state = C.DISCONNECTED;
+    //   }
+    // });
+    // group = Immutable.fromJS(group);
+    // return group;
+  }
+
+  set(storageType, data) {
+    log.debug('BulbStore set', storageType, data);
+    let serializedData = BulbSerializer.serializeDevice(data);
+    storageType.setItem(serializedData.uuid, serializedData, error => {
       if (error) {
-        log.error(error);
-      } else {
-        group.state = C.DISCONNECTED;
+        log.error('Storage error', error);
       }
     });
-    group = Immutable.fromJS(group);
-    return group;
+    return this.getStoredDevices(serializedData.uuid);
+  }
+
+  setAll(storageType, data) {
+    data.forEach((datum) => {
+      this.set(storageType, datum);
+    });
+    return this.getAll(storageType);
   }
 
   setStoredDevice(device) {
+    log.debug('BulbStore setStoredDevice', device);
     device.state = C.DISCONNECTED;
     let serializedDevice = BulbSerializer.serializeDevice(device);
     this.deviceStorage.setItem(serializedDevice.uuid, serializedDevice, error => {
@@ -118,7 +154,7 @@ class BulbStore {
   }
 
   setStoredGroup(group) {
-    log.debug('bulbCache setStoredGroup', group);
+    log.debug('BulbStore setStoredGroup', group);
     // remove properties not needed to be stored
     this.groupStorage.setItem(group.uuid, group, error => {
       if (error) {
@@ -133,6 +169,10 @@ class BulbStore {
       this.setStoredGroup(group);
     });
     return this.getStoredGroups();
+  }
+
+  deleteStoredGroup(group) {
+    log.info('bulbCache deleteCachedGroup group', group);
   }
 }
 
