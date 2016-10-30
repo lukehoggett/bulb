@@ -37,9 +37,9 @@ import
   Bulb
  from './bulb';
 
-// import
-//   BulbMessaging
-// from './bulb-messaging';
+import
+  BulbMessaging
+from './bulb-messaging';
 
 (function() {
   'use strict';
@@ -69,7 +69,7 @@ import
   let win;
 
   let bulb = null;
-  // let bulbMessaging = null;
+  let bulbMessaging = null;
 
   process.on(C.PROCESS_UNCAUGHT_EXCEPTION, onProcessUncaughtException);
 
@@ -112,7 +112,7 @@ import
     const {
       screen
     } = electron;
-    log.info('App Ready');
+    log.info('app.on(ready)');
 
     let primaryDisplay = screen.getPrimaryDisplay();
 
@@ -125,12 +125,12 @@ import
     win.on(C.WINDOW_UNRESPONSIVE, onWindowUnresponsive);
 
     function onWindowReadyToShow() {
-      log.debug('onWindowReadyToShow...');
+      log.debug('win.onWindowReadyToShow()');
       win.show();
     }
 
     function onWindowClosed() {
-      log.info('onWindowClosed...');
+      log.info('win.onWindowClosed()');
       noble.stopScanning();
       disconnectAll();
       win = null;
@@ -138,13 +138,13 @@ import
     }
 
     function onWindowUnresponsive() {
-      log.warn('onWindowUnresponsive...', arguments);
+      log.warn('win.onWindowUnresponsive()');
     }
 
     let webContents = win.webContents;
 
     bulb = new Bulb(webContents);
-    // bulbMessaging = new BulbMessaging(webContents);
+    bulbMessaging = new BulbMessaging(webContents);
 
     webContents.openDevTools({
       mode: 'undocked'
@@ -155,7 +155,7 @@ import
     webContents.on(C.WEBCONTENTS_CRASHED, onWebContentsCrashed);
 
     function onWebContentsDidFinishLoad() {
-      log.info('onWebContentsDidFinishLoad...');
+      log.info('webContents.onWebContentsDidFinishLoad()');
       // noble.on('stateChange', (state) => {
       startScanning();
       // });
@@ -163,7 +163,7 @@ import
     }
 
     function onWebContentsCrashed() {
-      log.error('onWebContentsCrashed', arguments);
+      log.error('webContents.onWebContentsCrashed()');
     }
 
     // adding ipcMain listeners
@@ -187,29 +187,29 @@ import
 
     // ipcMain listener functions
     function onIpcScanStart() {
-      log.info('onIpcScanStart...');
+      log.info('ipcMain.onIpcScanStart()');
       // Start scanning only if already powered up.
       startScanning();
     }
 
     function onIpcScanStop() {
       // Stop scanning for devices.
-      log.info('onScanStop... ');
+      log.info('ipcMain.onScanStop()');
       noble.stopScanning();
     }
 
     function onIpcDeviceConnect(event, deviceUUID) {
-      log.info('onDeviceConnect...');
+      log.info('ipcMain.onDeviceConnect()');
       bulb.connectAndReadCharacteristics(deviceUUID, webContents);
     }
 
     function onIpcDeviceDisconnect(event, deviceUUID) {
-      log.info('onDeviceDisconnect...');
+      log.info('ipcMain.onDeviceDisconnect()');
       disconnect(deviceUUID);
     }
 
     function onIpcGroupConnect(event, group) {
-      log.info('onIpcGroupConnect', group, group.devices.length);
+      log.info('ipcMain.onIpcGroupConnect()', group, group.devices.length);
 
       if (group.devices.length > 0) {
         log.debug('More than once device in group');
@@ -265,7 +265,7 @@ import
     }
 
     function onIpcDeviceGet(event, deviceUUID) {
-      log.info('onDeviceGet...');
+      log.info('ipcMain.onDeviceGet()');
       log.info('ipc: device.get', event, deviceUUID, deviceCache.getByUUID(deviceUUID));
     }
 
@@ -275,10 +275,10 @@ import
     }
 
     function onIpcDeviceGetStored(event) {
-      log.info('onDeviceGetCached...');
+      log.debug('ipcMain.onIpcDeviceGetStored()', bulbStore.getStoredDevices());
       bulbStore.getStoredDevices()
         .forEach((device, uuid) => {
-          log.info('onDeviceGetCached sending ', device, uuid);
+          log.info('ipcMain.onIpcDeviceGetStored() sending ', device, uuid);
           event.sender.send(C.IPC_DEVICE_GET_CACHED_REPLY, device);
         });
     }
@@ -345,7 +345,7 @@ import
     }
 
     function startScanning() {
-      log.debug('startScanning...');
+      log.debug('startScanning()');
       if (noble.state === 'poweredOn') {
         setTimeout(() => {
           noble.startScanning();

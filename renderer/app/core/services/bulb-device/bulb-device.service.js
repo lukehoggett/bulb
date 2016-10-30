@@ -32,14 +32,15 @@ class BulbDeviceService {
   }
 
   onGet(message, data) {
-    this.$log.debug('BulbDeviceService onPost', message, data);
+    this.$log.debug('BulbDeviceService.onGet()', message, data);
   }
 
   onPost(message, data) {
-    this.$log.debug('BulbDeviceService onPost', message, data);
+    this.$log.debug('BulbDeviceService.onPost()', message, data);
   }
 
   getCachedDevices() {
+    this.$log.debug('BulbDeviceService.getCachedDevices()', arguments);
     ipc.send(this.C.IPC_RENDERER_GET, {message: 'device.cached'});
     ipc.send(this.C.IPC_DEVICE_GET_CACHED);
   }
@@ -49,19 +50,19 @@ class BulbDeviceService {
   }
 
   startScan() {
-    this.$log.info('startScan sending IPC to main');
+    this.$log.info('BulbDeviceService.startScan() sending IPC to main');
     ipc.send(this.C.IPC_SCAN_START);
     this.scanning = true;
   }
 
   stopScan() {
-    this.$log.info('stopScan sending IPC to main');
+    this.$log.info('BulbDeviceService.stopScan() sending IPC to main');
     ipc.send(this.C.IPC_SCAN_STOP);
     this.scanning = false;
   }
 
   onScanningStart() {
-    this.$log.info('onScanningStart');
+    this.$log.info('BulbDeviceService.onScanningStart()');
     this.scanning = true;
   }
 

@@ -13,6 +13,7 @@ import Immutable from 'immutable';
 let storeInstance = null;
 class BulbStore {
   constructor() {
+    log.debug('BulbStore.constructor()');
     if (!storeInstance) {
       storeInstance = this;
     }
