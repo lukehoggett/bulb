@@ -99,7 +99,7 @@ class BulbDeviceService {
   }
 
   get(uuid) {
-    // this.$log.log('BulbService: get called: ', uuid);
+    this.$log.log('BulbService.get() uuid: ', uuid, this.devices);
     return this.devices[uuid];
   }
 

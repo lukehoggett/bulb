@@ -12,7 +12,6 @@ export function bulbDeviceListComponent() {
   return component;
 }
 
-
 class BulbDeviceListController {
 
   constructor($rootScope, $mdDialog, bulbDeviceService, $log, C) {

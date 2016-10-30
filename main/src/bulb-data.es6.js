@@ -4,7 +4,7 @@ import {log} from './logger';
 import Immutable from 'immutable';
 
 let dataInstance = null;
-export default class BulbData {
+class BulbData {
   constructor() {
     if (!dataInstance) {
       dataInstance = this;

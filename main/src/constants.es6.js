@@ -6,7 +6,6 @@
 export const DATA_DEVICE_DIR = '/data/device-storage';
 export const DATA_GROUP_DIR = '/data/group-storage';
 
-
 /**
  * EVENTS
  */

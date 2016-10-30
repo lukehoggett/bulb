@@ -80,7 +80,7 @@ log.debug('device.store file');
     //   log.info('getDevicesFromCache serializedDevices', serializedDevices);
     //   return serializedDevices;
     // }
-    // 
+    //
     // getGroupsFromCache() {
     //   let groupKeys = groupCache.keys();
     //   groupKeys.forEach((uuid, index) => {
@@ -94,18 +94,18 @@ log.debug('device.store file');
     //       }
     //     });
     //   });
-    // 
+    //
     //   return serializedGroups;
     // }
-    // 
+    //
     // getCachedDevices() {
     //   return serializedDevices;
     // }
-    // 
+    //
     // getCachedGroups() {
     //   return serializedGroups;
     // }
-    // 
+    //
     // getCachedDeviceByUUID(uuid) {
     //   if (!serializedDevices.has(uuid)) {
     //     log.error(`Device ${uuid} is not in deviceCache.`);
@@ -113,7 +113,7 @@ log.debug('device.store file');
     //   }
     //   return serializedDevices.get(uuid);
     // }
-    // 
+    //
     // getCachedGroupByUUID(uuid) {
     //   if (!serializedGroups.has(uuid)) {
     //     log.error(`Group ${uuid} is not in groupCache.`);
@@ -121,13 +121,13 @@ log.debug('device.store file');
     //   }
     //   return serializedGroups.get(uuid);
     // }
-    // 
+    //
     // setCachedDevices(devices) {
     //   devices.forEach((device) => {
     //     this.setCachedDevice(device);
     //   });
     // }
-    // 
+    //
     // setCachedDevice(device) {
     //   device.state = C.DISCONNECTED;
     //   // log.debug('bulbStore setCachedDevice');
@@ -141,13 +141,13 @@ log.debug('device.store file');
     //   });
     //   this.getDevicesFromCache();
     // }
-    // 
+    //
     // setCachedGroups(groups) {
     //   groups.forEach((group) => {
     //     this.setCachedGroup(group);
     //   });
     // }
-    // 
+    //
     // setCachedGroup(group) {
     //   log.info('bulbCache setCachedGroup', group);
     //   // remove properties not needed to be stored
@@ -158,11 +158,11 @@ log.debug('device.store file');
     //   });
     //   this.getGroupsFromCache();
     // }
-    // 
+    //
     // hasCachedDevice(uuid) {
     //   return serializedDevices.has(uuid);
     // }
-    // 
+    //
     // getDiscoveredDevices() {
     //   return discoveredDevices;
     // }
