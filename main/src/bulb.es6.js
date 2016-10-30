@@ -31,21 +31,25 @@ export default class Bulb {
         device.uuid = peripheral.uuid;
         device.peripheral = peripheral;
         device.type = playbulbType;
-        device.characteristics = (storedDevice ? storedDevice.characteristics : {});
+        device.peripheral.discovered = true;
+        device.characteristics = {};
+        log.debug('----------------------------------------------------');
+        log.debug('Bulb.discovered() device before setting data', device);
         device = bulbData.set(device);
 
         // on discovery check if device is in stored devices, if not update stored
         // look up cached device and merge discovered device characteristics
         let storedDevice = bulbStore.getStoredDevice(peripheral.uuid);
-        log.debug('discovered storedDevice', storedDevice);
+        log.debug('Bulb.discovered() storedDevice', storedDevice);
         if (!storedDevice) {
           log.debug('Bulb.discovered()', 'Device not in store: setting stored device');
           // save discovered device to persistent storage
           bulbStore.setStoredDevice(device);
         }
 
+        device.characteristics = (storedDevice ? storedDevice.characteristics : {});
+        log.debug('Bulb.discovered() device', device);
         // add properties to the device
-        device.peripheral.discovered = true; // we don't save discovered so need to add it here
 
         // this is needed to add the noble extra object stuff that can't be stored in the persistent storage
         // bulbData.setDiscoveredDevice(device);

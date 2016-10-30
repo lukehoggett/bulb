@@ -137,6 +137,7 @@ class BulbDeviceService {
     // this.$log.debug('getBulbType', this.getBulbType(device));
     // this.$log.debug('isEffect', this.isEffect(device));
     // this.$log.debug('isColor', this.isColor(device));
+    this.$log.log('onDeviceGetCachedReply', this.devices);
     this.devices[device.uuid] = device;
   }
 
@@ -204,6 +205,7 @@ class BulbDeviceService {
   }
 
   isConnected(uuid) {
+    this.$log.debug('isConnected this.get(uuid)', this.get(uuid));
     return this.get(uuid).peripheral.state === this.C.CONNECTED;
   }
 
